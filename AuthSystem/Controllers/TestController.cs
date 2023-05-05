@@ -38,8 +38,6 @@ namespace AuthSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages)
         {
-            if (ModelState.IsValid)
-            {
                 var test = new Test { TestName = testName , CreatedBy = "User" };
                 _test.Tests.Add(test);
                 await _test.SaveChangesAsync();
@@ -54,14 +52,13 @@ namespace AuthSystem.Controllers
                     };
 
                     _test.TestsDetail.Add(testDetails);
+                    Console.WriteLine(testDetails);
                 }
 
                 await _test.SaveChangesAsync();
 
                 return RedirectToAction("Test");
-            }
 
-            return RedirectToAction("Test");
         }
 
     }
