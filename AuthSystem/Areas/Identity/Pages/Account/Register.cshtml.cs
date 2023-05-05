@@ -161,10 +161,10 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     var client = new SmtpClient("mail.dastyaab.com", 587)
                     {
 
-                        Credentials = new NetworkCredential("no-reply@dastyaab.com", "Zounds@4321"),
+                        Credentials = new NetworkCredential("no-reply@dastyaab.com", "no-reply@dastyaab"),
                         EnableSsl = true
                     };
-                    client.Send("no-reply@dastyaab.com", Input.Email, "Welcome to PAF-IAST", "Please click on following link to Confirm: " + callbackUrl);
+                    client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
                     //                    client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
                     /////////////////   
 
@@ -179,6 +179,9 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     /////////////////   
                     //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                        // $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                   
+                      await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

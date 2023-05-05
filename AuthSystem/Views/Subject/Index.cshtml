@@ -37,22 +37,12 @@
     {
 
 
-
-            <div class="column" style="width: 15rem; background-color:lightblue ; display:flex; flex-direction:row;">
-                <div class="card-body">
-                <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })" >
-
-                    <h3>@subject.SubjectName</h3>
-
-                    </a>
-                <a class="btn btn-danger" asp-action="DeleteSubject" asp-controller="Subject" asp-route-id="@subject.SubjectId">Delete</a>
-
-                </div>
-
+    <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })">
+            <div class="column" style="width: 15rem; background-color:lightblue ; display:flex; flex-direction:row;">                              
+                    <h3>@subject.SubjectName</h3>            
             </div>
 
-        
-
+    </a>
     }
 <h2>Create New Subject</h2>
 <form method="post" asp-controller="Subject" asp-action="Create" class="form-control-lg">
