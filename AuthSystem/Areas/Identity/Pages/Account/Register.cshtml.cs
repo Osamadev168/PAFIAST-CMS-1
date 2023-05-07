@@ -2,27 +2,18 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using AuthSystem.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
-using System.Web.Helpers;
-using System.Net.Mail;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using System.Net.Mail;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace AuthSystem.Areas.Identity.Pages.Account
 {
@@ -81,14 +72,14 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             /// </summary>
             /// 
             [Required]
-            
+
             [DataType(DataType.Text)]
             [Display(Name = "FirstName")]
             public string FirstName { get; set; }
 
 
             [Required]
-         
+
             [DataType(DataType.Text)]
             [Display(Name = "LastName")]
             public string LastName { get; set; }
@@ -102,7 +93,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
 
 
             [Required]
-            
+
             [Display(Name = "Mobile Number")]
             public string MobileNumber { get; set; }
             /// <summary>
@@ -139,8 +130,8 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-                user.FirstName=Input.FirstName; 
-                user.LastName=Input.LastName;
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -178,10 +169,10 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     //          client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
                     /////////////////   
                     //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                       // $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                   
-                      await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    // $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                      $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

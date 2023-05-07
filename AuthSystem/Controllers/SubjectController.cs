@@ -3,7 +3,6 @@ using AuthSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AuthSystem.Controllers
 {
@@ -65,36 +64,41 @@ namespace AuthSystem.Controllers
 
             return RedirectToAction("Options");
         }
-        public IActionResult DeleteSubject( int id) {
+        public IActionResult DeleteSubject(int id)
+        {
             var SubjectData = _test.Subjects.Find(id);
             var MCQ = _test.MCQs.Where(x => x.SubjectId == id);
             var FIB = _test.Blanks.Where(x => x.SubjectId == id);
-            if (SubjectData == null) {
+            if (SubjectData == null)
+            {
 
                 return NotFound();
-                    }
+            }
             _test.Subjects.Remove(SubjectData);
             _test.MCQs.RemoveRange(MCQ);
             _test.Blanks.RemoveRange(FIB);
             _test.SaveChanges();
             return RedirectToAction("Index");
 
-        
+
         }
-        public IActionResult Options() {
+        public IActionResult Options()
+        {
 
 
             return View();
-        
+
         }
-        public IActionResult ViewQuestions() {
+        public IActionResult ViewQuestions()
+        {
             var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
 
             var Questions_MCQ = _test.MCQs.Where(x => x.SubjectId == SubjectId).Include(x => x.Subject);
             return View(Questions_MCQ);
         }
 
-        public IActionResult Type() {
+        public IActionResult Type()
+        {
 
             return View();
         }

@@ -1,6 +1,4 @@
-﻿using AuthSystem.Areas.Identity.Data;
-using AuthSystem.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using AuthSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -14,12 +12,12 @@ namespace AuthSystem.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-        
+
         }
 
         public IActionResult Index()
         {
-            
+
             return View();
         }
 

@@ -1,16 +1,9 @@
-﻿using System.Web;
-using Microsoft.AspNetCore.Mvc;
-using AuthSystem.Data;
+﻿using AuthSystem.Data;
 using AuthSystem.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.CodeAnalysis.Differencing;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
-using Excel = Microsoft.Office.Interop.Excel;
 namespace AuthSystem.Controllers
 {
     public class MCQController : Controller
@@ -38,7 +31,7 @@ namespace AuthSystem.Controllers
         public IActionResult Create()
         {
             int? selectedsubjectId = HttpContext.Session.GetInt32("SelectedSubjectId");
-            if (selectedsubjectId == null )
+            if (selectedsubjectId == null)
             {
                 return RedirectToAction("Index");
             }
@@ -49,32 +42,35 @@ namespace AuthSystem.Controllers
         public IActionResult Create(MCQ obj)
         {
             int? selectedsubjectId = HttpContext.Session.GetInt32("SelectedSubjectId");
-          
-                obj.SubjectId = selectedsubjectId.Value;
 
-                _test.MCQs.Add(obj);
-                _test.SaveChanges();
-                HttpContext.Session.Clear();
-                return RedirectToAction("Index");
+            obj.SubjectId = selectedsubjectId.Value;
+
+            _test.MCQs.Add(obj);
+            _test.SaveChanges();
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
 
 
 
         }
         [Authorize]
 
-        public IActionResult Edit() {
+        public IActionResult Edit()
+        {
 
             return View();
         }
         [HttpGet]
-        public IActionResult Edit(int? Id) { 
-        if (Id == null)
+        public IActionResult Edit(int? Id)
+        {
+            if (Id == null)
             {
 
                 return NotFound();
             }
             var EditMCQData = _test.MCQs.Find(Id);
-            if (EditMCQData == null) {
+            if (EditMCQData == null)
+            {
 
                 return NotFound();
             }
@@ -83,40 +79,47 @@ namespace AuthSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(MCQ obj) {
+        public IActionResult Edit(MCQ obj)
+        {
 
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
 
                 _test.MCQs.Update(obj);
                 _test.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(obj);
-        
+
         }
-        public IActionResult Delete(int? Id) {
+        public IActionResult Delete(int? Id)
+        {
             var mcqData = _test.MCQs.Find(Id);
-            if (mcqData == null) {
+            if (mcqData == null)
+            {
                 return NotFound();
             }
             _test.MCQs.Remove(mcqData);
             _test.SaveChanges();
             return RedirectToAction("Index");
         }
-        public IActionResult View(int? Id) {
+        public IActionResult View(int? Id)
+        {
 
-            if (Id == null) { 
-            
+            if (Id == null)
+            {
+
 
                 return NotFound();
-            
+
             }
             var questionData = _test.MCQs.Find(Id);
 
             return View(questionData);
-        
+
         }
-        public IActionResult UploadFile() {
+        public IActionResult UploadFile()
+        {
 
             return View();
         }
@@ -162,8 +165,8 @@ namespace AuthSystem.Controllers
                             SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value
 
 
-                    };
-                        
+                        };
+
                         if (string.IsNullOrEmpty(question.Answer))
                         {
                             ModelState.AddModelError("Answer", $"The answer for row {row} is required.");
@@ -181,14 +184,15 @@ namespace AuthSystem.Controllers
             }
 
             // Save the questions to the database
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 _test.MCQs.AddRange(questions);
                 _test.SaveChanges();
                 return RedirectToAction("Index");
 
             }
             return View();
-       
+
         }
 
 

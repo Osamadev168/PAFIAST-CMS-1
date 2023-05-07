@@ -9,7 +9,7 @@ namespace AuthSystem.Models
         public int TDId { get; set; }
 
         [ForeignKey("Test")]
-        public int  Id { get; set; }
+        public int Id { get; set; }
         public Test Test { get; set; }
 
         [ForeignKey("Subject")]

@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using AuthSystem.Data;
 using AuthSystem.Areas.Identity.Data;
+using AuthSystem.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("connectionString") ?? throw new InvalidOperationException("Connection string 'AuthDbContextConnection' not found.");

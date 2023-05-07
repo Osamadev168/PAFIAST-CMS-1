@@ -1,0 +1,40 @@
+﻿@model List<MCQ>
+@{
+    ViewData["Title"] = "Demo|Test";
+}
+<h1>Demo Test</h1>
+<p>@Model.Count  Questions</p>
+
+<form method ="post" action="@Url.Action("SubmitResult")">
+    @foreach (var question in Model)
+    {
+        <p class="text-justify text-uppercase">@question.Content</p>
+        <div class="options form-control input-group-text">
+                <ul>
+                    @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3)
+                .Aggregate("", (acc, option) => $"{acc}<li><label for='{question.Id}{option}'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' /></li>"))
+                </ul>
+
+
+        </div>
+        <p class="subject-name">@question.Subject.SubjectName.ToUpper()</p>
+
+        <hr/>
+    }
+
+    <button type="submit" value="submit"  class="btn btn-outline-success">Submit</button>
+
+</form>
+
+@functions
+
+{
+
+    public List<string> shuffleOptions (params string[] options)
+
+    {
+        var randOptions = new Random();
+        return options.OrderBy(x => randOptions.Next()).ToList();
+    }
+
+}

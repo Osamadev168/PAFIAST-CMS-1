@@ -60,3 +60,14 @@ body {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     border-radius : 10px
 }
+.options {
+    padding: 10px;
+    margin : 5px;
+}
+.subject-name {
+    text-align : right;
+    margin-left : 20px
+}
+.subjects-container {
+    margin : 10px
+}
