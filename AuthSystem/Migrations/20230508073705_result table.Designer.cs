@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20230508055411_Option 4 added")]
-    partial class Option4added
+    [Migration("20230508073705_result table")]
+    partial class resulttable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -181,6 +181,26 @@ namespace AuthSystem.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("MCQs");
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.Result", b =>
+                {
+                    b.Property<int>("ResultId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResultId"));
+
+                    b.Property<string>("AttemptedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("ResultId");
+
+                    b.ToTable("Results");
                 });
 
             modelBuilder.Entity("AuthSystem.Models.Subject", b =>

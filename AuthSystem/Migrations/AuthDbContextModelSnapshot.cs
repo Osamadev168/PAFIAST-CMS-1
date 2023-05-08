@@ -180,6 +180,26 @@ namespace AuthSystem.Migrations
                     b.ToTable("MCQs");
                 });
 
+            modelBuilder.Entity("AuthSystem.Models.Result", b =>
+                {
+                    b.Property<int>("ResultId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResultId"));
+
+                    b.Property<string>("AttemptedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("ResultId");
+
+                    b.ToTable("Results");
+                });
+
             modelBuilder.Entity("AuthSystem.Models.Subject", b =>
                 {
                     b.Property<int>("SubjectId")

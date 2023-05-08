@@ -5,7 +5,6 @@
 }
 
 <h1>MCQ Creation</h1>
-
 <form method="post">
   
     <div>
@@ -41,7 +40,7 @@
         </div>
        
         <div class="center-block" style="display : flex; flex-direction : column">
-            <h3>Please select a difficulty level for this answer</h3>
+            <h3>Please select a difficulty level for this question</h3>
             <label for="Easy">Easy</label>
             <input type="radio" value="Easy" class="form-check-input" name="difficulty" asp-for="Difficulty" id="Easy" />
             <label for="Medium">Medium</label>
@@ -62,9 +61,9 @@
         <span asp-validation-for ="Option4" class="text-danger"></span>
     </div>
 </form>
+<script src="https://cdn.tiny.cloud/1/ity2yj9qnyexhb9d3n2so42uklxs5mo5n84povwn2rrfueya/tinymce/6/tinymce.min.js" referrerpolicy="origin" rel="preload"></script>
 
 
-<script src="https://cdn.tiny.cloud/1/ity2yj9qnyexhb9d3n2so42uklxs5mo5n84povwn2rrfueya/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     var answerField = document.getElementById("answer");
     var radioOption1 = document.getElementById("radioOption1");

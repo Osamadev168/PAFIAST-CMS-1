@@ -12,7 +12,7 @@
         <div class="options form-control input-group-text">
                 <ul>
                     @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3 , question.Option4)
-                .Aggregate("", (acc, option) => $"{acc}<li><label for='{question.Id}{option}'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' /></li>"))
+                .Aggregate("", (acc, option) => $"{acc}<li><label >{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' /></li>"))
                 </ul>
 
 

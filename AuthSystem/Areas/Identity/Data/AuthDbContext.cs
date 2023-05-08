@@ -17,6 +17,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Subject> Subjects { get; set; }
     public DbSet<Test> Tests { get; set; }
     public DbSet<TestDetail> TestsDetail { get; set; }
+    public DbSet<Result> Results { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

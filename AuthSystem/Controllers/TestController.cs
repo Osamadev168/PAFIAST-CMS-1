@@ -102,6 +102,16 @@ namespace AuthSystem.Controllers
                     score++;
                 }
             }
+            var result = new Result
+            {
+
+                AttemptedBy = "Student",
+                Score = score,
+
+
+            };
+            _test.Results.Add(result);
+            _test.SaveChanges();
             return Content($"Your score is {score}");
         }
 
