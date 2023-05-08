@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace AuthSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class Option4added : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -238,6 +239,7 @@ namespace AuthSystem.Migrations
                     Option1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Option2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Option3 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option4 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false)
                 },

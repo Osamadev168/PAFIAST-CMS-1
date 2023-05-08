@@ -158,9 +158,11 @@ namespace AuthSystem.Controllers
                             Content = worksheet.Cells[row, 1].Value?.ToString(),
                             Answer = worksheet.Cells[row, 2].Value?.ToString(),
 
-                            Option1 = worksheet.Cells[row, 3].Value?.ToString(),
-                            Option2 = worksheet.Cells[row, 4].Value?.ToString(),
-                            Option3 = worksheet.Cells[row, 5].Value?.ToString(),
+                            Option1 = worksheet.Cells[row, 2].Value?.ToString(),
+                            Option2 = worksheet.Cells[row, 3].Value?.ToString(),
+                            Option3 = worksheet.Cells[row, 4].Value?.ToString(),
+                            Option4 = worksheet.Cells[row, 5].Value?.ToString(),
+
                             Difficulty = worksheet.Cells[row, 6].Value?.ToString(),
                             SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value
 

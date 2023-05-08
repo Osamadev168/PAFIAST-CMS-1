@@ -24,6 +24,8 @@
         <textarea class="form-control"
                   asp-for="Option2" placeholder="Option 2" id="option2"></textarea> <textarea class="form-control"
                                                                                               asp-for="Option3" placeholder="Option 3" id="option3"></textarea>
+                                                                                               <textarea class="form-control"
+                                                                                              asp-for="Option4" placeholder="Option 4" id="option4"></textarea>
 
         <div class="center-block" style="display : flex; flex-direction : column">
             <h3>Please select an option as an answer</h3>
@@ -33,6 +35,8 @@
             <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption2" />
             <label for="radioOption3">Option 3</label>
             <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption3" />
+            <label for="radioOption4">Option 4</label>
+            <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption4"/>
 
         </div>
        
@@ -46,7 +50,7 @@
             <input type="radio" value="Hard" class="form-check-input" name="difficulty" asp-for="Difficulty" id="Hard" />
         </div>
 
-        <button class=" btn btn-dark" style="margin-top:10px">Create</button>
+        <button class=" btn btn-primary" style="margin-top:10px">Create</button>
 
     </div>
     <div style="display : flex; flex-direction : column">
@@ -55,6 +59,7 @@
         <span asp-validation-for="Option1" class="text-danger"></span>
         <span asp-validation-for="Option2" class="text-danger"></span>
         <span asp-validation-for="Option3" class="text-danger"></span>
+        <span asp-validation-for ="Option4" class="text-danger"></span>
     </div>
 </form>
 
@@ -65,6 +70,8 @@
     var radioOption1 = document.getElementById("radioOption1");
     var radioOption2 = document.getElementById("radioOption2");
     var radioOption3 = document.getElementById("radioOption3");
+    var radioOption4 = document.getElementById("radioOption4");
+
 
     radioOption1.addEventListener("click", function () {
         answerField.value = tinymce.get('option1').getContent({ format: 'html' });
@@ -76,6 +83,9 @@
 
     radioOption3.addEventListener("click", function () {
         answerField.value = tinymce.get('option3').getContent({ format: 'html' });
+    });
+    radioOption4.addEventListener("click", function () {
+        answerField.value = tinymce.get('option4').getContent({ format: 'html' });
     });
 
 
@@ -102,6 +112,14 @@
         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
     }); tinymce.init({
         selector: '#option3',
+        width: 500,
+        height: 200,
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+
+    });
+    tinymce.init({
+        selector: '#option4',
         width: 500,
         height: 200,
         plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
