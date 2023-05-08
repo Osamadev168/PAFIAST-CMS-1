@@ -67,15 +67,15 @@
     var radioOption3 = document.getElementById("radioOption3");
 
     radioOption1.addEventListener("click", function () {
-        answerField.value = tinymce.get('option1').getContent({ format: 'text' });
+        answerField.value = tinymce.get('option1').getContent({ format: 'html' });
     });
 
     radioOption2.addEventListener("click", function () {
-        answerField.value = tinymce.get('option2').getContent({ format: 'text' });
+        answerField.value = tinymce.get('option2').getContent({ format: 'html' });
     });
 
     radioOption3.addEventListener("click", function () {
-        answerField.value = tinymce.get('option3').getContent({ format: 'text' });
+        answerField.value = tinymce.get('option3').getContent({ format: 'html' });
     });
 
 
