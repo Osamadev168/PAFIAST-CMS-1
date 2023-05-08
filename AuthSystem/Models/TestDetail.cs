@@ -17,5 +17,6 @@ namespace AuthSystem.Models
         public Subject Subject { get; set; }
 
         public int Percentage { get; set; }
+
     }
 }
