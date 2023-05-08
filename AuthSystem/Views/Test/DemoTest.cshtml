@@ -6,21 +6,25 @@
 <p>@Model.Count  Questions</p>
 
 <form method ="post" action="@Url.Action("SubmitResult")">
-    @foreach (var question in Model)
+  
+    @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
+{
+        <p>Section:<h1>@sectionGroup.Key.ToUpper()</h1></p>
+   
+
+    @foreach (var question in sectionGroup)
     {
-        <p class="text-justify text-uppercase">@Html.Raw(@question.Content)</p>
+        <ol class="text-justify text-uppercase">@Html.Raw(@question.Content)</ol>
         <div class="options form-control input-group-text">
-                <ul>
-                    @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3 , question.Option4)
-                .Aggregate("", (acc, option) => $"{acc}<li><label >{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' /></li>"))
-                </ul>
-
-
+            <ol>
+                @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
+                    .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' /></li>"))
+            </ol>
         </div>
-        <p class="subject-name">@question.Subject.SubjectName.ToUpper()</p>
-
-        <hr/>
+        <hr />
     }
+}
+
 
     <button type="submit" value="submit"  class="btn btn-outline-success">Submit</button>
 

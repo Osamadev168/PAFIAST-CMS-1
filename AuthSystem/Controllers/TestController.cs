@@ -77,7 +77,7 @@ namespace AuthSystem.Controllers
             {
                 var subjectQuestions = _test.MCQs.Include(q => q.Subject)
                     .Where(q => q.SubjectId == testDetail.SubjectId)
-                    .OrderBy(q => Guid.NewGuid()) // randomize order of questions
+                    .OrderBy(x => Guid.NewGuid()) // randomize order of questions
                     .Take((int)(testDetail.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == testDetail.SubjectId)))
                     .ToList();
 
@@ -87,7 +87,7 @@ namespace AuthSystem.Controllers
             var rng = new Random();
             testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
 
-            var questionsList = testQuestions.Take(totalQuestions).ToList();
+            var questionsList = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(totalQuestions).ToList();
 
             return View(questionsList);
         }

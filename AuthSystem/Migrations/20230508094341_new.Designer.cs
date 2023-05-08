@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20230508073705_result table")]
-    partial class resulttable
+    [Migration("20230508094341_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
