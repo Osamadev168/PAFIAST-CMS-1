@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthSystem.Models
 {
@@ -12,6 +12,7 @@ namespace AuthSystem.Models
         public string Option1 { get; set; }
         public string Option2 { get; set; }
         public string Option3 { get; set; }
+        public string Option4 { get; set; }
         public string Difficulty { get; set; }
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }

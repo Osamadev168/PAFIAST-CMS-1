@@ -10,13 +10,15 @@ namespace AuthSystem.Controllers
         {
             return View();
         }
-        public IActionResult CreationType() {
+        public IActionResult CreationType()
+        {
             return View();
-        
+
         }
-        public IActionResult CreationTypeFIB() {
+        public IActionResult CreationTypeFIB()
+        {
             return View();
-        
+
         }
     }
 }

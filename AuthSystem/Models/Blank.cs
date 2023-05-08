@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthSystem.Models
 {
@@ -16,6 +16,6 @@ namespace AuthSystem.Models
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
-        
+
     }
 }

@@ -5,19 +5,19 @@
 
 <h1>Create a new test</h1>
 
-<form method="post" asp-action="Create" asp-controller="Test">
+<form method="post" asp-action="Create" asp-controller="Test" class="form-control">
     <div>
         <label for="testName">Test Name:</label>
-        <input type="text" id="testName" name="testName" />
+        <input type="text" id="testName" name="testName" class="form-control"/>
     </div>
 
-    <div id="subjects-container">
+    <div id="subjects-container" class="subjects-container">
         @foreach (var subject in Model.Subjects)
         {
-            <div>
-                <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" />
-                <label for="subject_@subject.SubjectId">@subject.SubjectName</label>
-                <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" min="0" max="100" />
+            <div class="form-check">
+                <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" />
+                <label for="subject_@subject.SubjectId">@subject.SubjectName.ToUpper()</label>
+                <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100"  />
                 %
             </div>
         }
@@ -27,57 +27,54 @@
         Total Percentage: <span id="totalPercentage">0</span>%
     </div>
 
-    <button type="submit" id ="submit-btn">Create</button>
+    <button type="submit" id="submit-btn" disabled class="btn btn-success">Create</button>
 </form>
+<hr />
+<h2>Tests list</h2>
+
 
 <hr />
+    @foreach (var test in Model.TestList)
+    {
+    <div class="border border-success border-1 rounded gap-2 d-grid ">
 
-<h2>Test List</h2>
+        <h3>@test.TestName</h3>
+        <ol>
 
-@if (Model.TestList.Count() == 0)
-{
-    <p>No tests created yet.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Test Name</th>
-                <th>Created By</th>
-                <th>Subjects Included</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var test in Model.TestDetails)
+            @foreach (var detail in test.TestDetails)
             {
-                <tr>
-                    <td>@test.Test.TestName</td>
-                    <td>@test.Test.CreatedBy</td>
-                    <td>@test.Subject.SubjectName @test.Percentage%</td>
-                </tr>
+                <li>@detail.Subject.SubjectName - @detail.Percentage%</li>
+
+
             }
-        </tbody>
-    </table>
-}
+            <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})">View Demo</a>
+
+
+        </ol>
+        <br />
+        <hr />
+        </div>
+    }
+
+
 
 <script>
     function calculateTotalPercentage() {
         var totalPercentage = 0;
-        var percentageInputs = document.querySelectorAll('#subjects-container input[type="number"]');
+        var testName = document.getElementById('testName').value
+        var percentageInputs = document.querySelectorAll('#subjects-container input[type="number"]:enabled');
         percentageInputs.forEach(function (input) {
             if (input.value) {
                 totalPercentage += parseInt(input.value);
             }
         });
         var submitButton = document.getElementById("submit-btn")
-            if (totalPercentage != 100) {
-              submitButton.setAttribute('disabled' , 'disabled')
-            }
-            else (
-                submitButton.removeAttribute('disabled')
-            )
+        if (totalPercentage != 100 || testName == null ) {
+            submitButton.setAttribute('disabled', 'disabled');
+        }
+        else {
+            submitButton.removeAttribute('disabled');
+        }
         return totalPercentage;
     }
 
@@ -87,12 +84,20 @@ else
         totalPercentageElement.textContent = totalPercentage;
     }
 
-    // Call updateTotalPercentage initially and whenever the percentages change
     updateTotalPercentage();
     document.querySelectorAll('#subjects-container input[type="number"]').forEach(function (input) {
         input.addEventListener('input', updateTotalPercentage);
-    
-
     });
-    
+    document.querySelectorAll('#subjects-container input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.addEventListener('click', function () {
+            var percentageInputId = "percentage_" + checkbox.value;
+            var percentageInput = document.getElementById(percentageInputId);
+            percentageInput.disabled = !checkbox.checked;
+            if (!checkbox.checked ) {
+                percentageInput.value = "";
+            }
+            updateTotalPercentage(); 
+        });
+    });
+
 </script>

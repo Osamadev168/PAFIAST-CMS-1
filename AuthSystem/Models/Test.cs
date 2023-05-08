@@ -1,6 +1,5 @@
 ﻿using DCMS.Lib.Data.Abstractions.Attributes;
 using Microsoft.Build.Framework;
-using Microsoft.EntityFrameworkCore;
 
 namespace AuthSystem.Models
 {

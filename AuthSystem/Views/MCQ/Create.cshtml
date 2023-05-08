@@ -5,7 +5,6 @@
 }
 
 <h1>MCQ Creation</h1>
-
 <form method="post">
   
     <div>
@@ -24,6 +23,8 @@
         <textarea class="form-control"
                   asp-for="Option2" placeholder="Option 2" id="option2"></textarea> <textarea class="form-control"
                                                                                               asp-for="Option3" placeholder="Option 3" id="option3"></textarea>
+                                                                                               <textarea class="form-control"
+                                                                                              asp-for="Option4" placeholder="Option 4" id="option4"></textarea>
 
         <div class="center-block" style="display : flex; flex-direction : column">
             <h3>Please select an option as an answer</h3>
@@ -33,11 +34,13 @@
             <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption2" />
             <label for="radioOption3">Option 3</label>
             <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption3" />
+            <label for="radioOption4">Option 4</label>
+            <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption4"/>
 
         </div>
        
         <div class="center-block" style="display : flex; flex-direction : column">
-            <h3>Please select a difficulty level for this answer</h3>
+            <h3>Please select a difficulty level for this question</h3>
             <label for="Easy">Easy</label>
             <input type="radio" value="Easy" class="form-check-input" name="difficulty" asp-for="Difficulty" id="Easy" />
             <label for="Medium">Medium</label>
@@ -46,7 +49,7 @@
             <input type="radio" value="Hard" class="form-check-input" name="difficulty" asp-for="Difficulty" id="Hard" />
         </div>
 
-        <button class=" btn btn-dark" style="margin-top:10px">Create</button>
+        <button class=" btn btn-primary" style="margin-top:10px">Create</button>
 
     </div>
     <div style="display : flex; flex-direction : column">
@@ -55,57 +58,72 @@
         <span asp-validation-for="Option1" class="text-danger"></span>
         <span asp-validation-for="Option2" class="text-danger"></span>
         <span asp-validation-for="Option3" class="text-danger"></span>
+        <span asp-validation-for ="Option4" class="text-danger"></span>
     </div>
 </form>
+<script src="https://cdn.tiny.cloud/1/ity2yj9qnyexhb9d3n2so42uklxs5mo5n84povwn2rrfueya/tinymce/6/tinymce.min.js" referrerpolicy="origin" rel="preload"></script>
 
 
-<script src="https://cdn.tiny.cloud/1/ity2yj9qnyexhb9d3n2so42uklxs5mo5n84povwn2rrfueya/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     var answerField = document.getElementById("answer");
     var radioOption1 = document.getElementById("radioOption1");
     var radioOption2 = document.getElementById("radioOption2");
     var radioOption3 = document.getElementById("radioOption3");
+    var radioOption4 = document.getElementById("radioOption4");
+
 
     radioOption1.addEventListener("click", function () {
-        answerField.value = tinymce.get('option1').getContent({ format: 'text' });
+        answerField.value = tinymce.get('option1').getContent({ format: 'html' });
     });
 
     radioOption2.addEventListener("click", function () {
-        answerField.value = tinymce.get('option2').getContent({ format: 'text' });
+        answerField.value = tinymce.get('option2').getContent({ format: 'html' });
     });
 
     radioOption3.addEventListener("click", function () {
-        answerField.value = tinymce.get('option3').getContent({ format: 'text' });
+        answerField.value = tinymce.get('option3').getContent({ format: 'html' });
+    });
+    radioOption4.addEventListener("click", function () {
+        answerField.value = tinymce.get('option4').getContent({ format: 'html' });
     });
 
 
 
     tinymce.init({
         selector: '#statement',
-        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage  tableofcontents footnotes mergetags autocorrect typography',
-        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table mergetags  | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                                 ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
     });
 
     tinymce.init({
         selector: '#option1',
         width: 500,
         height: 200,
-        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage  tableofcontents footnotes mergetags autocorrect typography',
-        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table mergetags  | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                                 ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
     });
      tinymce.init({
         selector: '#option2',
         width: 500,
         height: 200,
 
-        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage  tableofcontents footnotes mergetags autocorrect typography',
-        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table mergetags  | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                              ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
     }); tinymce.init({
         selector: '#option3',
         width: 500,
         height: 200,
-        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage  tableofcontents footnotes mergetags autocorrect typography',
-        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table mergetags  | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+
+    });
+    tinymce.init({
+        selector: '#option4',
+        width: 500,
+        height: 200,
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+
     });
 
 

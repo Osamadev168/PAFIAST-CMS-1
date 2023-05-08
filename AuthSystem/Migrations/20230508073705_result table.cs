@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AuthSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class resulttable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,6 +50,20 @@ namespace AuthSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Results",
+                columns: table => new
+                {
+                    ResultId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Score = table.Column<int>(type: "int", nullable: false),
+                    AttemptedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Results", x => x.ResultId);
                 });
 
             migrationBuilder.CreateTable(
@@ -239,6 +253,7 @@ namespace AuthSystem.Migrations
                     Option1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Option2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Option3 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option4 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -379,6 +394,9 @@ namespace AuthSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "MCQs");
+
+            migrationBuilder.DropTable(
+                name: "Results");
 
             migrationBuilder.DropTable(
                 name: "TestsDetail");
