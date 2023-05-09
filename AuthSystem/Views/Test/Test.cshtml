@@ -61,7 +61,7 @@
 <script>
     function calculateTotalPercentage() {
         var totalPercentage = 0;
-        var testName = document.getElementById('testName').value
+        var testName = document.getElementById('testName').value;
         var percentageInputs = document.querySelectorAll('#subjects-container input[type="number"]:enabled');
         percentageInputs.forEach(function (input) {
             if (input.value) {
@@ -69,7 +69,7 @@
             }
         });
         var submitButton = document.getElementById("submit-btn")
-        if (totalPercentage != 100 || testName == null ) {
+        if (totalPercentage !== 100 || testName === null ) {
             submitButton.setAttribute('disabled', 'disabled');
         }
         else {
@@ -92,8 +92,9 @@
         checkbox.addEventListener('click', function () {
             var percentageInputId = "percentage_" + checkbox.value;
             var percentageInput = document.getElementById(percentageInputId);
+            var title = document.getElementById("testName").value;
             percentageInput.disabled = !checkbox.checked;
-            if (!checkbox.checked ) {
+            if (!checkbox.checked || title==null) {
                 percentageInput.value = "";
             }
             updateTotalPercentage(); 
