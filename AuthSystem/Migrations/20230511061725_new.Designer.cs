@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20230508094341_new")]
+    [Migration("20230511061725_new")]
     partial class @new
     {
         /// <inheritdoc />
@@ -176,9 +176,14 @@ namespace AuthSystem.Migrations
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TestSessionId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectId");
+
+                    b.HasIndex("TestSessionId");
 
                     b.ToTable("MCQs");
                 });
@@ -281,6 +286,28 @@ namespace AuthSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("TestsDetail");
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.TestSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("TestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("User")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TestId");
+
+                    b.ToTable("TestSessions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -439,6 +466,10 @@ namespace AuthSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AuthSystem.Models.TestSession", null)
+                        .WithMany("Questions")
+                        .HasForeignKey("TestSessionId");
+
                     b.Navigation("Subject");
                 });
 
@@ -475,6 +506,17 @@ namespace AuthSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("Subject");
+
+                    b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.TestSession", b =>
+                {
+                    b.HasOne("AuthSystem.Models.Test", "Test")
+                        .WithMany()
+                        .HasForeignKey("TestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Test");
                 });
@@ -542,6 +584,11 @@ namespace AuthSystem.Migrations
                     b.Navigation("TestDetails");
 
                     b.Navigation("TestList");
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.TestSession", b =>
+                {
+                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }

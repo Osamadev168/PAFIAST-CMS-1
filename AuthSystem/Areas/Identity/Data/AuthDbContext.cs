@@ -18,6 +18,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Test> Tests { get; set; }
     public DbSet<TestDetail> TestsDetail { get; set; }
     public DbSet<Result> Results { get; set; }
+    public DbSet <TestSession> TestSessions { get; set; }   
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
