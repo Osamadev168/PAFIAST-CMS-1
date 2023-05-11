@@ -62,7 +62,7 @@ namespace AuthSystem.Controllers
             {
                 var testDetails = new TestDetail
                 {
-                    Id = test.Id,
+                    TestId = test.Id,
                     SubjectId = subjectId,
                     Percentage = percentages[subjectId]
                 };
@@ -77,32 +77,94 @@ namespace AuthSystem.Controllers
         }
         public IActionResult DemoTest(int Id)
         {
-            var testDetails = _test.TestsDetail
-                .Include(td => td.Test)
-                .Where(td => td.Id == Id)
+            var userId = 34;
+            var assignedQuestions = _test.AssignedQuestions
+                .Include(aq => aq.Question)
+                .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
                 .ToList();
 
-            var totalQuestions = testDetails.Sum(td => (int)(td.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == td.SubjectId)));
+            List<MCQ> questionsList;
 
-            var testQuestions = new List<MCQ>();
-            foreach (var testDetail in testDetails)
+            if (assignedQuestions.Count == 0)
             {
-                var subjectQuestions = _test.MCQs.Include(q => q.Subject)
-                    .Where(q => q.SubjectId == testDetail.SubjectId)
-                    .OrderBy(x => Guid.NewGuid()) // randomize order of questions
-                    .Take((int)(testDetail.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == testDetail.SubjectId)))
+                var testDetails = _test.TestsDetail
+                    .Include(td => td.Test)
+                    .Where(td => td.TestId == Id)
                     .ToList();
 
-                testQuestions.AddRange(subjectQuestions);
+                var testQuestions = new List<MCQ>();
+                foreach (var testDetail in testDetails)
+                {
+                    var subjectQuestions = _test.MCQs.Include(q => q.Subject)
+                        .Where(q => q.SubjectId == testDetail.SubjectId)
+                        .OrderBy(x => Guid.NewGuid()) // randomize order of questions
+                        .Take((int)(testDetail.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == testDetail.SubjectId)))
+                        .ToList();
+
+                    testQuestions.AddRange(subjectQuestions);
+                }
+
+                var rng = new Random();
+                testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
+
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(testDetails.Sum(td => (int)(td.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == td.SubjectId)))).ToList();
+
+                // save the assigned questions for the user in the database
+                foreach (var question in totalQuestions)
+                {
+                    var assignedQuestion = new AssignedQuestions
+                    {
+                        UserId = userId,
+                        QuestionId = question.Id,
+                        TestDetailId = Id,
+                        Question = question
+                    };
+
+                    _test.AssignedQuestions.Add(assignedQuestion);
+                }
+
+                _test.SaveChanges();
+
+                questionsList = totalQuestions;
+            }
+            else
+            {
+                var assignedQuestionIds = assignedQuestions.Select(aq => aq.QuestionId).ToList();
+
+                var testDetails = _test.TestsDetail
+                    .Include(td => td.Test)
+                    .Where(td => td.TestId == Id)
+                    .ToList();
+
+                var testQuestions = new List<MCQ>();
+                foreach (var testDetail in testDetails)
+                {
+                    var subjectQuestions = _test.MCQs.Include(q => q.Subject)
+                        .Where(q => q.SubjectId == testDetail.SubjectId && assignedQuestionIds.Contains(q.Id))
+                        .OrderBy(x => Guid.NewGuid()) // randomize order of questions
+                        .ToList();
+
+                    testQuestions.AddRange(subjectQuestions);
+                }
+
+                var rng = new Random();
+                testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
+
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(testDetails.Sum(td => (int)(td.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == td.SubjectId)))).ToList();
+
+                questionsList = totalQuestions;
             }
 
-            var rng = new Random();
-            testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
-
-            var questionsList = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(totalQuestions).ToList();
 
             return View(questionsList);
         }
+
+
+
+
+
+
+
 
         public IActionResult SubmitResult(Dictionary<int, string> answers)
         {

@@ -321,6 +321,31 @@ namespace AuthSystem.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AssignedQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    QuestionId = table.Column<int>(type: "int", nullable: false),
+                    TestDetailId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssignedQuestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssignedQuestions_MCQs_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "MCQs",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AssignedQuestions_TestsDetail_TestDetailId",
+                        column: x => x.TestDetailId,
+                        principalTable: "TestsDetail",
+                        principalColumn: "TDId");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -361,6 +386,16 @@ namespace AuthSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AssignedQuestions_QuestionId",
+                table: "AssignedQuestions",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssignedQuestions_TestDetailId",
+                table: "AssignedQuestions",
+                column: "TestDetailId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Blanks_SubjectId",
                 table: "Blanks",
                 column: "SubjectId");
@@ -391,10 +426,9 @@ namespace AuthSystem.Migrations
                 column: "TestId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestsDetail_Id_SubjectId",
+                name: "IX_TestsDetail_Id",
                 table: "TestsDetail",
-                columns: new[] { "Id", "SubjectId" },
-                unique: true);
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestsDetail_SubjectId",
@@ -426,22 +460,25 @@ namespace AuthSystem.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "AssignedQuestions");
+
+            migrationBuilder.DropTable(
                 name: "Blanks");
 
             migrationBuilder.DropTable(
-                name: "MCQs");
-
-            migrationBuilder.DropTable(
                 name: "Results");
-
-            migrationBuilder.DropTable(
-                name: "TestsDetail");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "MCQs");
+
+            migrationBuilder.DropTable(
+                name: "TestsDetail");
 
             migrationBuilder.DropTable(
                 name: "TestSessions");

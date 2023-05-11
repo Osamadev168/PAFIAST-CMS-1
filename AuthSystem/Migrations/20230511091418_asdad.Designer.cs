@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20230511061725_new")]
-    partial class @new
+    [Migration("20230511091418_asdad")]
+    partial class asdad
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,6 +96,32 @@ namespace AuthSystem.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.AssignedQuestions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TestDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("TestDetailId");
+
+                    b.ToTable("AssignedQuestions");
                 });
 
             modelBuilder.Entity("AuthSystem.Models.Blank", b =>
@@ -269,21 +295,20 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TDId"));
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Percentage")
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TestId")
+                        .HasColumnType("int");
+
                     b.HasKey("TDId");
 
                     b.HasIndex("SubjectId");
 
-                    b.HasIndex("Id", "SubjectId")
-                        .IsUnique();
+                    b.HasIndex("TestId");
 
                     b.ToTable("TestsDetail");
                 });
@@ -447,6 +472,25 @@ namespace AuthSystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AuthSystem.Models.AssignedQuestions", b =>
+                {
+                    b.HasOne("AuthSystem.Models.MCQ", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("AuthSystem.Models.TestDetail", "TestDetail")
+                        .WithMany()
+                        .HasForeignKey("TestDetailId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("TestDetail");
+                });
+
             modelBuilder.Entity("AuthSystem.Models.Blank", b =>
                 {
                     b.HasOne("AuthSystem.Models.Subject", "Subject")
@@ -493,15 +537,15 @@ namespace AuthSystem.Migrations
 
             modelBuilder.Entity("AuthSystem.Models.TestDetail", b =>
                 {
-                    b.HasOne("AuthSystem.Models.Test", "Test")
-                        .WithMany("TestDetails")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AuthSystem.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AuthSystem.Models.Test", "Test")
+                        .WithMany("TestDetails")
+                        .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

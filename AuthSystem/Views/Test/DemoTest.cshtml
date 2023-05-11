@@ -7,7 +7,7 @@
 }
     
 <div class="container">
-    @if (Model != null &&Model.ToList().Count > 0)
+    @if (Model != null && Model.ToList().Count > 0)
     {
         <form method="post" action="@Url.Action("SubmitResult")" >
             <input type="submit" value="Submit"  />
@@ -28,7 +28,6 @@
                                     <h3>@sectionGroup.Key Tab Area</h3>
                                 @foreach (var question in sectionGroup)
                                 {
-                                  
                                         <ol class="text-justify text-uppercase">@Html.Raw(@question.Content)</ol>
                                         <div class="options form-control input-group-text">
                                             <ol>
