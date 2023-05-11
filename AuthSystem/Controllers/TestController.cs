@@ -38,12 +38,25 @@ namespace AuthSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages)
         {
+            if (string.IsNullOrEmpty(testName))
+            {
+                ModelState.AddModelError("TestName", "Test name is required.");
+            }
+
+            if (selectedSubjectIds == null || !selectedSubjectIds.Any())
+            {
+                ModelState.AddModelError("selectedSubjectIds", "At least one subject must be selected.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Return the view with validation errors
+                return RedirectToAction("Test");
+            }
+
             var test = new Test { TestName = testName, CreatedBy = "Admin" };
             _test.Tests.Add(test);
-            if (testName != null)
-            {
-                await _test.SaveChangesAsync();
-            }
+            await _test.SaveChangesAsync();
 
             foreach (var subjectId in selectedSubjectIds)
             {
@@ -61,7 +74,6 @@ namespace AuthSystem.Controllers
             await _test.SaveChangesAsync();
 
             return RedirectToAction("Test");
-
         }
         public IActionResult DemoTest(int Id)
         {
