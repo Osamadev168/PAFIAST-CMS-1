@@ -218,6 +218,26 @@ namespace AuthSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TestSessions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    User = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TestId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestSessions_Tests_TestId",
+                        column: x => x.TestId,
+                        principalTable: "Tests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Blanks",
                 columns: table => new
                 {
@@ -236,32 +256,6 @@ namespace AuthSystem.Migrations
                     table.PrimaryKey("PK_Blanks", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Blanks_Subjects_SubjectId",
-                        column: x => x.SubjectId,
-                        principalTable: "Subjects",
-                        principalColumn: "SubjectId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MCQs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Option1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Option2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Option3 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Option4 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MCQs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MCQs_Subjects_SubjectId",
                         column: x => x.SubjectId,
                         principalTable: "Subjects",
                         principalColumn: "SubjectId",
@@ -293,6 +287,38 @@ namespace AuthSystem.Migrations
                         principalTable: "Tests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MCQs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option3 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option4 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    TestSessionId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MCQs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MCQs_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "SubjectId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MCQs_TestSessions_TestSessionId",
+                        column: x => x.TestSessionId,
+                        principalTable: "TestSessions",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -345,6 +371,11 @@ namespace AuthSystem.Migrations
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MCQs_TestSessionId",
+                table: "MCQs",
+                column: "TestSessionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Subjects_SubjectId1",
                 table: "Subjects",
                 column: "SubjectId1");
@@ -369,6 +400,11 @@ namespace AuthSystem.Migrations
                 name: "IX_TestsDetail_SubjectId",
                 table: "TestsDetail",
                 column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestSessions_TestId",
+                table: "TestSessions",
+                column: "TestId");
         }
 
         /// <inheritdoc />
@@ -406,6 +442,9 @@ namespace AuthSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "TestSessions");
 
             migrationBuilder.DropTable(
                 name: "Subjects");

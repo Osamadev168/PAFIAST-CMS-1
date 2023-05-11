@@ -38,7 +38,7 @@
 
 
     <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })">
-            <div class="column" style="width: 15rem; background-color:lightblue ; display:flex; flex-direction:row;">                              
+            <div class="column" style="width: 15rem; background-color:lightblue ; display:flex; flex-direction:row;" data-subject-id="@subject.SubjectId">                              
                     <h3>@subject.SubjectName</h3>            
             </div>
 
@@ -49,4 +49,33 @@
     <input asp-for="SubjectName" placeholder="Enter new subject name" class="form-control" />
     <button type="submit" class="btn btn-secondary">Create</button>
 </form>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Get all subject containers
+            var subjectContainers = $('.column[data-subject-id]');
 
+            // Loop through each subject container
+            subjectContainers.each(function () {
+                var container = $(this);
+                var subjectId = container.data('subject-id');
+
+                // Send AJAX request to fetch questions count
+                $.ajax({
+                    url: '/Subject/GetQuestionsCount',
+                    method: 'GET',
+                    data: { SubjectId: subjectId },
+                    success: function (data) {
+                        // Update subject container with questions count
+                        var count = data.count;
+                        var countHtml = '<span class="questions-count">' + count + ' MCQs so far</span>';
+                        container.append(countHtml);
+                    },
+                    error: function () {
+                        console.error('Failed to fetch questions count for subject with ID ' + subjectId);
+                    }
+                });
+            });
+        });
+    </script>
+}

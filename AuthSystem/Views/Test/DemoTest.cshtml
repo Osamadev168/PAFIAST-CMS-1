@@ -1,132 +1,89 @@
-﻿@model List<MCQ>
+﻿@model List<MCQ>;
 @{
     ViewData["Title"] = "Demo|Test";
     int j = 0;
     int i = 0;
 
 }
-<h1>Demo Test</h1>
-<nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
-        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
-    </div>
-</nav>
-<div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">Section1</div>
-    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">Section2</div>
-    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">Section3</div>
-</div>
-<p>@Model.Count  Questions</p>
-
+    
 <div class="container">
-    @if (Model.ToList().Count > 0)
+    @if (Model != null &&Model.ToList().Count > 0)
     {
+        <form method="post" action="@Url.Action("SubmitResult")" >
+            <input type="submit" value="Submit"  />
+
         <ul class="nav nav-tabs" role="tablist">
             @{
-                foreach (var sectionGroup in Model.GroupBy(q=> q.Section))
+                foreach (var sectionGroup in Model.GroupBy(q => q.Section))
                 {
                     if (i == 0)
                     {
-                        <li class="active">
-                            <a  data-toggle="tab" href="#@sectionGroup.Key">@sectionGroup.Key</a>
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#@sectionGroup.Key">@sectionGroup.Key</a>
                         </li>
-                        <section class="tab-content">
-
-                            @foreach (var question in sectionGroup)
-
-                            {
-                                if (j == 0)
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="@sectionGroup.Key">
+                                    <br>
+                                    <p>@sectionGroup.Count()</p>
+                                    <h3>@sectionGroup.Key Tab Area</h3>
+                                @foreach (var question in sectionGroup)
                                 {
-
-                                    <div id="@question.Subject.SubjectName" class=" tab-pane fade in  active">
-                                        <br>
-                                        <h3>@question.Subject.SubjectName 's Tab Area </h3>
-                                    </div>
+                                  
+                                        <ol class="text-justify text-uppercase">@Html.Raw(@question.Content)</ol>
+                                        <div class="options form-control input-group-text">
+                                            <ol>
+                                                @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
+                            .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' onclick='userSelection({question.Id} , {option})' /></li>"))
+                                            </ol>
+                                        </div>
+                                        <hr />
                                 }
-                                else
-
-                                {
-
-                                    <div id="@question.Subject.SubjectName" class="tab-pane fade ">
-                                        <br>
-                                        <h3>@question.Subject.SubjectName 's Tab Area </h3>
-                                    </div>
-                                }
-                                j++;
-
-
-                            }
-                        </section>
+                            </div>
+                        </div>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a  data-toggle="tab" href="#@sectionGroup.Key">@sectionGroup.Key</a>
+                            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#@sectionGroup.Key">@sectionGroup.Key</a>
                         </li>
                         <div class="tab-content">
 
-                            @foreach (var question in sectionGroup)
+                            <div class="tab-pane fade" id="@sectionGroup.Key">
 
-                            {
-                                if (j == 0)
+                                <br>
+                                    <p>@sectionGroup.Count()</p>
+                                    <h3>@sectionGroup.Key Tab Area</h3>
+
+                                @foreach (var question in sectionGroup)
                                 {
 
-                                    <div id="@question.Subject.SubjectName" class=" tab-pane fade in  active">
-                                        <br>
-                                        <h3>@question.Subject.SubjectName 's Tab Area </h3>
-                                    </div>
+                                        <ol class="text-justify text-uppercase">@Html.Raw(@question.Content)</ol>
+                                        <div class="options form-control input-group-text">
+
+                                            <ol>
+
+                                                @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
+                            .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id} onclick='userSelection({question.Id} ,  {option})'/></li>"))
+                                            </ol>
+                                        </div>
+                                        <input type="hidden" name="answers[@question.Id]" id="answer_{question.Id}" value="" />
+                                        <hr />
+
                                 }
-                                else
-
-                                {
-
-                                    <div id="@question.Subject.SubjectName" class="tab-pane fade ">
-                                        <br>
-                                        <h3>@question.Subject.SubjectName 's Tab Area </h3>
-                                    </div>
-                                }
-                                j++;
-
-
-                            }
+                            </div>
                         </div>
                     }
                     i++;
-                
-
                 }
-
             }
         </ul>
-        
+        </form>
     }
 </div>
-<form method ="post" action="@Url.Action("SubmitResult")">
-
-  
-    @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
-{
-        <p>Section:<h1>@sectionGroup.Key.ToUpper()</h1></p>
-   
-
-    @foreach (var question in sectionGroup)
-    {
-        <ol class="text-justify text-uppercase">@Html.Raw(@question.Content)</ol>
-        <div class="options form-control input-group-text">
-            <ol>
-                @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                    .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' /></li>"))
-            </ol>
-        </div>
-        <hr />
-    }
-}
 
 
-    <button type="submit" value="submit"  class="btn btn-outline-success">Submit</button>
 
-</form>
+
 
 @functions
 
@@ -140,3 +97,18 @@
     }
 
 }
+
+                    <script>
+
+    <script>
+        function userSelection(questionId, option) {
+            // Find the hidden input field for this question
+            var answerInput = document.getElementById(`answer_${questionId}`);
+            if (answerInput) {
+                // Update its value with the selected option
+                answerInput.value = option;
+            }
+        }
+</script>
+
+    
