@@ -16,9 +16,10 @@ namespace AuthSystem.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int SubjectId)
         {
             var subjects = _test.Subjects.ToList();
+            var QuestionsCount = _test.MCQs.Count(q => q.SubjectId == SubjectId);
             var viewModel = new Subject
             {
                 Subjects = subjects
@@ -109,5 +110,12 @@ namespace AuthSystem.Controllers
             var Questions_Blanks = _test.Blanks.Where(x => x.SubjectId == SubjectId).Include(x => x.Subject);
             return View(Questions_Blanks);
         }
+        public IActionResult GetQuestionsCount(int SubjectId)
+        {
+            var count = _test.MCQs.Count(q => q.SubjectId == SubjectId);
+            var data = new { count = count };
+            return Json(data);
+        }
+
     }
 }

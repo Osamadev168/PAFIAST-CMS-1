@@ -17,7 +17,14 @@ namespace AuthSystem.Models
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
-        public string Section => Subject.SubjectName;
+        public string Section
+        {
+            get
+            {
+                return Subject?.SubjectName;
+            }
+        }
+
 
     }
 }

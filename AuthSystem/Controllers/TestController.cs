@@ -114,6 +114,7 @@ namespace AuthSystem.Controllers
                     score++;
                 }
             }
+           
             var result = new Result
             {
 
@@ -132,7 +133,7 @@ namespace AuthSystem.Controllers
 
 
 
-
     }
+    
 
 }

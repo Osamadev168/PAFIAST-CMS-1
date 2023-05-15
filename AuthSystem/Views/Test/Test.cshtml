@@ -48,6 +48,8 @@
 
             }
             <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})">View Demo</a>
+            <a class="btn btn-success" id="copy-button" >Copy Test Link</a>
+
 
 
         </ol>
@@ -105,6 +107,12 @@
             updateTotalPercentage(); 
         });
     });
+    var testButton = document.getElementById('copy-button')
+
+    testButton.onclick = function () {
+        //your code would go here
+        alert("test");
+    };
     
 </script>
 
