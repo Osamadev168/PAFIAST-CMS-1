@@ -77,7 +77,7 @@ namespace AuthSystem.Controllers
         }
         public IActionResult DemoTest(int Id)
         {
-            var userId = 34;
+            var userId = 78686;
             var assignedQuestions = _test.AssignedQuestions
                 .Include(aq => aq.Question)
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
@@ -98,7 +98,7 @@ namespace AuthSystem.Controllers
                     var subjectQuestions = _test.MCQs.Include(q => q.Subject)
                         .Where(q => q.SubjectId == testDetail.SubjectId)
                         .OrderBy(x => Guid.NewGuid()) // randomize order of questions
-                        .Take((int)(testDetail.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == testDetail.SubjectId)))
+                        .Take(Math.Max((int)(testDetail.Percentage / 100.0 * 100), 1))
                         .ToList();
 
                     testQuestions.AddRange(subjectQuestions);
@@ -107,7 +107,7 @@ namespace AuthSystem.Controllers
                 var rng = new Random();
                 testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
 
-                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(testDetails.Sum(td => (int)(td.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == td.SubjectId)))).ToList();
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
 
                 // save the assigned questions for the user in the database
                 foreach (var question in totalQuestions)
@@ -150,7 +150,7 @@ namespace AuthSystem.Controllers
                 var rng = new Random();
                 testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
 
-                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(testDetails.Sum(td => (int)(td.Percentage / 100.0 * _test.MCQs.Count(q => q.SubjectId == td.SubjectId)))).ToList();
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
 
                 questionsList = totalQuestions;
             }
@@ -158,6 +158,7 @@ namespace AuthSystem.Controllers
 
             return View(questionsList);
         }
+
 
 
 
