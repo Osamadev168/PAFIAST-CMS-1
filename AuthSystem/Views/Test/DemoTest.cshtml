@@ -1,13 +1,12 @@
 ﻿@model List<MCQ>;
 @{
     ViewData["Title"] = "Demo|Test";
-    int j = 0;
     int i = 0;
 
 }
     
 <div class="container">
-    @if (Model != null &&Model.ToList().Count > 0)
+    @if (Model != null && Model.ToList().Count > 0)
     {
         <form method="post" action="@Url.Action("SubmitResult")" >
             <input type="submit" value="Submit"  />
@@ -28,12 +27,11 @@
                                     <h3>@sectionGroup.Key Tab Area</h3>
                                 @foreach (var question in sectionGroup)
                                 {
-                                  
                                         <ol class="text-justify text-uppercase">@Html.Raw(@question.Content)</ol>
                                         <div class="options form-control input-group-text">
                                             <ol>
                                                 @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                            .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id}' onclick='userSelection({question.Id} , {option})' /></li>"))
+                            .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='userSelection({question.Id} , {option})' /></li>"))
                                             </ol>
                                         </div>
                                         <hr />
@@ -53,7 +51,6 @@
                                 <br>
                                     <p>@sectionGroup.Count()</p>
                                     <h3>@sectionGroup.Key Tab Area</h3>
-
                                 @foreach (var question in sectionGroup)
                                 {
 
@@ -63,7 +60,7 @@
                                             <ol>
 
                                                 @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                            .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='{question.Id} onclick='userSelection({question.Id} ,  {option})'/></li>"))
+                            .Aggregate("", (acc, option) => $"{acc}<li><label>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='userSelection({question.Id} ,  {option})'/></li>"))
                                             </ol>
                                         </div>
                                         <input type="hidden" name="answers[@question.Id]" id="answer_{question.Id}" value="" />

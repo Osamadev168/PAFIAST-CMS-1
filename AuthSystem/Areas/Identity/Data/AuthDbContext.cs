@@ -2,6 +2,7 @@
 using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace AuthSystem.Data;
 
@@ -19,12 +20,23 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<TestDetail> TestsDetail { get; set; }
     public DbSet<Result> Results { get; set; }
     public DbSet <TestSession> TestSessions { get; set; }   
+    public DbSet <AssignedQuestions> AssignedQuestions { get; set; } 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<AssignedQuestions>()
+        .HasOne(aq => aq.TestDetail)
+        .WithMany()
+        .HasForeignKey(aq => aq.TestDetailId)
+        .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<AssignedQuestions>()
+            .HasOne(aq => aq.Question)
+            .WithMany()
+            .HasForeignKey(aq => aq.QuestionId)
+            .OnDelete(DeleteBehavior.NoAction);
         base.OnModelCreating(builder);
-        builder.Entity<TestDetail>()
-        .HasIndex(td => new { td.Id, td.SubjectId })
-        .IsUnique();
+        
+
         // Customize the ASP.NET Identity model and override the defaults if needed.
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);

@@ -4,6 +4,7 @@ using AuthSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,12 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230511091044_new")]
+    partial class @new
+>>>>>>>> cfbd1f6d738c73f68a661f0e7706fa0065eed992:AuthSystem/Migrations/20230511061725_new.Designer.cs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,20 +296,20 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TDId"));
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.Property<int>("Percentage")
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TestId")
-                        .HasColumnType("int");
-
                     b.HasKey("TDId");
 
-                    b.HasIndex("SubjectId");
+                    b.HasIndex("Id");
 
-                    b.HasIndex("TestId");
+                    b.HasIndex("SubjectId");
 
                     b.ToTable("TestsDetail");
                 });
@@ -534,15 +538,15 @@ namespace AuthSystem.Migrations
 
             modelBuilder.Entity("AuthSystem.Models.TestDetail", b =>
                 {
-                    b.HasOne("AuthSystem.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
+                    b.HasOne("AuthSystem.Models.Test", "Test")
+                        .WithMany("TestDetails")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AuthSystem.Models.Test", "Test")
-                        .WithMany("TestDetails")
-                        .HasForeignKey("TestId")
+                    b.HasOne("AuthSystem.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
