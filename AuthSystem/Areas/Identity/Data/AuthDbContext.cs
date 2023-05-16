@@ -1,5 +1,6 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
@@ -35,7 +36,6 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(aq => aq.QuestionId)
             .OnDelete(DeleteBehavior.NoAction);
         base.OnModelCreating(builder);
-        
 
         // Customize the ASP.NET Identity model and override the defaults if needed.
         // For example, you can rename the ASP.NET Identity table names and more.

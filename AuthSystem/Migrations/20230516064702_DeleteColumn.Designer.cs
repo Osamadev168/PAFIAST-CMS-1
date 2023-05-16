@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20230511091044_new")]
-    partial class @new
+    [Migration("20230516064702_DeleteColumn")]
+    partial class DeleteColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,6 +114,9 @@ namespace AuthSystem.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UserResponse")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -295,20 +298,20 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TDId"));
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Percentage")
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TestId")
+                        .HasColumnType("int");
+
                     b.HasKey("TDId");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("SubjectId");
+
+                    b.HasIndex("TestId");
 
                     b.ToTable("TestsDetail");
                 });
@@ -537,15 +540,15 @@ namespace AuthSystem.Migrations
 
             modelBuilder.Entity("AuthSystem.Models.TestDetail", b =>
                 {
-                    b.HasOne("AuthSystem.Models.Test", "Test")
-                        .WithMany("TestDetails")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AuthSystem.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AuthSystem.Models.Test", "Test")
+                        .WithMany("TestDetails")
+                        .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

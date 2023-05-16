@@ -77,7 +77,7 @@ namespace AuthSystem.Controllers
         }
         public IActionResult DemoTest(int Id)
         {
-            var userId = 78686;
+            var userId = 7;
             var assignedQuestions = _test.AssignedQuestions
                 .Include(aq => aq.Question)
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
@@ -191,12 +191,48 @@ namespace AuthSystem.Controllers
             return Content($"Your score is {score}");
         }
 
+        public IActionResult SaveUserResponse(Dictionary<int, string> answers)
+        {
+            try
+            {
+                foreach (var answer in answers)
+                {
+                    var questionId = answer.Key;
+                    var selectedAnswer = answer.Value;
+
+                    var question = _test.AssignedQuestions.FirstOrDefault(q => q.QuestionId == questionId);
+                    if (question != null)
+                    {
+                        question.UserResponse = selectedAnswer;
+                    }
+                    else
+                    {
+                        // Question not found
+                        return Json(new { error = $"Question not found for ID: {questionId}" });
+                    }
+                }
+
+                _test.SaveChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or return an appropriate error message
+                return Json(new { error = $"Error saving user response: {ex.Message}" });
+            }
+        }
+
+
+
+
+
 
 
 
 
 
     }
-    
+
 
 }
