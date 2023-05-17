@@ -177,7 +177,7 @@ namespace AuthSystem.Controllers
                     score++;
                 }
             }
-           
+
             var result = new Result
             {
 
@@ -190,49 +190,43 @@ namespace AuthSystem.Controllers
             _test.SaveChanges();
             return Content($"Your score is {score}");
         }
+        [HttpPost]
 
-        public IActionResult SaveUserResponse(Dictionary<int, string> answers)
+        public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers)
         {
-            try
-            {
+            var userId = 7;
                 foreach (var answer in answers)
                 {
                     var questionId = answer.Key;
                     var selectedAnswer = answer.Value;
 
-                    var question = _test.AssignedQuestions.FirstOrDefault(q => q.QuestionId == questionId);
+                    var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId ).FirstOrDefault();
                     if (question != null)
                     {
                         question.UserResponse = selectedAnswer;
                     }
-                    else
-                    {
-                        // Question not found
-                        return Json(new { error = $"Question not found for ID: {questionId}" });
-                    }
                 }
 
                 _test.SaveChanges();
+            
 
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                // Log the exception or return an appropriate error message
-                return Json(new { error = $"Error saving user response: {ex.Message}" });
-            }
+            return Json(new { success = "Good" });
+        }
+        [HttpGet]
+        public IActionResult FetchUserResponses() {
+
+
+            var userId = 7;
+            var assignedQuestions = _test.AssignedQuestions
+                .Where(aq => aq.UserId == userId)
+                .ToDictionary(aq => aq.QuestionId, aq => aq.UserResponse);
+
+            return Json(assignedQuestions);
+
         }
 
 
 
 
-
-
-
-
-
-
     }
-
-
 }

@@ -5,10 +5,9 @@
 
 <h1>Create a new test</h1>
 
-<form method="post" asp-action="Create" asp-controller="Test" class="form-control">
+<form method="post" asp-action="Create" asp-controller="Test" class="form-control border-info">
     <div>
-        <label for="testName">Test Name:</label>
-        <input type="text" id="testName" name="testName" class="form-control" required/>
+        <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name"/>
     </div>
 
     <div id="subjects-container" class="subjects-container">
@@ -36,7 +35,7 @@
 <hr />
     @foreach (var test in Model.TestList)
     {
-    <div class="border border-success border-1 rounded gap-2 d-grid ">
+    <div class="border border-dark border-1 rounded gap-2 d-grid p-lg-3 ">
 
         <h3>@test.TestName</h3>
         <ol>
