@@ -92,18 +92,14 @@
     
 
     function saveUserResponse(element) {
-        // Get the question ID and selected answer from the clicked radio button
         var questionId = element.name.replace("answers[", "").replace("]", "");
         var selectedAnswer = element.value;
 
-        // Set the selected answer value to the corresponding hidden input field
         document.getElementById("answer_" + questionId).value = selectedAnswer;
 
-        // Create a dictionary with the question ID and selected answer
         var data = {};
         data[questionId] = selectedAnswer;
 
-        // Make an AJAX request to save the user response immediately
         fetch('/Test/SaveUserResponse', {
             method: 'POST',
             headers: {
@@ -124,7 +120,6 @@
     }
 
     // Function to fetch user responses on page load/refresh
-    // Function to fetch user responses on page load/refresh
     function fetchUserResponses() {
         var url = window.location.href;
         var testId = url.substring(url.lastIndexOf('/') + 1);
@@ -133,18 +128,15 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                // Update the hidden input fields with the fetched user responses
                 data.forEach(item => {
                     var questionId = item.questionId;
                     var userResponse = item.userResponse;
                     var radioId = questionId + userResponse;
 
-                    // Check the corresponding radio button based on the fetched user response
                     var radioElement = document.getElementById(radioId);
                     if (radioElement) {
                         radioElement.checked = true;
 
-                        // Set the selected answer value to the hidden input field
                         document.getElementById("answer_" + questionId).value = userResponse;
                     } else {
                         console.error('Radio element not found:', radioId);
@@ -152,7 +144,6 @@
                 });
             })
             .then(() => {
-                // Trigger a change event on the radio buttons to update the UI
                 var radioButtons = document.getElementsByClassName('options');
                 for (var i = 0; i < radioButtons.length; i++) {
                     radioButtons[i].dispatchEvent(new Event('change'));
@@ -165,7 +156,6 @@
 
 
 
-    // Call the function when the page is loaded or refreshed
     window.addEventListener('load', fetchUserResponses);
 </script>
 
