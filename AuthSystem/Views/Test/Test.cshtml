@@ -29,7 +29,7 @@
     <button type="submit" id="submit-btn" disabled class="btn btn-success">Create</button>
 </form>
 <hr />
-<h2>Tests list</h2>
+<h2>Created Tests</h2>
 
 
 <hr />
@@ -46,7 +46,7 @@
 
 
             }
-            <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})">View Demo</a>
+            <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})" >View Demo</a>
             <a class="btn btn-success" id="copy-button" >Copy Test Link</a>
 
 
@@ -62,6 +62,7 @@
 
 
 <script>
+   
    function calculateTotalPercentage() {
     var totalPercentage = 0;
     var testName = document.getElementById('testName').value;

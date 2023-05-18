@@ -4,7 +4,7 @@
     int i = 0;
 }
 
-<div class="container">
+<div class="container" id="test-section">
     @if (Model != null && Model.ToList().Count > 0)
     {
         <form action="@Url.Action("SubmitResult")" method="post" class="form-control form">
@@ -22,8 +22,7 @@
                             <div class="tab-content">
                                 <div class="tab-pane fade show active" id="@sectionGroup.Key">
                                     <br>
-                                    <p>@sectionGroup.Count()</p>
-                                    <h3>@sectionGroup.Key Questions</h3>
+                                    <h3>@sectionGroup.Key Section</h3>
                                     @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
                                     {
                                         <div class="container-fluid border-2">
@@ -50,12 +49,11 @@
                             <div class="tab-content">
                                 <div class="tab-pane fade" id="@sectionGroup.Key">
                                     <br>
-                                    <p>@sectionGroup.Count()</p>
-                                    <h3>@sectionGroup.Key Questions</h3>
+                                    <h3>@sectionGroup.Key Section</h3>
                                     @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
                                     {
                                         <div class="container border-2">
-                                            <ol class="text-justify text-uppercase">@index) @Html.Raw(@question.Content)</ol>
+                                            <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
                                             <div class="options form-control input-group-text">
                                                 <ol>
                                                     @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4 )
@@ -91,6 +89,8 @@
 }
 
 <script>
+    
+
     function saveUserResponse(element) {
         // Get the question ID and selected answer from the clicked radio button
         var questionId = element.name.replace("answers[", "").replace("]", "");
@@ -124,27 +124,46 @@
     }
 
     // Function to fetch user responses on page load/refresh
+    // Function to fetch user responses on page load/refresh
     function fetchUserResponses() {
-        fetch('/Test/FetchUserResponses')
+        var url = window.location.href;
+        var testId = url.substring(url.lastIndexOf('/') + 1);
+        console.log(testId)
+        fetch('/Test/FetchUserResponses?testId=' + testId)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                console.log(data);
                 // Update the hidden input fields with the fetched user responses
-                Object.keys(data).forEach(questionId => {
-                    var answer = data[questionId];
-                    var radioId = questionId + answer;
+                data.forEach(item => {
+                    var questionId = item.questionId;
+                    var userResponse = item.userResponse;
+                    var radioId = questionId + userResponse;
 
                     // Check the corresponding radio button based on the fetched user response
-                    document.getElementById(radioId).checked = true;
+                    var radioElement = document.getElementById(radioId);
+                    if (radioElement) {
+                        radioElement.checked = true;
 
-                    // Set the selected answer value to the hidden input field
-                    document.getElementById("answer_" + questionId).value = answer;
+                        // Set the selected answer value to the hidden input field
+                        document.getElementById("answer_" + questionId).value = userResponse;
+                    } else {
+                        console.error('Radio element not found:', radioId);
+                    }
                 });
+            })
+            .then(() => {
+                // Trigger a change event on the radio buttons to update the UI
+                var radioButtons = document.getElementsByClassName('options');
+                for (var i = 0; i < radioButtons.length; i++) {
+                    radioButtons[i].dispatchEvent(new Event('change'));
+                }
             })
             .catch(error => {
                 console.error('Error fetching user responses:', error);
             });
     }
+
+
 
     // Call the function when the page is loaded or refreshed
     window.addEventListener('load', fetchUserResponses);

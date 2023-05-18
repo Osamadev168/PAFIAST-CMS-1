@@ -77,7 +77,7 @@ namespace AuthSystem.Controllers
         }
         public IActionResult DemoTest(int Id)
         {
-            var userId = 7;
+            var userId = 45;
             var assignedQuestions = _test.AssignedQuestions
                 .Include(aq => aq.Question)
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
@@ -194,7 +194,7 @@ namespace AuthSystem.Controllers
 
         public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers)
         {
-            var userId = 7;
+            var userId = 45;
                 foreach (var answer in answers)
                 {
                     var questionId = answer.Key;
@@ -213,17 +213,23 @@ namespace AuthSystem.Controllers
             return Json(new { success = "Good" });
         }
         [HttpGet]
-        public IActionResult FetchUserResponses() {
+        public IActionResult FetchUserResponses(int testId)
+        {
+            var userId = 45; 
 
-
-            var userId = 7;
             var assignedQuestions = _test.AssignedQuestions
-                .Where(aq => aq.UserId == userId)
-                .ToDictionary(aq => aq.QuestionId, aq => aq.UserResponse);
+                .Where(aq => aq.UserId == userId && aq.TestDetailId == testId)
+                .Select(aq => new
+                {
+                    QuestionId = aq.QuestionId,
+                    UserResponse = aq.UserResponse
+                })
+                .ToList();
 
             return Json(assignedQuestions);
-
         }
+
+
 
 
 
