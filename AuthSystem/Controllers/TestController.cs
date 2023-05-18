@@ -77,7 +77,7 @@ namespace AuthSystem.Controllers
         }
         public IActionResult DemoTest(int Id)
         {
-            var userId = 78686;
+            var userId = 45;
             var assignedQuestions = _test.AssignedQuestions
                 .Include(aq => aq.Question)
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
@@ -177,7 +177,7 @@ namespace AuthSystem.Controllers
                     score++;
                 }
             }
-           
+
             var result = new Result
             {
 
@@ -190,6 +190,44 @@ namespace AuthSystem.Controllers
             _test.SaveChanges();
             return Content($"Your score is {score}");
         }
+        [HttpPost]
+
+        public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers)
+        {
+            var userId = 45;
+                foreach (var answer in answers)
+                {
+                    var questionId = answer.Key;
+                    var selectedAnswer = answer.Value;
+
+                    var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId ).FirstOrDefault();
+                    if (question != null)
+                    {
+                        question.UserResponse = selectedAnswer;
+                    }
+                }
+
+                _test.SaveChanges();
+            
+
+            return Json(new { success = "Good" });
+        }
+        [HttpGet]
+        public IActionResult FetchUserResponses(int testId)
+        {
+            var userId = 45; 
+
+            var assignedQuestions = _test.AssignedQuestions
+                .Where(aq => aq.UserId == userId && aq.TestDetailId == testId)
+                .Select(aq => new
+                {
+                    QuestionId = aq.QuestionId,
+                    UserResponse = aq.UserResponse
+                })
+                .ToList();
+
+            return Json(assignedQuestions);
+        }
 
 
 
@@ -197,6 +235,4 @@ namespace AuthSystem.Controllers
 
 
     }
-    
-
 }

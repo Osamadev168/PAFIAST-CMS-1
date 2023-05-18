@@ -18,6 +18,7 @@ namespace AuthSystem.Models
         public TestDetail TestDetail { get; set; }
         public int TestDetailId { get; set; }
 
+        public string? UserResponse { get; set; }
 
     }
 }
