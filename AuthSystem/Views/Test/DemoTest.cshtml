@@ -92,6 +92,8 @@
     
 
     function saveUserResponse(element) {
+        var url = window.location.href;
+        var testId = url.substring(url.lastIndexOf('/') + 1);
         var questionId = element.name.replace("answers[", "").replace("]", "");
         var selectedAnswer = element.value;
 
@@ -100,12 +102,12 @@
         var data = {};
         data[questionId] = selectedAnswer;
 
-        fetch('/Test/SaveUserResponse', {
+        fetch('/Test/SaveUserResponse?testId=' + testId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         })
             .then(response => {
                 if (response.ok) {
@@ -156,6 +158,7 @@
 
 
 
+    // Call the function when the page is loaded or refreshed
     window.addEventListener('load', fetchUserResponses);
 </script>
 

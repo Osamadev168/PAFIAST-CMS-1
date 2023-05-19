@@ -77,7 +77,7 @@ namespace AuthSystem.Controllers
         }
         public IActionResult DemoTest(int Id)
         {
-            var userId = 45;
+            var userId = 33;
             var assignedQuestions = _test.AssignedQuestions
                 .Include(aq => aq.Question)
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
@@ -141,14 +141,13 @@ namespace AuthSystem.Controllers
                 {
                     var subjectQuestions = _test.MCQs.Include(q => q.Subject)
                         .Where(q => q.SubjectId == testDetail.SubjectId && assignedQuestionIds.Contains(q.Id))
-                        .OrderBy(x => Guid.NewGuid()) // randomize order of questions
                         .ToList();
 
                     testQuestions.AddRange(subjectQuestions);
                 }
 
                 var rng = new Random();
-                testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
+                testQuestions = testQuestions.ToList();
 
                 var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
 
@@ -192,30 +191,32 @@ namespace AuthSystem.Controllers
         }
         [HttpPost]
 
-        public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers)
+        public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers , int testId)
         {
-            var userId = 45;
+            var userId = 33;
                 foreach (var answer in answers)
                 {
                     var questionId = answer.Key;
                     var selectedAnswer = answer.Value;
 
-                    var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId ).FirstOrDefault();
-                    if (question != null)
-                    {
-                        question.UserResponse = selectedAnswer;
-                    }
+                    var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId  && u.TestDetailId == testId).FirstOrDefault();
+                {
+                    Console.WriteLine(questionId);
+                    Console.WriteLine(selectedAnswer);
+
+
+                    question.UserResponse = selectedAnswer;
+                }
                 }
 
                 _test.SaveChanges();
-            
 
             return Json(new { success = "Good" });
         }
         [HttpGet]
         public IActionResult FetchUserResponses(int testId)
         {
-            var userId = 45; 
+            var userId = 33; 
 
             var assignedQuestions = _test.AssignedQuestions
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == testId)
