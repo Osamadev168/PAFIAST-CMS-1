@@ -1,8 +1,10 @@
 ﻿using AuthSystem.Data;
 using AuthSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace AuthSystem.Controllers
 {
@@ -216,8 +218,9 @@ namespace AuthSystem.Controllers
         [HttpGet]
         public IActionResult FetchUserResponses(int testId)
         {
-            var userId = 33; 
-
+         
+             var userId = 33; 
+            
             var assignedQuestions = _test.AssignedQuestions
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == testId)
                 .Select(aq => new
