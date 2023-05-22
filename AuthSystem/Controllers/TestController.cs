@@ -191,15 +191,15 @@ namespace AuthSystem.Controllers
         }
         [HttpPost]
 
-        public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers , int testId)
+        public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers, int testId)
         {
             var userId = 33;
-                foreach (var answer in answers)
-                {
-                    var questionId = answer.Key;
-                    var selectedAnswer = answer.Value;
+            foreach (var answer in answers)
+            {
+                var questionId = answer.Key;
+                var selectedAnswer = answer.Value;
 
-                    var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId  && u.TestDetailId == testId).FirstOrDefault();
+                var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId && u.TestDetailId == testId).FirstOrDefault();
                 {
                     Console.WriteLine(questionId);
                     Console.WriteLine(selectedAnswer);
@@ -207,16 +207,16 @@ namespace AuthSystem.Controllers
 
                     question.UserResponse = selectedAnswer;
                 }
-                }
+            }
 
-                _test.SaveChanges();
+            _test.SaveChanges();
 
             return Json(new { success = "Good" });
         }
         [HttpGet]
         public IActionResult FetchUserResponses(int testId)
         {
-            var userId = 33; 
+            var userId = 33;
 
             var assignedQuestions = _test.AssignedQuestions
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == testId)
@@ -229,6 +229,28 @@ namespace AuthSystem.Controllers
 
             return Json(assignedQuestions);
         }
+
+        public IActionResult GetNumberOfQuestions(int subjectId)
+        {
+            var questionsCount = _test.MCQs.Count(q => q.SubjectId == subjectId);
+            var data = new { count = questionsCount };
+            Console.WriteLine(subjectId);
+            Console.WriteLine(data);
+            return Json(data);
+        }
+        public IActionResult GetTestName(int testId)
+        {
+            var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
+
+            if (test != null)
+            {
+                var testName = test.TestName;
+                return Json(testName);
+            }
+
+            return NotFound();
+        }
+
 
 
 
