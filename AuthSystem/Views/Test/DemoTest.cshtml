@@ -13,7 +13,7 @@
             <div class="d-flex justify-content-end">
                 <input type="submit" value="SUBMIT" class="btn btn-success position-fixed" />
             </div>
-            <p id="user-progress">Question <span id="current-question"></span> of <span id="total-questions">@Model.Count</span> attempted</p>
+           <span id="total-questions"></span> 
             <nav>
                 <div class="nav nav-tabs nav-pills" id="nav-tab" role="tablist">
                     @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
@@ -68,7 +68,7 @@
         });
 
         // Update the total attempted questions count
-        document.getElementById('total-questions').innerText = totalAttemptedQuestions;
+        document.getElementById('total-questions').innerText = totalAttemptedQuestions + ' Questions attempted so far';
     }
 
 
