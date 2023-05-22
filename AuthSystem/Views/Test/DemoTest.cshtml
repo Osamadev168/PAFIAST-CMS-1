@@ -72,7 +72,6 @@
     
 
     function saveUserResponse(element) {
-        updateProgress();
         var url = window.location.href;
         var testId = url.substring(url.lastIndexOf('/') + 1);
         var questionId = element.name.replace("answers[", "").replace("]", "");
