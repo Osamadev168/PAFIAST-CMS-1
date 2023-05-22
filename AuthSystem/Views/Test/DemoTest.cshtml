@@ -8,8 +8,8 @@
 @if (Model != null && Model.ToList().Count > 0)
 {
     <form action="@Url.Action("SubmitResult")" method="post" class="form-control form-group">
-       
-      <div class="fixed-tabs">
+
+        <div class="fixed-tabs">
             <div class="d-flex justify-content-end">
                 <input type="submit" value="SUBMIT" class="btn btn-success position-fixed" />
             </div>
@@ -22,7 +22,7 @@
                     }
                 </div>
             </nav>
-      </div>
+        </div>
 
         <div class="tab-content" id="nav-tabContent">
             @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
@@ -30,46 +30,47 @@
                 <div class="tab-pane  @(sectionGroup.Key == Model.First().Section ? "show active" : "")" id="nav-@sectionGroup.Key" role="tabpanel" aria-labelledby="nav-@sectionGroup.Key-tab">
                     <br>
                     <h3>@sectionGroup.Key Section</h3>
-                    @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
-                    {
-                        <div class="container @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "4" : "2")">
-                            <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
-                            <div class="options form-control input-group-text">
-                                <ol>
-                                    @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                        .Aggregate("", (acc, option) => $"{acc}<li><label class='text-uppercase'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
-                                </ol>
+                    <div id="section-@sectionGroup.Key" data-attempted-count="0">
+                        @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
+                        {
+                            <div class="container @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "4" : "2")">
+                                <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
+                                <div class="options form-control input-group-text">
+                                    <ol>
+                                        @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
+                            .Aggregate("", (acc, option) => $"{acc}<li><label class='text-uppercase'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
+                                    </ol>
+                                </div>
+                                <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
                             </div>
-                            <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
             }
         </div>
     </form>
 }
 
+<script>
+    // Function to update the attempted count for each subject section
+    function updateAttemptedCount() {
+        var sectionTabs = document.querySelectorAll('.nav-link[data-bs-toggle="tab"]');
+        var totalAttemptedQuestions = 0;
 
+        sectionTabs.forEach(tab => {
+            var sectionId = tab.getAttribute('data-bs-target').replace('#nav-', '');
+            var attemptedQuestions = document.querySelectorAll('#section-' + sectionId + ' .options input:checked');
+            var attemptedCount = attemptedQuestions.length;
+            totalAttemptedQuestions += attemptedCount;
 
+            document.getElementById('section-' + sectionId).setAttribute('data-attempted-count', attemptedCount);
+            tab.innerHTML = sectionId + ' <span class="badge bg-primary">' + attemptedCount + '</span>';
+        });
 
-
-
-
-@functions
-
-{
-
-    public List<string> shuffleOptions (params string[] options)
-
-    {
-        var randOptions = new Random();
-        return options.OrderBy(x => randOptions.Next()).ToList();
+        // Update the total attempted questions count
+        document.getElementById('total-questions').innerText = totalAttemptedQuestions;
     }
 
-}
-
-<script>
-    
 
     function saveUserResponse(element) {
         var url = window.location.href;
@@ -81,7 +82,7 @@
         var data = {};
         data[questionId] = selectedAnswer;
         fetch('/Test/SaveUserResponse?testId=' + testId, {
-            method: 'POST', 
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -97,19 +98,19 @@
             .catch(error => {
                 console.error('Error saving user response:', error);
             });
+
+        updateAttemptedCount();
     }
 
     // Function to fetch user responses on page load/refresh
     function fetchUserResponses() {
-
         var url = window.location.href;
         var testId = url.substring(url.lastIndexOf('/') + 1);
         console.log(testId)
         fetch('/Test/FetchUserResponses?testId=' + testId)
             .then(response => response.json())
             .then(data => {
-
-                    console.log(data);
+                console.log(data);
                 data.forEach(item => {
                     var questionId = item.questionId;
                     var userResponse = item.userResponse;
@@ -124,6 +125,7 @@
                         console.error('Radio element not found:', radioId);
                     }
                 });
+                updateAttemptedCount();
             })
             .then(() => {
                 var radioButtons = document.getElementsByClassName('options');
@@ -136,23 +138,28 @@
             });
     }
 
-  
-
     // Call the function when the page is loaded or refreshed
     window.addEventListener('load', function () {
         fetchUserResponses();
         getTestName();
     });
-    function getTestName () {
+
+    function getTestName() {
         var url = window.location.href;
         var testId = url.substring(url.lastIndexOf('/') + 1);
-    fetch ('/Test/GetTestName?testId=' + testId).then (response => response.json()).then(name => {
-        document.getElementById('test-name').innerText = name
-    })
-    
+        fetch('/Test/GetTestName?testId=' + testId).then(response => response.json()).then(name => {
+            document.getElementById('test-name').innerText = name
+        });
     }
-
 </script>
 
 
-    
+@functions
+{
+    public List<string> shuffleOptions(params string[] options)
+    {
+        var randOptions = new Random();
+        return options.OrderBy(x => randOptions.Next()).ToList();
+    }
+}
+
