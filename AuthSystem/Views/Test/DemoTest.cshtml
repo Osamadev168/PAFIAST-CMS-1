@@ -1,78 +1,58 @@
 ﻿@model List<MCQ>;
 @{
     ViewData["Title"] = "Demo|Test";
-    int i = 0;
 }
 
-<div class="container" id="test-section">
-    @if (Model != null && Model.ToList().Count > 0)
-    {
-        <form action="@Url.Action("SubmitResult")" method="post" class="form-control form">
-            <input type="submit" value="Submit" class="btn btn-success position-fixed" />
-            <p id="demo" class="">_timer</p>
-            <ul class="nav nav-tabs nav-pills" role="tablist">
-                @{
-                    foreach (var sectionGroup in Model.GroupBy(q => q.Section))
-                    {
-                        if (i == 0)
-                        {
-                            <li class="nav-item ">
-                                <a class="nav-link active pe-auto" data-bs-toggle="tab" data-bs-target="#@sectionGroup.Key">@sectionGroup.Key</a>
-                            </li>
-                            <div class="tab-content">
-                                <div class="tab-pane fade show active" id="@sectionGroup.Key">
-                                    <br>
-                                    <h3>@sectionGroup.Key Section</h3>
-                                    @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
-                                    {
-                                        <div class="container-fluid border-2">
-                                            <ol class="text-justify text-uppercase user-select-none">
-                                           @index) @Html.Raw(@question.Content)</ol>
-                                            <div class="options form-control input-group-text">
-                                                <ol>
-                                                    @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                                .Aggregate("", (acc, option) => $"{acc}<li><label class='text-uppercase'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
-                                                </ol>
-                                                <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
+<h1 id="test-name">Loading.....</h1>
 
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#@sectionGroup.Key">@sectionGroup.Key</a>
-                            </li>
-                            <div class="tab-content">
-                                <div class="tab-pane fade" id="@sectionGroup.Key">
-                                    <br>
-                                    <h3>@sectionGroup.Key Section</h3>
-                                    @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
-                                    {
-                                        <div class="container border-2">
-                                            <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
-                                            <div class="options form-control input-group-text">
-                                                <ol>
-                                                    @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4 )
-                                .Aggregate("", (acc, option) => $"{acc}<li><label class='text-uppercase'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
-                                                </ol>
-                                            </div>
-                                            <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        }
-                        i++;
+@if (Model != null && Model.ToList().Count > 0)
+{
+    <form action="@Url.Action("SubmitResult")" method="post" class="form-control form-group">
+       
+      <div class="fixed-tabs">
+            <div class="d-flex justify-content-end">
+                <input type="submit" value="SUBMIT" class="btn btn-success position-fixed" />
+            </div>
+            <p id="user-progress">Question <span id="current-question"></span> of <span id="total-questions">@Model.Count</span> attempted</p>
+            <nav>
+                <div class="nav nav-tabs nav-pills" id="nav-tab" role="tablist">
+                    @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
+                    {
+                        <button class="nav-link @(sectionGroup.Key == Model.First().Section ? "active" : "")" id="nav-@sectionGroup.Key-tab" data-bs-toggle="tab" data-bs-target="#nav-@sectionGroup.Key" type="button" role="tab" aria-controls="nav-@sectionGroup.Key" aria-selected="@(sectionGroup.Key == Model.First().Section ? "true" : "false")">@sectionGroup.Key</button>
                     }
-                }
-            </ul>
-        </form>
-    }
-</div>
+                </div>
+            </nav>
+      </div>
+
+        <div class="tab-content" id="nav-tabContent">
+            @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
+            {
+                <div class="tab-pane  @(sectionGroup.Key == Model.First().Section ? "show active" : "")" id="nav-@sectionGroup.Key" role="tabpanel" aria-labelledby="nav-@sectionGroup.Key-tab">
+                    <br>
+                    <h3>@sectionGroup.Key Section</h3>
+                    @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
+                    {
+                        <div class="container @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "4" : "2")">
+                            <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
+                            <div class="options form-control input-group-text">
+                                <ol>
+                                    @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
+                        .Aggregate("", (acc, option) => $"{acc}<li><label class='text-uppercase'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
+                                </ol>
+                            </div>
+                            <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </form>
+}
+
+
+
+
+
 
 
 @functions
@@ -92,18 +72,17 @@
     
 
     function saveUserResponse(element) {
+        updateProgress();
         var url = window.location.href;
         var testId = url.substring(url.lastIndexOf('/') + 1);
         var questionId = element.name.replace("answers[", "").replace("]", "");
         var selectedAnswer = element.value;
-
         document.getElementById("answer_" + questionId).value = selectedAnswer;
 
         var data = {};
         data[questionId] = selectedAnswer;
-
         fetch('/Test/SaveUserResponse?testId=' + testId, {
-            method: 'POST',
+            method: 'POST', 
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -123,13 +102,15 @@
 
     // Function to fetch user responses on page load/refresh
     function fetchUserResponses() {
+
         var url = window.location.href;
         var testId = url.substring(url.lastIndexOf('/') + 1);
         console.log(testId)
         fetch('/Test/FetchUserResponses?testId=' + testId)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+
+                    console.log(data);
                 data.forEach(item => {
                     var questionId = item.questionId;
                     var userResponse = item.userResponse;
@@ -156,10 +137,22 @@
             });
     }
 
-
+  
 
     // Call the function when the page is loaded or refreshed
-    window.addEventListener('load', fetchUserResponses);
+    window.addEventListener('load', function () {
+        fetchUserResponses();
+        getTestName();
+    });
+    function getTestName () {
+        var url = window.location.href;
+        var testId = url.substring(url.lastIndexOf('/') + 1);
+    fetch ('/Test/GetTestName?testId=' + testId).then (response => response.json()).then(name => {
+        document.getElementById('test-name').innerText = name
+    })
+    
+    }
+
 </script>
 
 

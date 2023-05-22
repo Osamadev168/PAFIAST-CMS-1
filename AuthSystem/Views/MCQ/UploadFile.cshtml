@@ -6,15 +6,32 @@
     <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-controller="MCQ">
         <div class="form-group">
             <label for="file">Select Excel file:</label>
-            <input type="file" name="file" id="file" class="form-control-file">
+            <input type="file" name="file" id="file" class="form-control-file" accept=".xlsx, .xls">
         </div>
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
+    <span id="file-name">fyjfjfh</span>
+
 </div>
-<div style="display : flex; flex-direction : column">
+<div style="display: flex; flex-direction: column">
     <span asp-validation-for="Content" class="text-danger"></span>
     <span asp-validation-for="Answer" class="text-danger"></span>
     <span asp-validation-for="Option1" class="text-danger"></span>
     <span asp-validation-for="Option2" class="text-danger"></span>
     <span asp-validation-for="Option3" class="text-danger"></span>
 </div>
+<script>
+    // Listen for file selection change event
+    document.getElementById('file').addEventListener('change', handleFileSelect);
+
+    function handleFileSelect(event) {
+        var selectedFile = event.target.files[0];
+        var fileNameContainer = document.getElementById('file-name');
+
+        if (selectedFile) {
+            fileNameContainer.textContent = selectedFile.name;
+        } else {
+            fileNameContainer.textContent = 'No file selected';
+        }
+    }
+</script>

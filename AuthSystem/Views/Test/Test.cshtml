@@ -5,7 +5,7 @@
 
 <h1>Create a new test</h1>
 
-<form method="post" asp-action="Create" asp-controller="Test" class="form-control border-info">
+<form method="post" asp-action="Create" asp-controller="Test" class="form form-control form-group">
     <div>
         <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name"/>
     </div>
@@ -14,10 +14,12 @@
         @foreach (var subject in Model.Subjects)
         {
             <div class="form-check">
-                <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" />
+                <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" data-subject-id="@subject.SubjectId" />
                 <label for="subject_@subject.SubjectId">@subject.SubjectName.ToUpper()</label>
                 <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100" required  />
                 %
+                <span id="question-count-@subject.SubjectId"></span>
+
             </div>
         }
     </div>
@@ -74,9 +76,10 @@
     });
         var submitButton = document.getElementById("submit-btn");
         if (totalPercentage != 100) {
-            submitButton.setAttribute('disabled', 'disabled');
+            submitButton.setAttribute('disabled', 'disabled');  
         }
-        else {
+        
+                else {
             submitButton.removeAttribute('disabled');
         }
     
@@ -112,6 +115,54 @@
         //your code would go here
         alert("test");
     };
+
+
+    function handleCheckboxClick() {
+        var checkbox = event.target;
+        var subjectId = checkbox.getAttribute("data-subject-id");
+        console.log("Clicked checkbox for subject ID: " + subjectId);
+
+        if (checkbox.checked) {
+            fetch('/Test/GetNumberOfQuestions?subjectId=' + subjectId, {
+                method: 'GET',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var questionCountElement = document.getElementById('question-count-' + subjectId);
+                    questionCountElement.textContent = data.count + ' Questions Available';
+                    var percentageInputId = "percentage_" + checkbox.value;
+                    var percentageInput = document.getElementById(percentageInputId);
+
+                    if (data.count < parseInt(percentageInput.value)) {
+                        alert('The percentage of questions selected exceeds the total number of questions available for this subject.');
+                        checkbox.checked = false;
+                        percentageInput.disabled = true;
+                        percentageInput.value = "";
+                    }
+
+                    calculateTotalPercentage();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        } else {
+            var questionCountElement = document.getElementById('question-count-' + subjectId);
+            questionCountElement.textContent = '';
+            var percentageInputId = "percentage_" + checkbox.value;
+            var percentageInput = document.getElementById(percentageInputId);
+            percentageInput.disabled = true;
+            percentageInput.value = "";
+            calculateTotalPercentage();
+        }
+    }
+
+
+
+    var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selectedSubjectIds"]');
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('click', handleCheckboxClick);
+    });
+
     
 </script>
 
