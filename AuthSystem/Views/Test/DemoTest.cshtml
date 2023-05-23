@@ -18,7 +18,7 @@
                 <div class="nav nav-tabs nav-pills" id="nav-tab" role="tablist">
                     @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
                     {
-                        <button class="nav-link @(sectionGroup.Key == Model.First().Section ? "active" : "")" id="nav-@sectionGroup.Key-tab" data-bs-toggle="tab" data-bs-target="#nav-@sectionGroup.Key" type="button" role="tab" aria-controls="nav-@sectionGroup.Key" aria-selected="@(sectionGroup.Key == Model.First().Section ? "true" : "false")">@sectionGroup.Key</button>
+                        <button class="nav-link @(sectionGroup.Key == Model.First().Section ? "active" : "")" id="nav-@sectionGroup.Key-tab" data-bs-toggle="tab" data-bs-target="#nav-@sectionGroup.Key" type="button" role="tab" aria-controls="nav-@sectionGroup.Key" aria-selected="@(sectionGroup.Key == Model.First().Section ? "true" : "false")">@sectionGroup.Key/@sectionGroup.Count()</button>
                     }
                 </div>
             </nav>
@@ -35,10 +35,10 @@
                         {
                             <div class="container @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "4" : "2")">
                                 <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
-                                <div class="options form-control input-group-text">
-                                    <ol>
+                                <div class="options form-control">
+                                    <ol type="a">
                                         @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                            .Aggregate("", (acc, option) => $"{acc}<li><label class='text-uppercase'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
+                            .Aggregate("", (acc, option) => $"{acc}<li><label class='user-select-none'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
                                     </ol>
                                 </div>
                                 <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
@@ -59,17 +59,23 @@
 
         sectionTabs.forEach(tab => {
             var sectionId = tab.getAttribute('data-bs-target').replace('#nav-', '');
+
             var attemptedQuestions = document.querySelectorAll('#section-' + sectionId + ' .options input:checked');
             var attemptedCount = attemptedQuestions.length;
             totalAttemptedQuestions += attemptedCount;
-
+            var totalQuestions = document.querySelectorAll('#section-' + sectionId + ' .options input');
+            var totalCount = totalQuestions.length / 4;
             document.getElementById('section-' + sectionId).setAttribute('data-attempted-count', attemptedCount);
-            tab.innerHTML = sectionId + ' <span class="badge bg-primary">' + attemptedCount + '</span>';
+            tab.innerHTML = sectionId + ' <span class="badge bg-secondary">' + attemptedCount + `/${totalCount}`+ '</span>';
+
+            // Display the total number of questions in the subject
+          
         });
 
         // Update the total attempted questions count
-        document.getElementById('total-questions').innerText = totalAttemptedQuestions + ' Questions attempted so far';
+        document.getElementById('total-questions').innerText = totalAttemptedQuestions + ' Question(s) attempted so far';
     }
+
 
 
     function saveUserResponse(element) {
