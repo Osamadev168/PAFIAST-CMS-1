@@ -63,7 +63,7 @@ function handleCheckboxClick(e) {
             .then(response => response.json())
             .then(data => {
                 var questionCountElement = document.getElementById('question-count-' + subjectId);
-                questionCountElement.textContent = data.count + ' Questions Available';
+                questionCountElement.textContent = data.count + ' Question(s) Available';
 
                 var percentageInputId = "percentage_" + subjectId;
                 var percentageInput = document.getElementById(percentageInputId);
