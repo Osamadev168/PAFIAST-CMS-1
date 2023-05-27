@@ -4,13 +4,20 @@
     ViewData["Title"] = "View|Questions|MCQ";
 }
 
-<h1>View Questions</h1>
+ @foreach (var questions in Model) {
 
-<div> @foreach (var questions in Model) {
-    
- <p>@questions.Content</p>
- <p>@questions.Option1</p>
- <h2>@questions.Subject.SubjectName</h2>
+    <div class="bg-light rounded m-5">
+        <h3>@Html.Raw(@questions.Content)</h3>
+        <ol type="a">
+            <li> @Html.Raw(@questions.Option1)</li>
+            <li>@Html.Raw(@questions.Option2)</li>
+            <li>@Html.Raw(@questions.Option3)</li>
+            <li>@Html.Raw(@questions.Option4)</li>
+        </ol>
 
+        <h6>@questions.Subject.SubjectName</h6>
+        <hr />
+ </div>
 
-}</div>
+}
+

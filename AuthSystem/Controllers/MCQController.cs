@@ -52,6 +52,7 @@ namespace AuthSystem.Controllers
 
 
 
+
         }
         [Authorize]
 
@@ -148,7 +149,7 @@ namespace AuthSystem.Controllers
                     if (worksheet == null)
                     {
                         ModelState.AddModelError("file", "Excel file is empty or has no worksheets.");
-                        return View();
+                        return Content("Please provide a valid excel file!");
                     }
 
                     for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
@@ -180,7 +181,7 @@ namespace AuthSystem.Controllers
 
                     if (!ModelState.IsValid)
                     {
-                        return View();
+                        return Content("please provide a valid file");
                     }
                 }
             }
@@ -190,7 +191,7 @@ namespace AuthSystem.Controllers
             {
                 _test.MCQs.AddRange(questions);
                 _test.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ViewQuestions" , "Subject");
 
             }
             return View();

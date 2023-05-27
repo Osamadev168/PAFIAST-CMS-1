@@ -231,15 +231,21 @@ namespace AuthSystem.Controllers
 
             return Json(assignedQuestions);
         }
-
         public IActionResult GetNumberOfQuestions(int subjectId)
         {
             var questionsCount = _test.MCQs.Count(q => q.SubjectId == subjectId);
-            var data = new { count = questionsCount };
-            Console.WriteLine(subjectId);
-            Console.WriteLine(data);
+            var subject = _test.Subjects.FirstOrDefault(q => q.SubjectId == subjectId);
+            var subjectName = subject != null ? subject.SubjectName : string.Empty;
+            var data = new
+            {
+                count = questionsCount,
+                SubjectName = subjectName
+            };
+
             return Json(data);
         }
+
+
         public IActionResult GetTestName(int testId)
         {
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);

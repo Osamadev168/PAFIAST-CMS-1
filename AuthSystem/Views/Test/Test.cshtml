@@ -7,7 +7,7 @@
 
 <form method="post" asp-action="Create" asp-controller="Test" class="form form-control form-group">
     <div>
-        <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name"/>
+        <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name" />
     </div>
 
     <div id="subjects-container" class="subjects-container">
@@ -16,155 +16,54 @@
             <div class="form-check">
                 <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" data-subject-id="@subject.SubjectId" />
                 <label for="subject_@subject.SubjectId">@subject.SubjectName.ToUpper()</label>
-                <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100" required  />
+                <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100" required />
                 %
-                <span id="question-count-@subject.SubjectId"></span>
+                <span id="question-count-@subject.SubjectId" class="no-of-questions"></span>
+
+                <span id="err-message-@subject.SubjectId" class="err-message-questions"></span>
 
             </div>
         }
+
     </div>
-   
-    <div>
+
+    @*<div class="form-group">
+        <label for="duration">Duration (minutes):</label>
+        <input type="number" id="duration" name="duration" class="form-control" required placeholder="Enter test duration in minutes" />
+    </div>
+
+    <div class="form-group">
+        <label for="testDateTime">Test Date and Time:</label>
+        <input type="datetime-local" id="testDateTime" name="testDateTime" class="form-control" required />
+    </div>*@
+
+    <div class="total-percentage" id="total-percentage">
         Total Percentage: <span id="totalPercentage">0</span>%
     </div>
 
     <button type="submit" id="submit-btn" disabled class="btn btn-success">Create</button>
 </form>
+
 <hr />
+
 <h2>Created Tests</h2>
 
-
 <hr />
-    @foreach (var test in Model.TestList)
-    {
-    <div class="border border-dark border-1 rounded gap-2 d-grid p-lg-3 ">
 
+@foreach (var test in Model.TestList)
+{
+    <div class="border border-dark rounded gap-2 d-grid p-lg-3 ">
         <h3>@test.TestName</h3>
         <ol>
-
             @foreach (var detail in test.TestDetails)
             {
                 <li>@detail.Subject.SubjectName - @detail.Percentage%</li>
-
-
             }
-            <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})" >View Demo</a>
-            <a class="btn btn-success" id="copy-button" >Copy Test Link</a>
-
-
-
+            <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})">View Demo</a>
+            <a class="btn btn-success" id="copy-button">Copy Test Link</a>
         </ol>
         <br />
         <hr />
-        </div>
-    }
-
-
-
-
-
-<script>
-   
-   function calculateTotalPercentage() {
-    var totalPercentage = 0;
-    var testName = document.getElementById('testName').value;
-    var percentageInputs = document.querySelectorAll('#subjects-container input[type="number"]:enabled');
-    percentageInputs.forEach(function (input) {
-        if (input.value) {
-            totalPercentage += parseInt(input.value);
-        }
-    });
-        var submitButton = document.getElementById("submit-btn");
-        if (totalPercentage != 100) {
-            submitButton.setAttribute('disabled', 'disabled');  
-        }
-        
-                else {
-            submitButton.removeAttribute('disabled');
-        }
-    
-    return totalPercentage;
+    </div>
 }
-
-
-    function updateTotalPercentage() {
-        var totalPercentageElement = document.getElementById('totalPercentage');
-        var totalPercentage = calculateTotalPercentage();
-        totalPercentageElement.textContent = totalPercentage;
-    }
-   
-
-    updateTotalPercentage();
-    document.querySelectorAll('#subjects-container input[type="number"]').forEach(function (input) {
-        input.addEventListener('input', updateTotalPercentage);
-    });
-    document.querySelectorAll('#subjects-container input[type="checkbox"]').forEach(function (checkbox) {
-        checkbox.addEventListener('click', function () {
-            var percentageInputId = "percentage_" + checkbox.value;
-            var percentageInput = document.getElementById(percentageInputId);
-            var title = document.getElementById("testName").value;
-            percentageInput.disabled = !checkbox.checked;
-            if (!checkbox.checked || title==null) {
-                percentageInput.value = "";
-            }
-            updateTotalPercentage(); 
-        });
-    });
-    var testButton = document.getElementById('copy-button')
-
-    testButton.onclick = function () {
-        //your code would go here
-        alert("test");
-    };
-
-
-    function handleCheckboxClick() {
-        var checkbox = event.target;
-        var subjectId = checkbox.getAttribute("data-subject-id");
-        console.log("Clicked checkbox for subject ID: " + subjectId);
-
-        if (checkbox.checked) {
-            fetch('/Test/GetNumberOfQuestions?subjectId=' + subjectId, {
-                method: 'GET',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    var questionCountElement = document.getElementById('question-count-' + subjectId);
-                    questionCountElement.textContent = data.count + ' Questions Available';
-                    var percentageInputId = "percentage_" + checkbox.value;
-                    var percentageInput = document.getElementById(percentageInputId);
-
-                    if (data.count < parseInt(percentageInput.value)) {
-                        alert('The percentage of questions selected exceeds the total number of questions available for this subject.');
-                        checkbox.checked = false;
-                        percentageInput.disabled = true;
-                        percentageInput.value = "";
-                    }
-
-                    calculateTotalPercentage();
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        } else {
-            var questionCountElement = document.getElementById('question-count-' + subjectId);
-            questionCountElement.textContent = '';
-            var percentageInputId = "percentage_" + checkbox.value;
-            var percentageInput = document.getElementById(percentageInputId);
-            percentageInput.disabled = true;
-            percentageInput.value = "";
-            calculateTotalPercentage();
-        }
-    }
-
-
-
-    var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selectedSubjectIds"]');
-    checkboxes.forEach(function (checkbox) {
-        checkbox.addEventListener('click', handleCheckboxClick);
-    });
-
-    
-</script>
-
-
+<script src="/js/CreateTest.js"></script>
