@@ -76,3 +76,40 @@ body {
     font-size : large
    
 }
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    padding: 1px;
+    background: conic-gradient(#0000, #1E4D92) content-box;
+    mask: repeating-conic-gradient( #0000 0deg, #000 1deg calc(360deg/10 - 10deg - 1deg), #0000 calc(360deg/10 - 10deg) calc(360deg/10) ), radial-gradient( farthest-side, #0000 calc(98% - 10px), #000 calc(100% - 10px) );
+    mask-composite: intersect;
+    -webkit-mask-composite: destination-in;
+    animation: spin 1000ms infinite steps(10);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(1turn)
+    }
+}
+.err-message-questions {
+  font-size  : larger;
+  color : darkred
+}
+.no-of-questions {
+
+    color: chartreuse;
+    font-family  : 'Times New Roman', Times, serif;
+    font-size : medium
+
+}
+.total-percentage  {
+    font-size :large;
+    color : blueviolet;
+    font-family : 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+}
+.total-percentage-err {
+    font-size: large;
+    color: red
+}
