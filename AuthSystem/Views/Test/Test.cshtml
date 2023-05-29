@@ -27,15 +27,19 @@
 
     </div>
 
-    @*<div class="form-group">
+   <div class="form-group">
         <label for="duration">Duration (minutes):</label>
         <input type="number" id="duration" name="duration" class="form-control" required placeholder="Enter test duration in minutes" />
     </div>
 
     <div class="form-group">
-        <label for="testDateTime">Test Date and Time:</label>
-        <input type="datetime-local" id="testDateTime" name="testDateTime" class="form-control" required />
-    </div>*@
+        <label for="testDateTime">Test Start Time:</label>
+        <input type="datetime-local" id="startTime" name="startTime" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="testDateTime">Test End Time:</label>
+        <input type="datetime-local" id="endTime" name="endTime" class="form-control" required />
+    </div>
 
     <div class="total-percentage" id="total-percentage">
         Total Percentage: <span id="totalPercentage">0</span>%
@@ -54,6 +58,7 @@
 {
     <div class="border border-dark rounded gap-2 d-grid p-lg-3 ">
         <h3>@test.TestName</h3>
+        <h6>Starts at: @test.StartTime---Ends at: @test.EndTime</h6>
         <ol>
             @foreach (var detail in test.TestDetails)
             {

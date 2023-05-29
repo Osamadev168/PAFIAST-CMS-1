@@ -12,6 +12,9 @@ namespace AuthSystem.Models
         [Required]
         public string TestName { get; set; }
         public string CreatedBy { get; set; }
+        public int Duration { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public List<Test> TestList { get; set; }
         public List<Subject> Subjects { get; set; }
         public List<TestDetail> TestDetails { get; set; }
