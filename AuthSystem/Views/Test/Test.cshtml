@@ -57,17 +57,21 @@
 @foreach (var test in Model.TestList)
 {
     <div class="border border-dark rounded gap-2 d-grid p-lg-3 ">
-        <h3>@test.TestName</h3>
-        <h6>Starts at: @test.StartTime---Ends at: @test.EndTime</h6>
-        <ol>
-            @foreach (var detail in test.TestDetails)
-            {
-                <li>@detail.Subject.SubjectName - @detail.Percentage%</li>
-            }
-            <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})">View Demo</a>
-            <a class="btn btn-success" id="copy-button">Copy Test Link</a>
-        </ol>
-        <br />
+        <h3 style="font-family : 'Lucida Sans'">@test.TestName</h3>
+        <h6 class="text-secondary">Starts at: @test.StartTime---Ends at: @test.EndTime</h6>
+        <p class="text-primary display-7" style="font-family : Rockwell">Duration: @test.Duration minutes</p>
+        <div style="margin:10px; border : 0.5px silver solid; border-radius : 4px inherit; font-size : 25px; font-family : 'Segoe UI Symbol'">
+            <ol>
+                @foreach (var detail in test.TestDetails)
+                {
+                    <li>@detail.Subject.SubjectName - @detail.Percentage%</li>
+                }
+                
+            </ol>
+            
+        </div>
+        <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})">View Demo</a>
+        <a class="btn btn-success" id="copy-button">Copy Test Link</a>
         <hr />
     </div>
 }

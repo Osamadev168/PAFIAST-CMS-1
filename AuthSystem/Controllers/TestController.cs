@@ -3,6 +3,7 @@ using AuthSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace AuthSystem.Controllers
 {
@@ -24,7 +25,7 @@ namespace AuthSystem.Controllers
         {
             var viewModel = new Test
             {
-                TestList = _test.Tests.ToList(),
+                TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
                 Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
                 TestDetails = _test.TestsDetail.Include(td => td.Test).ToList()
             };
@@ -268,6 +269,21 @@ namespace AuthSystem.Controllers
             return NotFound();
         }
 
+
+        public IActionResult GetTestDuration(int testId) {
+
+
+            var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
+
+            if (test != null)
+            {
+                var duration = test.Duration;
+                return Json(duration);
+            }
+
+            return NotFound();
+
+        }
 
 
 
