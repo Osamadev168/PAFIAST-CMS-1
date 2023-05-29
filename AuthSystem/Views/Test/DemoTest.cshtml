@@ -4,6 +4,7 @@
 }
 
 <h1 id="test-name">Loading.....</h1>
+<h2 id="test-duration" style="position : fixed; left : 800px ">Loading...</h2>
 
 @if (Model != null && Model.ToList().Count > 0)
 {
@@ -148,6 +149,7 @@
     window.addEventListener('load', function () {
         fetchUserResponses();
         getTestName();
+        getTestDuration();
     });
 
     function getTestName() {
@@ -156,6 +158,31 @@
         fetch('/Test/GetTestName?testId=' + testId).then(response => response.json()).then(name => {
             document.getElementById('test-name').innerText = name
         });
+    }
+    function getTestDuration () {
+
+        var url = window.location.href;
+        var testId = url.substring(url.lastIndexOf('/') + 1);
+        fetch('/Test/GetTestDuration?testId=' + testId).then (response => response.json()).then(duration => {
+            var start = duration;// 10 minutes
+            var i = 1;
+            var timer = setInterval(function () {
+                $('#timing').text(Math.floor((start - i) / 60) + " Minutes " + ((start - i) % 60) + " Seconds");
+                i++;
+
+                if (start === i) {  
+                    window.clearInterval(timer);
+                    //DO STUFF HERE
+                }
+
+            }, 1000);
+            document.getElementById('test-duration').innerText = duration + ' minutes allowed'
+            console.log(duration)
+
+        })
+    
+
+    
     }
 </script>
 
