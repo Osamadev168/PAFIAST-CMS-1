@@ -113,3 +113,8 @@ body {
     font-size: large;
     color: red
 }
+
+.nav-link:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
