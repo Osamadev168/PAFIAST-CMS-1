@@ -42,7 +42,7 @@ namespace AuthSystem.Controllers
         {
 
             // Create a new Subject object from the model data
-            Subject newSubject = new Subject { SubjectName = model.SubjectName.Trim().Replace(" ", "-")};
+            Subject newSubject = new Subject { SubjectName = model.SubjectName.Trim().Replace(" ", "-") };
 
             // Add the new subject to the database
             _test.Subjects.Add(newSubject);

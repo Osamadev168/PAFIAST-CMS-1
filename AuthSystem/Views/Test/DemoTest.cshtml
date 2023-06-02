@@ -2,24 +2,24 @@
 @{
     ViewData["Title"] = "Demo|Test";
 }
-
-<h1 id="test-name">Loading.....</h1>
-<h2 id="test-duration" style="position : fixed; left : 800px ">Loading...</h2>
-
 @if (Model != null && Model.ToList().Count > 0)
 {
     <form action="@Url.Action("SubmitResult")" method="post" class="form-control form-group">
+        <div style="margin-left: 810px; margin-top: 100px; position: fixed;background-color: aliceblue; text-align: justify; width : 500px;font-family : monospace; font-size : 4px" class="container">
+            <h1 id="test-name">Loading.....</h1>
+            <h2 id="test-duration">Loading....</h2>
+            <input type="submit" value="SUBMIT" class="btn btn-success" />
+        </div>
 
         <div class="fixed-tabs">
             <div class="d-flex justify-content-end">
-                <input type="submit" value="SUBMIT" class="btn btn-success position-fixed" />
             </div>
            <span id="total-questions"></span> 
             <nav>
                 <div class="nav nav-tabs nav-pills" id="nav-tab" role="tablist">
                     @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
                     {
-                        <button class="nav-link @(sectionGroup.Key == Model.First().Section ? "active" : "")" id="nav-@sectionGroup.Key-tab" data-bs-toggle="tab" data-bs-target="#nav-@sectionGroup.Key" type="button" role="tab" aria-controls="nav-@sectionGroup.Key" aria-selected="@(sectionGroup.Key == Model.First().Section ? "true" : "false")">@sectionGroup.Key/@sectionGroup.Count()</button>
+                        <button class="nav-link @(sectionGroup.Key == Model.First().Section ? "active" : "")" id="nav-@sectionGroup.Key-tab" data-bs-toggle="tab" data-bs-target="#nav-@sectionGroup.Key" type="button" role="tab" aria-controls="nav-@sectionGroup.Key" aria-selected="@(sectionGroup.Key == Model.First().Section ? "true" : "false")" style="font-family : 'Segoe UI'">@sectionGroup.Key/@sectionGroup.Count()</button>
                     }
                 </div>
             </nav>
@@ -51,142 +51,6 @@
         </div>
     </form>
 }
-
-<script>
-    // Function to update the attempted count for each subject section
-    function updateAttemptedCount() {
-        var sectionTabs = document.querySelectorAll('.nav-link[data-bs-toggle="tab"]');
-        var totalAttemptedQuestions = 0;
-
-        sectionTabs.forEach(tab => {
-            var sectionId = tab.getAttribute('data-bs-target').replace('#nav-', '');
-
-            var attemptedQuestions = document.querySelectorAll('#section-' + sectionId + ' .options input:checked');
-            var attemptedCount = attemptedQuestions.length;
-            totalAttemptedQuestions += attemptedCount;
-            var totalQuestions = document.querySelectorAll('#section-' + sectionId + ' .options input');
-            var totalCount = totalQuestions.length / 4;
-            document.getElementById('section-' + sectionId).setAttribute('data-attempted-count', attemptedCount);
-            tab.innerHTML = sectionId + ' <span class="badge rounded-pill bg-success">' + attemptedCount + `/${totalCount}` + '</span>';
-
-            // Display the total number of questions in the subject
-          
-        });
-
-        // Update the total attempted questions count
-        document.getElementById('total-questions').innerText = totalAttemptedQuestions + ' Question(s) attempted so far';
-    }
-
-
-
-    function saveUserResponse(element) {
-        var url = window.location.href;
-        var testId = url.substring(url.lastIndexOf('/') + 1);
-        var questionId = element.name.replace("answers[", "").replace("]", "");
-        var selectedAnswer = element.value;
-        document.getElementById("answer_" + questionId).value = selectedAnswer;
-
-        var data = {};
-        data[questionId] = selectedAnswer;
-        fetch('/Test/SaveUserResponse?testId=' + testId, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log('User response saved successfully!');
-                } else {
-                    console.error('Error saving user response:', response.statusText);
-                }
-            })
-            .catch(error => {
-                console.error('Error saving user response:', error);
-            });
-
-        updateAttemptedCount();
-    }
-
-    // Function to fetch user responses on page load/refresh
-    function fetchUserResponses() {
-        var url = window.location.href;
-        var testId = url.substring(url.lastIndexOf('/') + 1);
-        console.log(testId)
-        fetch('/Test/FetchUserResponses?testId=' + testId)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                data.forEach(item => {
-                    var questionId = item.questionId;
-                    var userResponse = item.userResponse;
-                    var radioId = questionId + userResponse;
-
-                    var radioElement = document.getElementById(radioId);
-                    if (radioElement) {
-                        radioElement.checked = true;
-
-                        document.getElementById("answer_" + questionId).value = userResponse;
-                    } else {
-                        console.error('Radio element not found:', radioId);
-                    }
-                });
-                updateAttemptedCount();
-            })
-            .then(() => {
-                var radioButtons = document.getElementsByClassName('options');
-                for (var i = 0; i < radioButtons.length; i++) {
-                    radioButtons[i].dispatchEvent(new Event('change'));
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user responses:', error);
-            });
-    }
-
-    // Call the function when the page is loaded or refreshed
-    window.addEventListener('load', function () {
-        fetchUserResponses();
-        getTestName();
-        getTestDuration();
-    });
-
-    function getTestName() {
-        var url = window.location.href;
-        var testId = url.substring(url.lastIndexOf('/') + 1);
-        fetch('/Test/GetTestName?testId=' + testId).then(response => response.json()).then(name => {
-            document.getElementById('test-name').innerText = name
-        });
-    }
-    function getTestDuration () {
-
-        var url = window.location.href;
-        var testId = url.substring(url.lastIndexOf('/') + 1);
-        fetch('/Test/GetTestDuration?testId=' + testId).then (response => response.json()).then(duration => {
-            var start = duration;// 10 minutes
-            var i = 1;
-            var timer = setInterval(function () {
-                $('#timing').text(Math.floor((start - i) / 60) + " Minutes " + ((start - i) % 60) + " Seconds");
-                i++;
-
-                if (start === i) {  
-                    window.clearInterval(timer);
-                    //DO STUFF HERE
-                }
-
-            }, 1000);
-            document.getElementById('test-duration').innerText = duration + ' minutes allowed'
-            console.log(duration)
-
-        })
-    
-
-    
-    }
-</script>
-
-
 @functions
 {
     public List<string> shuffleOptions(params string[] options)
@@ -195,4 +59,9 @@
         return options.OrderBy(x => randOptions.Next()).ToList();
     }
 }
+
+<script src="/js/Test.js"></script>
+
+
+
 

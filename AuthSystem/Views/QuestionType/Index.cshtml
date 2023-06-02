@@ -3,21 +3,21 @@
 }
 
 <h1>Select Question Type</h1>
-<a href="@Url.Action("CreationType", "QuestionType")" style="text-decoration : none;">
+<div class="question-type">
 
-<div class="card bg" style="width: 18rem;">
-    <div class="card-body">
-        <h5 class="card-title">Multiple Choice Type Question</h5>
-        <p class="card-text">Create an MCQ in the question bank</p>
-    </div>
-</div>
-</a>
-<a href="@Url.Action("CreationTypeFIB", "QuestionType")" style="text-decoration : none;">
+   <div class="card-question-type">
+        <a href="@Url.Action("CreationType", "QuestionType")">
 
-<div class="card bg" style="width: 18rem;">
-    <div class="card-body">
-        <h5 class="card-title">Fill in the blank</h5>
-        <p class="card-text">Create a Fill in the Blank Question</p>
-    </div>
+                    <h3>Multiple Choice Question</h3>
+                    <p>Create an MCQ in the question bank</p>
+        </a>
+   </div>
+   <div class="card-question-type">
+        <a href="@Url.Action("CreationTypeFIB", "QuestionType")">
+
+                    <h3>Fill in the blank</h3>
+                    <p>Create a Fill in the Blank Question</p>
+        </a>
+   </div>
+
 </div>
-</a>

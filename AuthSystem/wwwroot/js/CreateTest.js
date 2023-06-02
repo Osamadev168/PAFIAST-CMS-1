@@ -109,3 +109,22 @@ var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selecte
 checkboxes.forEach(function (checkbox) {
     checkbox.addEventListener('click', handleCheckboxClick);
 });
+
+    function copyTestLink(event) {
+        var testLink = event.target.dataset.testLink;
+    navigator.clipboard.writeText("http://localhost:5173" +testLink)
+    .then(function () {
+        alert("Test link copied to clipboard!");
+            })
+    .catch(function (error) {
+        console.error("Failed to copy test link: ", error);
+            });
+    }
+
+    var copyButtons = document.querySelectorAll(".copy-button");
+    copyButtons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+            copyTestLink(event);
+        });
+    });
