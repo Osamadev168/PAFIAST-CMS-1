@@ -88,14 +88,6 @@ function fetchUserResponses() {
             console.error('Error fetching user responses:', error);
         });
 }
-
-
-window.addEventListener('load', function () {
-    fetchUserResponses();
-    getTestName();
-    getTestDuration();
-});
-
 function getTestName() {
     var url = window.location.href;
     var testId = url.substring(url.lastIndexOf('/') + 1);
@@ -106,21 +98,42 @@ function getTestName() {
 function getTestDuration() {
     var url = window.location.href;
     var testId = url.substring(url.lastIndexOf('/') + 1);
-    fetch('/Test/GetTestDuration?testId=' + testId)
+    fetch('/Test/GetRemainingTime?testId=' + testId)
         .then(response => response.json())
-        .then(duration => {
-            var start = duration * 60;
+        .then(remainingMinutes => {
+            var hours = Math.floor(remainingMinutes / 60);
+            var minutes = Math.floor(remainingMinutes % 60);
+            var seconds = 0;
+
             var timer = setInterval(function () {
-                var hours = Math.floor(start / 3600);
-                var minutes = Math.floor((start % 3600) / 60);
-                var seconds = start % 60;
                 $('#test-duration').text(hours + " H " + minutes + " M " + seconds + " S");
-                start--;
-
-                if (start < 0) {
-                    clearInterval(timer);
-
+                seconds--;
+                if (seconds < 0) {
+                    if (minutes > 0) {
+                        minutes--;
+                        seconds = 59;
+                    } else if (hours > 0) {
+                        hours--;
+                        minutes = 59;
+                        seconds = 59;
+                    } else {
+                        clearInterval(timer);
+                        $('#test-duration').text('Test is finished');
+                    }
                 }
             }, 1000);
         });
 }
+function SaveStartTime() {
+    var url = window.location.href;
+    var testId = url.substring(url.lastIndexOf('/') + 1);
+    fetch('/Test/SaveStartTime?testId=' + testId).then(() => {
+        console.log('Done')
+    })
+}
+window.addEventListener('load', function () {
+    SaveStartTime();
+    getTestDuration();
+    getTestName();
+    fetchUserResponses();
+});

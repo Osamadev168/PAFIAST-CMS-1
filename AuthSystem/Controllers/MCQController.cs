@@ -191,7 +191,7 @@ namespace AuthSystem.Controllers
             {
                 _test.MCQs.AddRange(questions);
                 _test.SaveChanges();
-                return RedirectToAction("ViewQuestions" , "Subject");
+                return RedirectToAction("ViewQuestions", "Subject");
 
             }
             return View();

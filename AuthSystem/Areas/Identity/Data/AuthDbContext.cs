@@ -1,15 +1,13 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace AuthSystem.Data;
 
 public class AuthDbContext : IdentityDbContext<ApplicationUser>
 {
-   
+
 
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
         : base(options)
@@ -22,8 +20,9 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Test> Tests { get; set; }
     public DbSet<TestDetail> TestsDetail { get; set; }
     public DbSet<Result> Results { get; set; }
-    public DbSet <TestSession> TestSessions { get; set; }   
-    public DbSet <AssignedQuestions> AssignedQuestions { get; set; } 
+    public DbSet<TestSession> TestSessions { get; set; }
+    public DbSet<AssignedQuestions> AssignedQuestions { get; set; }
+    public DbSet<UserTestSession> UserTestSessions { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<AssignedQuestions>()

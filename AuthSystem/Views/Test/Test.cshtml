@@ -3,49 +3,61 @@
     ViewData["Title"] = "Create Test";
 }
 
+<div class="create-test-page-title">
 <h1>Create a new test</h1>
 
+</div>
 <form method="post" asp-action="Create" asp-controller="Test" class="form form-control form-group">
-    <div>
-        <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name" />
-    </div>
+   <div class="test-details">
+        <div>
+            <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name" />
+        </div>
+        <div id="subjects-container" class="subjects-container">
+            @if (Model.Subjects.Count == 0)
+            {
+                <h2>No Subjects Available</h2>
+            }
+            @foreach (var subject in Model.Subjects)
+            {
+                <div class="form-check">
+                    <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" data-subject-id="@subject.SubjectId" />
+                    <label for="subject_@subject.SubjectId">@subject.SubjectName.ToUpper()</label>
+                    <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100" required />
+                    %
+                    <span id="question-count-@subject.SubjectId" class="no-of-questions"></span>
 
-    <div id="subjects-container" class="subjects-container">
-        @foreach (var subject in Model.Subjects)
-        {
-            <div class="form-check">
-                <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" data-subject-id="@subject.SubjectId" />
-                <label for="subject_@subject.SubjectId">@subject.SubjectName.ToUpper()</label>
-                <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100" required />
-                %
-                <span id="question-count-@subject.SubjectId" class="no-of-questions"></span>
+                    <span id="err-message-@subject.SubjectId" class="err-message-questions"></span>
 
-                <span id="err-message-@subject.SubjectId" class="err-message-questions"></span>
-
+                </div>
+               
+            }
+            <div class="total-percentage" id="total-percentage">
+                Total Percentage: <span id="totalPercentage">0</span>%
             </div>
-        }
+        </div>
+   </div>
 
-    </div>
+  <div class="session-details">
+        <div class="form-group">
+            <label for="duration">Duration (minutes):</label>
+            <input type="number" id="duration" name="duration" class="form-control" required placeholder="Enter test duration in minutes" min="10" />
+        </div>
 
-   <div class="form-group">
-        <label for="duration">Duration (minutes):</label>
-        <input type="number" id="duration" name="duration" class="form-control" required placeholder="Enter test duration in minutes" />
-    </div>
+        <div class="form-group">
+            <label for="testDateTime">Test Start Time:</label>
+            <input type="datetime-local" id="startTime" name="startTime" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="testDateTime">Test End Time:</label>
+            <input type="datetime-local" id="endTime" name="endTime" class="form-control" required />
+        </div>
 
-    <div class="form-group">
-        <label for="testDateTime">Test Start Time:</label>
-        <input type="datetime-local" id="startTime" name="startTime" class="form-control" required />
-    </div>
-    <div class="form-group">
-        <label for="testDateTime">Test End Time:</label>
-        <input type="datetime-local" id="endTime" name="endTime" class="form-control" required />
-    </div>
+  </div>
+   <div class="create-test-button">
+        <button type="submit" id="submit-btn" disabled class="btn btn-success">Create</button>
+   </div>
 
-    <div class="total-percentage" id="total-percentage">
-        Total Percentage: <span id="totalPercentage">0</span>%
-    </div>
-
-    <button type="submit" id="submit-btn" disabled class="btn btn-success">Create</button>
+    
 </form>
 
 <hr />
@@ -53,7 +65,12 @@
 <h2>Created Tests</h2>
 
 <hr />
+@if (Model.TestList.Count == 0)
+{
+    
+<h1>NO TESTS CREATED YET!</h1>
 
+}
 @foreach (var test in Model.TestList)
 {
     <div class="border border-dark rounded gap-2 d-grid p-lg-3 ">
@@ -62,16 +79,22 @@
         <p class="text-primary display-7" style="font-family : Rockwell">Duration: @test.Duration minutes</p>
         <div style="margin:10px; border : 0.5px silver solid; border-radius : 10px; font-size : 25px; font-family : 'Segoe UI Symbol'">
             <ol>
-                @foreach (var detail in test.TestDetails)
+                @if (test.TestDetails != null)
+
                 {
-                    <li>@detail.Subject.SubjectName - @detail.Percentage%</li>
+
+                    @foreach (var detail in test.TestDetails)
+                    {
+                        <li>@detail.Subject.SubjectName - @detail.Percentage%</li>
+                    }
                 }
-                
+
             </ol>
-            
+
         </div>
         <a class="btn btn-primary" href="@Url.Action("DemoTest", "Test",  new{Id = test.Id})">View Demo</a>
-        <a class="btn btn-success" id="copy-button">Copy Test Link</a>
+        <a class="btn btn-success copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { Id = test.Id })">Copy Test Link</a>
+
         <hr />
     </div>
 }

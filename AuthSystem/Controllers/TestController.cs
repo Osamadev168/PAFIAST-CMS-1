@@ -1,22 +1,24 @@
-﻿using AuthSystem.Data;
+﻿using AuthSystem.Areas.Identity.Data;
+using AuthSystem.Data;
 using AuthSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-
-
 namespace AuthSystem.Controllers
 {
     public class TestController : Controller
     {
-        private readonly AuthDbContext _test;
 
-        public TestController(AuthDbContext test)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AuthDbContext _test;
+        [ActivatorUtilitiesConstructor]
+        public TestController(AuthDbContext test, UserManager<ApplicationUser> userManager)
         {
 
             _test = test;
+            _userManager = userManager;
 
 
         }
@@ -39,7 +41,7 @@ namespace AuthSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages , int duration , DateTime startTime , DateTime endTime)
+        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, DateTime startTime, DateTime endTime)
         {
             if (string.IsNullOrEmpty(testName))
             {
@@ -57,7 +59,7 @@ namespace AuthSystem.Controllers
                 return RedirectToAction("Test");
             }
 
-            var test = new Test { TestName = testName, CreatedBy = "Admin"  , Duration = duration , StartTime = startTime , EndTime = endTime };
+            var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration, StartTime = startTime, EndTime = endTime };
             _test.Tests.Add(test);
             await _test.SaveChangesAsync();
 
@@ -68,7 +70,7 @@ namespace AuthSystem.Controllers
                     TestId = test.Id,
                     SubjectId = subjectId,
                     Percentage = percentages[subjectId],
-                    
+
                 };
 
                 _test.TestsDetail.Add(testDetails);
@@ -83,7 +85,8 @@ namespace AuthSystem.Controllers
         {
             var test = _test.Tests.Where(x => x.Id == Id).FirstOrDefault();
 
-            if (test.StartTime <= DateTime.Now && test.EndTime >= DateTime.Now) {
+            if (test.StartTime <= DateTime.Now && test.EndTime >= DateTime.Now)
+            {
 
                 var userId = 33;
                 var assignedQuestions = _test.AssignedQuestions
@@ -138,7 +141,6 @@ namespace AuthSystem.Controllers
                 else
                 {
                     var assignedQuestionIds = assignedQuestions.Select(aq => aq.QuestionId).ToList();
-
                     var testDetails = _test.TestsDetail
                         .Include(td => td.Test)
                         .Where(td => td.TestId == Id)
@@ -150,36 +152,21 @@ namespace AuthSystem.Controllers
                         var subjectQuestions = _test.MCQs.Include(q => q.Subject)
                             .Where(q => q.SubjectId == testDetail.SubjectId && assignedQuestionIds.Contains(q.Id))
                             .ToList();
-
                         testQuestions.AddRange(subjectQuestions);
                     }
 
                     var rng = new Random();
                     testQuestions = testQuestions.ToList();
-
                     var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
-
                     questionsList = totalQuestions;
                 }
-
-
                 return View(questionsList);
             }
-
-            else {
-
+            else
+            {
                 return Content("Test not available!");
             }
         }
-
-
-
-
-
-
-
-
-
         public IActionResult SubmitResult(Dictionary<int, string> answers)
         {
             var score = 0;
@@ -193,18 +180,14 @@ namespace AuthSystem.Controllers
 
             var result = new Result
             {
-
                 AttemptedBy = "Student",
                 Score = score,
-
-
             };
             _test.Results.Add(result);
             _test.SaveChanges();
             return Content($"Your score is {score}");
         }
         [HttpPost]
-
         public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers, int testId)
         {
             var userId = 33;
@@ -222,10 +205,8 @@ namespace AuthSystem.Controllers
                     question.UserResponse = selectedAnswer;
                 }
             }
-
             _test.SaveChanges();
-
-            return Json(new { success = "Good" });
+            return Json(new { success = "Done!" });
         }
         [HttpGet]
         public IActionResult FetchUserResponses(int testId)
@@ -240,7 +221,6 @@ namespace AuthSystem.Controllers
                     UserResponse = aq.UserResponse
                 })
                 .ToList();
-
             return Json(assignedQuestions);
         }
         public IActionResult GetNumberOfQuestions(int subjectId)
@@ -253,11 +233,8 @@ namespace AuthSystem.Controllers
                 count = questionsCount,
                 SubjectName = subjectName
             };
-
             return Json(data);
         }
-
-
         public IActionResult GetTestName(int testId)
         {
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
@@ -267,30 +244,50 @@ namespace AuthSystem.Controllers
                 var testName = test.TestName;
                 return Json(testName);
             }
-
             return NotFound();
         }
-
-
-        public IActionResult GetTestDuration(int testId) {
-
-
+        public IActionResult GetTestDuration(int testId)
+        {
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
-
             if (test != null)
             {
                 var duration = test.Duration;
                 return Json(duration);
             }
-
             return NotFound();
 
         }
+        public IActionResult SaveStartTime(int testId)
+        {
+            var userId = 33;
+            var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
+            if (testSession == null)
+            {
+                testSession = new UserTestSession
+                {
+                    TestId = testId,
+                    UserId = userId,
+                    StartTime = DateTime.Now,
+                };
+                _test.UserTestSessions.Add(testSession);
+            }
+            _test.SaveChanges();
+            return Content("Done");
+        }
+        public IActionResult GetRemainingTime(int testId)
+        {
+            var userId = 33;
+            var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
+            var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
 
-
-
-
-
-
+            if (testSession != null && test != null)
+            {
+                var currentTime = DateTime.Now;
+                var elapsedTime = currentTime - testSession.StartTime;
+                var remainingTime = test.Duration - elapsedTime.TotalMinutes;
+                return Json(remainingTime);
+            }
+            return (Json(test.Duration));
+        }
     }
 }

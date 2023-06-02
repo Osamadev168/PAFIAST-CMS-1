@@ -19,6 +19,6 @@ namespace AuthSystem.Models
         public int TestDetailId { get; set; }
 
         public string? UserResponse { get; set; }
-
+        public TimeSpan? StartTime { get; set; }
     }
 }
