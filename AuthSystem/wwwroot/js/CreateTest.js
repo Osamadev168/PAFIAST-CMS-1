@@ -145,6 +145,11 @@ document.getElementById('timeSpan').addEventListener('input', () => {
 
     var timeSpanInput = document.getElementById('timeSpan').value;
     var timeSpanHoursElement = document.getElementById('timeSpanHours');
-    timeSpanHoursElement.innerHTML = timeSpanInput / 60 + " Hours";
+    var hours = Math.floor(timeSpanInput / 60);
+    var minutes = timeSpanInput % 60;
+    var timeString = hours + " hours " + minutes + " minutes";
+    timeSpanHoursElement.innerHTML = timeString;
+
+
 })
 
