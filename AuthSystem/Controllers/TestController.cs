@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Versioning;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
 
 namespace AuthSystem.Controllers
 {
@@ -92,6 +93,11 @@ namespace AuthSystem.Controllers
 
             {
                  var test =  _test.Tests.Where(q => q.Id == testId).FirstOrDefault();
+                var calendarToken = RandomNumberGenerator.Create();
+                byte[] randomBytes = new byte[16];
+                calendarToken.GetBytes(randomBytes);
+                string tokenValue = Convert.ToBase64String(randomBytes);
+                calendarToken.ToInt();
                 var calendar = new TestCalenders
                 {
                     TestId = testId,
@@ -114,7 +120,33 @@ namespace AuthSystem.Controllers
         }
 
 
+        public IActionResult GetTestEndTime(int testId, TimeOnly startTime)
+        {
+            try
+            {
+                Console.Write( startTime);
+                Console.Write(testId);
 
+
+                var test = _test.Tests.SingleOrDefault(q => q.Id == testId);
+                if (test == null)
+                {
+                    return NotFound(); // Return a 404 Not Found response if the test is not found
+                }
+
+                if (startTime == null)
+                {
+                    return BadRequest("Invalid start time"); // Return a 400 Bad Request response if the start time is not provided
+                }
+
+                var testEndTime = startTime.AddMinutes(test.TimeSpan);
+                return Content(testEndTime.ToString());
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message); // Return a 500 Internal Server Error response with the exception message
+            }
+        }
 
 
 

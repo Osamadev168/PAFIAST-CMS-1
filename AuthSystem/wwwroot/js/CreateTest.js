@@ -8,7 +8,6 @@
             totalPercentage += parseInt(input.value);
         }
     });
-
     var submitButton = document.getElementById("submit-btn");
 
     if (totalPercentage != 100) {
@@ -24,16 +23,11 @@
 
     return totalPercentage;
 }
-
-
-
 function updateTotalPercentage() {
     var totalPercentageElement = document.getElementById('totalPercentage');
     var totalPercentage = calculateTotalPercentage();
     totalPercentageElement.textContent = totalPercentage;
 }
-
-
 updateTotalPercentage();
 document.querySelectorAll('#subjects-container input[type="number"]').forEach(function (input) {
     input.addEventListener('input', updateTotalPercentage);
@@ -49,13 +43,9 @@ document.querySelectorAll('#subjects-container input[type="checkbox"]').forEach(
         updateTotalPercentage();
     });
 });
-
-
-
 function handleCheckboxClick(e) {
     var checkbox = e.target;
     var subjectId = checkbox.getAttribute("data-subject-id");
-
     if (checkbox.checked) {
         fetch('/Test/GetNumberOfQuestions?subjectId=' + subjectId, {
             method: 'GET',
@@ -78,10 +68,8 @@ function handleCheckboxClick(e) {
                         percentageInput.value = "";
                         updateTotalPercentage()
                     }
-
                     calculateTotalPercentage();
                 });
-
                 calculateTotalPercentage();
             })
             .catch(error => {
@@ -90,8 +78,6 @@ function handleCheckboxClick(e) {
     } else {
         var questionCountElement = document.getElementById('question-count-' + subjectId);
         questionCountElement.textContent = '';
-        var submitButton = document.getElementById("submit-btn").style.display = 'flex'
-
         var percentageInputId = "percentage_" + subjectId;
         var percentageInput = document.getElementById(percentageInputId);
 
@@ -101,10 +87,6 @@ function handleCheckboxClick(e) {
         calculateTotalPercentage();
     }
 }
-
-
-
-
 var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selectedSubjectIds"]');
 checkboxes.forEach(function (checkbox) {
     checkbox.addEventListener('click', handleCheckboxClick);
@@ -124,12 +106,45 @@ checkboxes.forEach(function (checkbox) {
     var copyButtons = document.querySelectorAll(".copy-button");
     copyButtons.forEach(function (button) {
         button.addEventListener("click", function (event) {
-            event.preventDefault(); // Prevent the default link behavior
+            event.preventDefault(); 
             copyTestLink(event);
         });
     });
+var calendarForms = document.querySelectorAll('#calendars-container form');
+
+calendarForms.forEach(function (form) {
+    var startTimeInput = form.querySelector('input[name="startTime"]');
+    var testIdInput = form.querySelector('input[name="testId"]');
+    var endTimeElement = form.querySelector('#endTime');
+
+    startTimeInput.addEventListener('input', function () {
+        var testId = testIdInput.value;
+        var startTime = startTimeInput.value;
+        fetch(`/Test/GetTestEndTime?testId=${testId}&startTime=${startTime}`)
+            .then(function (response) {
+                return response.text();
+            }) 
+            .then(function (data) {
+                endTimeElement.innerHTML = "The end time for this calendar will be " + "<strong>" + data + "</strong>";
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+    });
+});
+
+document.getElementById('duration').addEventListener('input', () => {
 
 
+    var durationInput = document.getElementById('duration').value;
+    var durationHoursElement = document.getElementById('durationHours');
+    durationHoursElement.innerHTML = durationInput / 60 + " Hours";
+})
+document.getElementById('timeSpan').addEventListener('input', () => {
 
 
+    var timeSpanInput = document.getElementById('timeSpan').value;
+    var timeSpanHoursElement = document.getElementById('timeSpanHours');
+    timeSpanHoursElement.innerHTML = timeSpanInput / 60 + " Hours";
+})
 
