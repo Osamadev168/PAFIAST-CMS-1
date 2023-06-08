@@ -25,7 +25,7 @@ function updateAttemptedCount() {
 
 function saveUserResponse(element) {
     var url = window.location.href;
-    var testId = url.substring(url.lastIndexOf('/') + 1);
+    var testId = url.split("/").pop().split("?")[0];
     var questionId = element.name.replace("answers[", "").replace("]", "");
     var selectedAnswer = element.value;
     document.getElementById("answer_" + questionId).value = selectedAnswer;
@@ -56,7 +56,7 @@ function saveUserResponse(element) {
 
 function fetchUserResponses() {
     var url = window.location.href;
-    var testId = url.substring(url.lastIndexOf('/') + 1);
+    var testId = url.split("/").pop().split("?")[0];
     console.log(testId)
     fetch('/Test/FetchUserResponses?testId=' + testId)
         .then(response => response.json())
@@ -90,14 +90,14 @@ function fetchUserResponses() {
 }
 function getTestName() {
     var url = window.location.href;
-    var testId = url.substring(url.lastIndexOf('/') + 1);
+    var testId = url.split("/").pop().split("?")[0];
     fetch('/Test/GetTestName?testId=' + testId).then(response => response.json()).then(name => {
         document.getElementById('test-name').innerText = name
     });
 }
 function getTestDuration() {
     var url = window.location.href;
-    var testId = url.substring(url.lastIndexOf('/') + 1);
+    var testId = url.split("/").pop().split("?")[0];
     fetch('/Test/GetRemainingTime?testId=' + testId)
         .then(response => response.json())
         .then(remainingMinutes => {
@@ -126,7 +126,7 @@ function getTestDuration() {
 }
 function SaveStartTime() {
     var url = window.location.href;
-    var testId = url.substring(url.lastIndexOf('/') + 1);
+    var testId = url.split("/").pop().split("?")[0];
     fetch('/Test/SaveStartTime?testId=' + testId).then(() => {
         console.log('Done')
     })

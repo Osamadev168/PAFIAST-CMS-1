@@ -1,10 +1,13 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
 using AuthSystem.Models;
+using DCMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Versioning;
+using System.Reflection.Metadata.Ecma335;
 
 namespace AuthSystem.Controllers
 {
@@ -31,7 +34,8 @@ namespace AuthSystem.Controllers
             {
                 TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
                 Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
-                TestDetails = _test.TestsDetail.Include(td => td.Test).ToList()
+                TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
+                TestCalenders = _test.TestCalenders.Include(td => td.Test).ToList(),
             };
 
 
@@ -41,7 +45,7 @@ namespace AuthSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, DateTime startTime, DateTime endTime)
+        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration , int timeSpan)
         {
             if (string.IsNullOrEmpty(testName))
             {
@@ -55,39 +59,77 @@ namespace AuthSystem.Controllers
 
             if (!ModelState.IsValid)
             {
-                // Return the view with validation errors
                 return RedirectToAction("Test");
             }
 
-            var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration, StartTime = startTime, EndTime = endTime };
+            var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration, TimeSpan = timeSpan};
             _test.Tests.Add(test);
             await _test.SaveChangesAsync();
 
+            
+
             foreach (var subjectId in selectedSubjectIds)
             {
-                var testDetails = new TestDetail
+                var testDetail = new TestDetail
                 {
                     TestId = test.Id,
                     SubjectId = subjectId,
-                    Percentage = percentages[subjectId],
-
+                    Percentage = percentages[subjectId]
                 };
 
-                _test.TestsDetail.Add(testDetails);
-                Console.WriteLine(testDetails);
+                _test.TestsDetail.Add(testDetail);
             }
 
             await _test.SaveChangesAsync();
 
             return RedirectToAction("Test");
         }
-        public IActionResult DemoTest(int Id)
+
+        [HttpPost]
+        public IActionResult CreateCalendar(int testId , DateOnly date , TimeOnly startTime)
         {
-            var test = _test.Tests.Where(x => x.Id == Id).FirstOrDefault();
+            try
 
-            if (test.StartTime <= DateTime.Now && test.EndTime >= DateTime.Now)
             {
+                 var test =  _test.Tests.Where(q => q.Id == testId).FirstOrDefault();
+                var calendar = new TestCalenders
+                {
+                    TestId = testId,
+                    Date = date,
+                    StartTime = startTime,
+                    EndTime = startTime.AddMinutes(test.TimeSpan)
 
+                };
+
+                    _test.TestCalenders.Add(calendar);
+
+                _test.SaveChanges();
+
+                return RedirectToAction("Test");
+            }
+            catch (Exception ex)
+            {
+                return Json("Error creating calendars: " + ex.Message);
+            }
+        }
+
+
+
+
+
+
+        public IActionResult DemoTest(int Id, int C_Id)
+        {
+            var test = _test.Tests.FirstOrDefault(x => x.Id == Id);
+            var testCalendar = _test.TestCalenders.FirstOrDefault(x => x.Id == C_Id && x.TestId == Id);
+
+            if (testCalendar.Date.Day != DateTime.Today.Day || testCalendar.StartTime.ToTimeSpan() > DateTime.Now.TimeOfDay || testCalendar.EndTime.ToTimeSpan() <= DateTime.Now.TimeOfDay)
+            {
+                return Content("Not Available");
+            }
+
+            else
+            {
                 var userId = 33;
                 var assignedQuestions = _test.AssignedQuestions
                     .Include(aq => aq.Question)
@@ -162,11 +204,8 @@ namespace AuthSystem.Controllers
                 }
                 return View(questionsList);
             }
-            else
-            {
-                return Content("Test not available!");
-            }
         }
+
         public IActionResult SubmitResult(Dictionary<int, string> answers)
         {
             var score = 0;
