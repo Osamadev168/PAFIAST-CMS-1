@@ -86,17 +86,20 @@ namespace AuthSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCalendar(int testId , DateOnly date , TimeOnly startTime, TimeOnly endTime)
+        public IActionResult CreateCalendar(int testId , DateOnly date , TimeOnly startTime)
         {
             try
+
             {
-                    var calendar = new TestCalenders
-                    {
-                        TestId = testId,
-                        Date = date,
-                        StartTime = startTime,
-                        EndTime = endTime
-                    };
+                 var test =  _test.Tests.Where(q => q.Id == testId).FirstOrDefault();
+                var calendar = new TestCalenders
+                {
+                    TestId = testId,
+                    Date = date,
+                    StartTime = startTime,
+                    EndTime = startTime.AddMinutes(test.TimeSpan)
+
+                };
 
                     _test.TestCalenders.Add(calendar);
 

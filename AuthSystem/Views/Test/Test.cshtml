@@ -69,6 +69,7 @@
     <div class="border border-dark rounded gap-2 d-grid p-lg-3 ">
         <h3 style="font-family : 'Lucida Sans'">@test.TestName</h3>
         <p class="text-primary display-7" style="font-family : Rockwell">Duration: @test.Duration minutes</p>
+        <p class="text-primary display-7" style="font-family : Rockwell">TimeSpan: @test.TimeSpan minutes</p>
         <div style="margin:10px; border : 0.5px silver solid; border-radius : 10px; font-size : 25px; font-family : 'Segoe UI Symbol'">
             <ol>
                 @if (test.TestDetails != null)
@@ -94,7 +95,6 @@
                     @foreach (var calendar in test.TestCalenders)
                     {
                         {
-                            
                             <li>
                                 Date: @calendar.Date.ToString("D")
                                 - From: @calendar.StartTime.ToString("HH:mm")
@@ -124,8 +124,7 @@
                     <input type="date" name="date" required />
                     <label>Start Time:</label>
                     <input type="time" name="startTime" required />
-                    <label>End Time:</label>
-                    <input type="time" name="endTime" required />
+                   
                     <button type="submit" id="addCalendarBtn" class="btn btn-primary">Add Calendar</button>
                 </form>
                     </div>
