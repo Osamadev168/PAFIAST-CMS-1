@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Versioning;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 
 namespace AuthSystem.Controllers
@@ -96,6 +94,7 @@ namespace AuthSystem.Controllers
                 var calendarToken = RandomNumberGenerator.Create();
                 byte[] randomBytes = new byte[16];
                 calendarToken.GetBytes(randomBytes);
+                string token = Convert.ToBase64String(randomBytes);
                 string tokenValue = Convert.ToBase64String(randomBytes);
                 calendarToken.ToInt();
                 var calendar = new TestCalenders
@@ -103,7 +102,8 @@ namespace AuthSystem.Controllers
                     TestId = testId,
                     Date = date,
                     StartTime = startTime,
-                    EndTime = startTime.AddMinutes(test.TimeSpan)
+                    EndTime = startTime.AddMinutes(test.TimeSpan),
+                    CalendarToken = token
 
                 };
 
