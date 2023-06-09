@@ -40,6 +40,7 @@ document.querySelectorAll('#subjects-container input[type="checkbox"]').forEach(
         if (!checkbox.checked) {
             percentageInput.value = "";
         }
+        
         updateTotalPercentage();
     });
 });
@@ -138,18 +139,104 @@ document.getElementById('duration').addEventListener('input', () => {
 
     var durationInput = document.getElementById('duration').value;
     var durationHoursElement = document.getElementById('durationHours');
-    durationHoursElement.innerHTML = durationInput / 60 + " Hours";
+    var hours = Math.floor(durationInput / 60);
+    var minutes = durationInput % 60;
+    var timeString = hours + " hours " + minutes + " minutes";
+    var durationError = document.getElementById('durationError');
+    var submitButton = document.getElementById('submit-btn');
+    var timeSpanInput = parseInt(document.getElementById('timeSpan').value);
+
+    durationHoursElement.innerHTML = timeString;
+    if (timeSpanInput < durationInput) {
+        durationError.innerHTML = 'Timespan cannot be less than duration';
+        submitButton.disabled = true;
+        submitButton.style.backgroundColor = "red";
+
+    } else if (timeSpanInput == durationInput) {
+        durationError.innerHTML = "";
+        submitButton.style.backgroundColor = "";
+    }
+    else {
+
+        durationError.innerHTML = "";
+        submitButton.style.backgroundColor = "";
+
+    }
 })
 document.getElementById('timeSpan').addEventListener('input', () => {
-
-
-    var timeSpanInput = document.getElementById('timeSpan').value;
+    var timeSpanInput = parseInt(document.getElementById('timeSpan').value);
     var timeSpanHoursElement = document.getElementById('timeSpanHours');
-    var hours = Math.floor(timeSpanInput / 60);
+    var hours = Math.floor(timeSpanInput / 60).toPrecision();
     var minutes = timeSpanInput % 60;
     var timeString = hours + " hours " + minutes + " minutes";
     timeSpanHoursElement.innerHTML = timeString;
 
+    var durationInput = parseInt(document.getElementById('duration').value);
+    var durationError = document.getElementById('durationError');
+    var submitButton = document.getElementById('submit-btn')
+    if (timeSpanInput < durationInput) {
+        durationError.innerHTML = 'Timespan cannot be less than duration';
+        submitButton.disabled = true;
+        submitButton.style.backgroundColor = "red";
 
-})
+    } else if (timeSpanInput == durationInput) {
+        durationError.innerHTML = "";
+        submitButton.style.backgroundColor = "";
+    }
+    else {
+
+        durationError.innerHTML = "";
+        submitButton.style.backgroundColor = "";
+
+    }
+});
+
+var testNameInput = document.getElementById('testName').value
+document.getElementById('testName').addEventListener('blur', () => {
+
+    if (testNameInput !== null) {
+
+
+        var testName = document.getElementById('testName').value;
+        var submitButton = document.getElementById('submit-btn');
+
+        fetch('/Test/CheckTestName?testName=' + encodeURIComponent(testName))
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Error validating Test Name');
+                }
+            })
+            .then(data => {
+                if (data === '"Test name already exists."') {
+                    document.getElementById('testNameError').textContent = 'Test name not avialable!';
+                    document.getElementById('testNameError').style.color = 'red';
+                    submitButton.disabled = true;
+                    submitButton.style.backgroundColor = 'red';
+                } else {
+                    document.getElementById('testNameError').textContent = 'A great test name indeed!';
+                    document.getElementById('testNameError').style.color = 'green';
+                    submitButton.style.backgroundColor = '';
+                }
+            })
+            .catch(error => {
+                document.getElementById('testNameError').textContent = 'An error occurred: ' + error.message;
+            });
+
+    }
+    else {
+
+        document.getElementById('testNameError').textContent = '';
+        submitButton.disabled = false;
+        submitButton.style.backgroundColor = '';
+    }
+
+});
+
+
+
+    
+
+
 
