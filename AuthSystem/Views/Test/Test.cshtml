@@ -7,12 +7,16 @@
 <h1>Create a new test</h1>
 
 </div>
-<form method="post" asp-action="Create" asp-controller="Test" class="form form-control form-group" style="50px">
+<form method="post" asp-action="Create" asp-controller="Test" class="form form-control">
     <h2>Test Composition</h2>
-   <div class="test-details" style="width:300px">
+   <div class="test-details">
         <div>
-            <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name" />
+            <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name" oninvalid="this.setCustomValidity('Test name is required!')"
+                   oninput="this.setCustomValidity('')" />
+            <span id="testNameError" style="font-size: larger"></span>
+
         </div>
+
         <div id="subjects-container" class="subjects-container">
             @if (Model.Subjects.Count == 0)
             {
@@ -21,7 +25,7 @@
             @foreach (var subject in Model.Subjects)
             {
                 <div class="form-check">
-                    <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" data-subject-id="@subject.SubjectId" />
+                    <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" data-subject-id="@subject.SubjectId"   />
                     <label for="subject_@subject.SubjectId">@subject.SubjectName.ToUpper()</label>
                     <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100" required />
                     %
@@ -46,6 +50,7 @@
                 <span id="timeSpanHours"></span>
 
             </div>
+            <span id="durationError" style="color:darkred"></span>
         </div>
    </div>
 
@@ -102,7 +107,6 @@
                             </li>
                             <a href="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken})">Test Link</a>
                             <a class="btn btn-primary copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken })">Copy Test Link</a>
-
                         }
                     }
                 </ol>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Versioning;
 using System.Security.Cryptography;
 
 namespace AuthSystem.Controllers
@@ -150,12 +151,12 @@ namespace AuthSystem.Controllers
 
 
 
-        public IActionResult DemoTest(int Id, int C_Id)
+        public IActionResult DemoTest(int Id, int C_Id, string C_token)
         {
             var test = _test.Tests.FirstOrDefault(x => x.Id == Id);
-            var testCalendar = _test.TestCalenders.FirstOrDefault(x => x.Id == C_Id && x.TestId == Id);
+            var testCalendar = _test.TestCalenders.FirstOrDefault(x => x.Id == C_Id && x.TestId == Id  );
 
-            if (testCalendar.Date.Day != DateTime.Today.Day || testCalendar.StartTime.ToTimeSpan() > DateTime.Now.TimeOfDay || testCalendar.EndTime.ToTimeSpan() <= DateTime.Now.TimeOfDay)
+            if (testCalendar.Date.Day != DateTime.Today.Day || testCalendar.StartTime.ToTimeSpan() > DateTime.Now.TimeOfDay || testCalendar.EndTime.ToTimeSpan() <= DateTime.Now.TimeOfDay || testCalendar.CalendarToken != C_token )
             {
                 return Content("Not Available");
             }
@@ -360,5 +361,27 @@ namespace AuthSystem.Controllers
             }
             return (Json(test.Duration));
         }
+
+        public IActionResult CheckTestName(string testName)
+        {
+            try
+            {
+                var test = _test.Tests.FirstOrDefault(t => t.TestName == testName);
+
+                if (test != null)
+                {
+                    return Json("Test name already exists.");
+                }
+                else
+                {
+                    return Json( "Test name is available." );
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+
     }
 }
