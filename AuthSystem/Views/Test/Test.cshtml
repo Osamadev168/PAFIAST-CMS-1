@@ -8,6 +8,7 @@
 
 </div>
 <form method="post" asp-action="Create" asp-controller="Test" class="form form-control form-group">
+    <h2>Test Composition</h2>
    <div class="test-details">
         <div>
             <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name" />
@@ -99,8 +100,8 @@
                                 - From: @calendar.StartTime.ToString("HH:mm")
                                 - To: @calendar.EndTime.ToString("HH:mm")
                             </li>
-                            <a href="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id })">Test Link</a>
-                            <a class="btn btn-primary copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id })">Copy Test Link</a>
+                            <a href="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken})">Test Link</a>
+                            <a class="btn btn-primary copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken })">Copy Test Link</a>
 
                         }
                     }
