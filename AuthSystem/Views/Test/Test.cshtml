@@ -101,7 +101,7 @@
                                 - To: @calendar.EndTime.ToString("HH:mm")
                             </li>
                             <a href="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken})">Test Link</a>
-                            <a class="btn btn-primary copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id })">Copy Test Link</a>
+                            <a class="btn btn-primary copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken })">Copy Test Link</a>
 
                         }
                     }
