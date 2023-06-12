@@ -48,12 +48,15 @@ function handleCheckboxClick(e) {
     var checkbox = e.target;
     var subjectId = checkbox.getAttribute("data-subject-id");
     if (checkbox.checked) {
+        var questionCountElement = document.getElementById('question-count-' + subjectId);
+        questionCountElement.classList.add = 'loader'
         fetch('/Test/GetNumberOfQuestions?subjectId=' + subjectId, {
             method: 'GET',
         })
-            .then(response => response.json())
+            .then(response => response.json(),
+             )
             .then(data => {
-                var questionCountElement = document.getElementById('question-count-' + subjectId);
+                questionCountElement.classList.add = ''
                 questionCountElement.textContent = data.count + ' Question(s) Available';
 
                 var percentageInputId = "percentage_" + subjectId;
