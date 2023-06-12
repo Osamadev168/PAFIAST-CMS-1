@@ -156,10 +156,20 @@ namespace AuthSystem.Controllers
             var test = _test.Tests.FirstOrDefault(x => x.Id == Id);
             var testCalendar = _test.TestCalenders.FirstOrDefault(x => x.Id == C_Id && x.TestId == Id  );
 
-            if (testCalendar.Date.Day != DateTime.Today.Day || testCalendar.StartTime.ToTimeSpan() > DateTime.Now.TimeOfDay || testCalendar.EndTime.ToTimeSpan() <= DateTime.Now.TimeOfDay )
+            if (testCalendar == null)
+                
             {
                 return Content("Not Available");
             }
+
+            if (testCalendar.Date.Day != DateTime.Today.Day ||
+                testCalendar.StartTime.ToTimeSpan() > DateTime.Now.TimeOfDay ||
+                testCalendar.EndTime.ToTimeSpan() <= DateTime.Now.TimeOfDay ||
+                testCalendar.CalendarToken != C_token)
+            {
+                return Content("Not Available");
+            }
+
 
             else
             {
