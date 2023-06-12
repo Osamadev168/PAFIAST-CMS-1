@@ -40,7 +40,7 @@ document.querySelectorAll('#subjects-container input[type="checkbox"]').forEach(
         if (!checkbox.checked) {
             percentageInput.value = "";
         }
-        
+
         updateTotalPercentage();
     });
 });
@@ -93,24 +93,24 @@ checkboxes.forEach(function (checkbox) {
     checkbox.addEventListener('click', handleCheckboxClick);
 });
 
-    function copyTestLink(event) {
-        var testLink = event.target.dataset.testLink;
-    navigator.clipboard.writeText("http://localhost:5173" +testLink)
-    .then(function () {
-        alert("Test link copied to clipboard!");
-            })
-    .catch(function (error) {
-        console.error("Failed to copy test link: ", error);
-            });
-    }
-
-    var copyButtons = document.querySelectorAll(".copy-button");
-    copyButtons.forEach(function (button) {
-        button.addEventListener("click", function (event) {
-            event.preventDefault(); 
-            copyTestLink(event);
+function copyTestLink(event) {
+    var testLink = event.target.dataset.testLink;
+    navigator.clipboard.writeText("http://localhost:5173" + testLink)
+        .then(function () {
+            alert("Test link copied to clipboard!");
+        })
+        .catch(function (error) {
+            console.error("Failed to copy test link: ", error);
         });
+}
+
+var copyButtons = document.querySelectorAll(".copy-button");
+copyButtons.forEach(function (button) {
+    button.addEventListener("click", function (event) {
+        event.preventDefault();
+        copyTestLink(event);
     });
+});
 var calendarForms = document.querySelectorAll('#calendars-container form');
 
 calendarForms.forEach(function (form) {
@@ -124,7 +124,7 @@ calendarForms.forEach(function (form) {
         fetch(`/Test/GetTestEndTime?testId=${testId}&startTime=${startTime}`)
             .then(function (response) {
                 return response.text();
-            }) 
+            })
             .then(function (data) {
                 endTimeElement.innerHTML = "The end time for this calendar will be " + "<strong>" + data + "</strong>";
             })
@@ -135,33 +135,23 @@ calendarForms.forEach(function (form) {
 });
 
 document.getElementById('duration').addEventListener('input', () => {
-
-
     var durationInput = document.getElementById('duration').value;
     var durationHoursElement = document.getElementById('durationHours');
     var hours = Math.floor(durationInput / 60);
     var minutes = durationInput % 60;
     var timeString = hours + " hours " + minutes + " minutes";
     var durationError = document.getElementById('durationError');
-    var submitButton = document.getElementById('submit-btn');
     var timeSpanInput = parseInt(document.getElementById('timeSpan').value);
 
     durationHoursElement.innerHTML = timeString;
     if (timeSpanInput < durationInput) {
         durationError.innerHTML = 'Timespan cannot be less than duration';
-        submitButton.disabled = true;
-        submitButton.style.backgroundColor = "red";
 
-    } else if (timeSpanInput == durationInput) {
-        durationError.innerHTML = "";
-        submitButton.style.backgroundColor = "";
     }
     else {
-
         durationError.innerHTML = "";
-        submitButton.style.backgroundColor = "";
-
     }
+    
 })
 document.getElementById('timeSpan').addEventListener('input', () => {
     var timeSpanInput = parseInt(document.getElementById('timeSpan').value);
@@ -173,34 +163,24 @@ document.getElementById('timeSpan').addEventListener('input', () => {
 
     var durationInput = parseInt(document.getElementById('duration').value);
     var durationError = document.getElementById('durationError');
-    var submitButton = document.getElementById('submit-btn')
     if (timeSpanInput < durationInput) {
         durationError.innerHTML = 'Timespan cannot be less than duration';
-        submitButton.disabled = true;
-        submitButton.style.backgroundColor = "red";
 
-    } else if (timeSpanInput == durationInput) {
+    } else {
         durationError.innerHTML = "";
-        submitButton.style.backgroundColor = "";
     }
-    else {
-
-        durationError.innerHTML = "";
-        submitButton.style.backgroundColor = "";
-
-    }
+    
 });
 
 var testNameInput = document.getElementById('testName').value
 document.getElementById('testName').addEventListener('blur', () => {
 
-    if (testNameInput !== null) {
 
 
-        var testName = document.getElementById('testName').value;
-        var submitButton = document.getElementById('submit-btn');
-
-        fetch('/Test/CheckTestName?testName=' + encodeURIComponent(testName))
+    var testName = document.getElementById('testName').value;
+    var submitButton = document.getElementById('submit-btn');
+    if (testName !== "") {
+        fetch('/Test/CheckTestName?testName=' + testName)
             .then(response => {
                 if (response.ok) {
                     return response.text();
@@ -209,34 +189,27 @@ document.getElementById('testName').addEventListener('blur', () => {
                 }
             })
             .then(data => {
-                if (data === '"Test name already exists."') {
+                console.log(data)
+                if (data === "true") {
                     document.getElementById('testNameError').textContent = 'Test name not avialable!';
                     document.getElementById('testNameError').style.color = 'red';
-                    submitButton.disabled = true;
+
+                } else if (data === "false") {
                     submitButton.style.backgroundColor = 'red';
-                } else {
                     document.getElementById('testNameError').textContent = 'A great test name indeed!';
                     document.getElementById('testNameError').style.color = 'green';
                     submitButton.style.backgroundColor = '';
+
                 }
             })
             .catch(error => {
                 document.getElementById('testNameError').textContent = 'An error occurred: ' + error.message;
-            });
+            }); 
 
     }
-    else {
-
-        document.getElementById('testNameError').textContent = '';
-        submitButton.disabled = false;
-        submitButton.style.backgroundColor = '';
-    }
-
-});
 
 
 
-    
-
+}); 
 
 
