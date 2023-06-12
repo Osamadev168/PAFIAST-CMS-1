@@ -37,6 +37,9 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
             .WithMany()
             .HasForeignKey(aq => aq.QuestionId)
             .OnDelete(DeleteBehavior.NoAction);
+        builder.Entity<Test>(entity => {
+            entity.HasIndex(e => e.TestName).IsUnique();
+        });
         base.OnModelCreating(builder);
 
         // Customize the ASP.NET Identity model and override the defaults if needed.

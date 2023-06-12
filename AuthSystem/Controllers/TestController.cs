@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Versioning;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 
 namespace AuthSystem.Controllers
@@ -22,11 +23,8 @@ namespace AuthSystem.Controllers
 
             _test = test;
             _userManager = userManager;
-
-
         }
         [Authorize]
-
         [HttpGet]
         public IActionResult Test()
         {
@@ -41,50 +39,66 @@ namespace AuthSystem.Controllers
 
             return View(viewModel);
         }
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration , int timeSpan)
+        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan)
         {
             if (string.IsNullOrEmpty(testName))
             {
-                ModelState.AddModelError("TestName", "Test name is required.");
+                TempData["testName"] = "Test name must be provided";
             }
-
-            if (selectedSubjectIds == null || !selectedSubjectIds.Any())
+            else if (_test.Tests.Any(t => t.TestName == testName))
             {
-                ModelState.AddModelError("selectedSubjectIds", "At least one subject must be selected.");
+                TempData["testName"] = "Test name must be unique.";
             }
-
-            if (!ModelState.IsValid)
+            else if (selectedSubjectIds == null || !selectedSubjectIds.Any())
             {
+                TempData["selectedSubjectIds"] = "At least one subject must be selected.";
+            }
+            else if (duration <= 0)
+            {
+                TempData["duration"] = "Please provide a valid duration for this test";
+            }
+            else
+            {
+                var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration };
+
+                if (timeSpan <= 0)
+                {
+                    test.TimeSpan = duration;
+                }
+                else
+                {
+                    test.TimeSpan = timeSpan;
+                }
+
+                _test.Tests.Add(test);
+                await _test.SaveChangesAsync();
+
+                if (selectedSubjectIds != null)
+                {
+                    foreach (var subjectId in selectedSubjectIds)
+                    {
+                        var testDetail = new TestDetail
+                        {
+                            TestId = test.Id,
+                            SubjectId = subjectId,
+                            Percentage = percentages[subjectId]
+                        };
+
+                        _test.TestsDetail.Add(testDetail);
+                    }
+                }
+
+                await _test.SaveChangesAsync();
+
                 return RedirectToAction("Test");
             }
 
-            var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration, TimeSpan = timeSpan};
-            _test.Tests.Add(test);
-            await _test.SaveChangesAsync();
-
             
-
-            foreach (var subjectId in selectedSubjectIds)
-            {
-                var testDetail = new TestDetail
-                {
-                    TestId = test.Id,
-                    SubjectId = subjectId,
-                    Percentage = percentages[subjectId]
-                };
-
-                _test.TestsDetail.Add(testDetail);
-            }
-
-            await _test.SaveChangesAsync();
 
             return RedirectToAction("Test");
         }
-
         [HttpPost]
         public IActionResult CreateCalendar(int testId , DateOnly date , TimeOnly startTime)
         {
@@ -119,16 +133,10 @@ namespace AuthSystem.Controllers
                 return Json("Error creating calendars: " + ex.Message);
             }
         }
-
-
         public IActionResult GetTestEndTime(int testId, TimeOnly startTime)
         {
             try
             {
-                Console.Write( startTime);
-                Console.Write(testId);
-
-
                 var test = _test.Tests.SingleOrDefault(q => q.Id == testId);
                 if (test == null)
                 {
@@ -380,11 +388,11 @@ namespace AuthSystem.Controllers
 
                 if (test != null)
                 {
-                    return Json("Test name already exists.");
+                    return Json(true);
                 }
                 else
                 {
-                    return Json( "Test name is available." );
+                    return Json(false);
                 }
             }
             catch (Exception e)
