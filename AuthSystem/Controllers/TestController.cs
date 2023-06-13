@@ -336,16 +336,31 @@ namespace AuthSystem.Controllers
             }
             return NotFound();
         }
-        public IActionResult GetTestDuration(int testId)
+        public IActionResult GetTestDuration(int testId , int C_Id)
         {
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
-            if (test != null)
-            {
-                var duration = test.Duration;
-                return Json(duration);
-            }
-            return NotFound();
+            var testCalendar = _test.TestCalenders.FirstOrDefault(q => q.TestId == testId && q.Id == C_Id);
 
+            if (test != null && testCalendar != null)
+            {
+                var currentTime = DateTime.Now.TimeOfDay;
+                var endTime = testCalendar.EndTime.ToTimeSpan();
+
+                var minutesPassed = (endTime - currentTime).TotalMinutes;
+                Console.WriteLine(minutesPassed + "Minutes");
+                if (minutesPassed >= test.Duration)
+                {
+                    var duration = test.Duration;
+                    return Json(duration);
+                }
+                else if (minutesPassed < test.Duration )
+                {
+                    var remainingMinutes = (endTime - currentTime).TotalMinutes;
+                    return Json(remainingMinutes);
+                }
+            }
+
+            return NotFound();
         }
         public IActionResult SaveStartTime(int testId)
         {
@@ -364,19 +379,24 @@ namespace AuthSystem.Controllers
             _test.SaveChanges();
             return Content("Done");
         }
-        public IActionResult GetRemainingTime(int testId)
+        public IActionResult GetRemainingTime(int testId , int C_Id)
         {
             var userId = 33;
             var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
+            var testCalendar = _test.TestCalenders.FirstOrDefault(q => q.TestId == testId && q.Id == C_Id);
+            var currentTime = DateTime.Now.TimeOfDay;
+            var endTime = testCalendar.EndTime.ToTimeSpan();
+
+            var minutesPassed = (endTime - currentTime).TotalMinutes;
 
             if (testSession != null && test != null)
             {
-                var currentTime = DateTime.Now;
-                var elapsedTime = currentTime - testSession.StartTime;
-                var remainingTime = test.Duration - elapsedTime.TotalMinutes;
+                var elapsedTime = currentTime - testSession.StartTime.TimeOfDay;
+                var remainingTime = test.Duration - minutesPassed;
                 return Json(remainingTime);
             }
+             
             return (Json(test.Duration));
         }
 
