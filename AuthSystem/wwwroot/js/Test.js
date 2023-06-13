@@ -98,13 +98,15 @@ function getTestName() {
 function getTestDuration() {
     var url = window.location.href;
     var testId = url.split("/").pop().split("?")[0];
-    fetch('/Test/GetRemainingTime?testId=' + testId)
+    const urlParams = new URLSearchParams(url.substring(url.indexOf('?')));
+    const cId = urlParams.get("C_Id");
+    fetch(`/Test/GetTestDuration?testId=${testId}&C_Id=${cId}`)
         .then(response => response.json())
         .then(remainingMinutes => {
             var hours = Math.floor(remainingMinutes / 60);
-            var minutes = Math.floor(remainingMinutes % 60);
+            var minutes = Math.floor(remainingMinutes);
             var seconds = 0;
-
+            console.log(remainingMinutes)
             var timer = setInterval(function () {
                 $('#test-duration').text(hours + " H " + minutes + " M " + seconds + " S");
                 seconds--;

@@ -86,13 +86,11 @@
                 @if (test.TestDetails != null)
 
                 {
-
                     @foreach (var detail in test.TestDetails)
                     {
                         <li>@detail.Subject.SubjectName - @detail.Percentage%</li>
                     }
                 }
-
             </ol>
             @if (test.TestCalenders != null && test.TestCalenders.Any())
             {
@@ -105,7 +103,9 @@
                             <li>
                                 Date: @calendar.Date.ToString("D")
                                 - From: @calendar.StartTime.ToString("HH:mm")
-                                - To: @calendar.EndTime.ToString("HH:mm")
+                                - To: @calendar.StartTime.AddMinutes(test.Duration).ToString("HH:mm")
+                                <strong>(Link will be valid from @calendar.StartTime.ToString("HH:mm") to @calendar.EndTime.ToString("HH:mm") on @calendar.Date.ToString("D"))</strong>
+
                             </li>
                             <a href="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken})">Test Link</a>
                             <a class="btn btn-primary copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken })">Copy Test Link</a>
@@ -137,10 +137,5 @@
        
        
     </div>
-}
-@section Scripts  {
-
- <partial name="_ValidationScriptsPartial"/>
-
 }
 <script src="/js/CreateTest.js"></script>
