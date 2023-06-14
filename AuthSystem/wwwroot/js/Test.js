@@ -104,7 +104,7 @@ function getTestDuration() {
         .then(response => response.json())
         .then(remainingMinutes => {
             var hours = Math.floor(remainingMinutes / 60);
-            var minutes = Math.floor(remainingMinutes);
+            var minutes = Math.floor(remainingMinutes%60);
             var seconds = 0;
             console.log(remainingMinutes)
             var timer = setInterval(function () {
