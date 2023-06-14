@@ -61,7 +61,6 @@ function fetchUserResponses() {
     fetch('/Test/FetchUserResponses?testId=' + testId)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             data.forEach(item => {
                 var questionId = item.questionId;
                 var userResponse = item.userResponse;
@@ -104,7 +103,7 @@ function getTestDuration() {
         .then(response => response.json())
         .then(remainingMinutes => {
             var hours = Math.floor(remainingMinutes / 60);
-            var minutes = Math.floor(remainingMinutes);
+            var minutes = Math.floor(remainingMinutes % 60);
             var seconds = 0;
             console.log(remainingMinutes)
             var timer = setInterval(function () {

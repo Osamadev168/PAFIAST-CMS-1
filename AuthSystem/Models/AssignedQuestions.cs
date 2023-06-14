@@ -8,7 +8,7 @@ namespace AuthSystem.Models
         [Key]
         public int Id { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         [ForeignKey("QuestionId")]
         public MCQ Question { get; set; }
