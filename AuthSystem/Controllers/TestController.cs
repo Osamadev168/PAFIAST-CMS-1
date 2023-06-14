@@ -159,13 +159,12 @@ namespace AuthSystem.Controllers
 
 
 
-        public IActionResult DemoTest(int Id, int C_Id, string C_token)
+        public async Task<IActionResult> DemoTest(int Id, int C_Id, string C_token)
         {
             var test = _test.Tests.FirstOrDefault(x => x.Id == Id);
-            var testCalendar = _test.TestCalenders.FirstOrDefault(x => x.Id == C_Id && x.TestId == Id  );
+            var testCalendar = _test.TestCalenders.FirstOrDefault(x => x.Id == C_Id && x.TestId == Id);
 
             if (testCalendar == null)
-                
             {
                 return Content("Not Available");
             }
@@ -178,84 +177,88 @@ namespace AuthSystem.Controllers
                 return Content("Not Available");
             }
 
+            var user = await _userManager.GetUserAsync(User);
 
-            else
+            if (user == null) {
+                return Content("User not found"); 
+               
+            }
+            var userId = user.Id;
+
+            List<MCQ> questionsList;
+
+            var assignedQuestions = _test.AssignedQuestions
+                .Include(aq => aq.Question)
+                .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
+                .ToList();
+
+            if (assignedQuestions.Count == 0)
             {
-                var userId = 33;
-                var assignedQuestions = _test.AssignedQuestions
-                    .Include(aq => aq.Question)
-                    .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
+                var testDetails = _test.TestsDetail
+                    .Include(td => td.Test)
+                    .Where(td => td.TestId == Id)
                     .ToList();
 
-                List<MCQ> questionsList;
-
-                if (assignedQuestions.Count == 0)
+                var testQuestions = new List<MCQ>();
+                foreach (var testDetail in testDetails)
                 {
-                    var testDetails = _test.TestsDetail
-                        .Include(td => td.Test)
-                        .Where(td => td.TestId == Id)
+                    var subjectQuestions = _test.MCQs.Include(q => q.Subject)
+                        .Where(q => q.SubjectId == testDetail.SubjectId)
+                        .OrderBy(x => Guid.NewGuid()) // randomize order of questions
+                        .Take(Math.Max((int)(testDetail.Percentage / 100.0 * 100), 1))
                         .ToList();
 
-                    var testQuestions = new List<MCQ>();
-                    foreach (var testDetail in testDetails)
-                    {
-                        var subjectQuestions = _test.MCQs.Include(q => q.Subject)
-                            .Where(q => q.SubjectId == testDetail.SubjectId)
-                            .OrderBy(x => Guid.NewGuid()) // randomize order of questions
-                            .Take(Math.Max((int)(testDetail.Percentage / 100.0 * 100), 1))
-                            .ToList();
-
-                        testQuestions.AddRange(subjectQuestions);
-                    }
-
-                    var rng = new Random();
-                    testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
-
-                    var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
-
-                    // save the assigned questions for the user in the database
-                    foreach (var question in totalQuestions)
-                    {
-                        var assignedQuestion = new AssignedQuestions
-                        {
-                            UserId = userId,
-                            QuestionId = question.Id,
-                            TestDetailId = Id,
-                            Question = question
-                        };
-
-                        _test.AssignedQuestions.Add(assignedQuestion);
-                    }
-
-                    _test.SaveChanges();
-
-                    questionsList = totalQuestions;
+                    testQuestions.AddRange(subjectQuestions);
                 }
-                else
+
+                var rng = new Random();
+                testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
+
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
+
+                // save the assigned questions for the user in the database
+                foreach (var question in totalQuestions)
                 {
-                    var assignedQuestionIds = assignedQuestions.Select(aq => aq.QuestionId).ToList();
-                    var testDetails = _test.TestsDetail
-                        .Include(td => td.Test)
-                        .Where(td => td.TestId == Id)
-                        .ToList();
-
-                    var testQuestions = new List<MCQ>();
-                    foreach (var testDetail in testDetails)
+                    var assignedQuestion = new AssignedQuestions
                     {
-                        var subjectQuestions = _test.MCQs.Include(q => q.Subject)
-                            .Where(q => q.SubjectId == testDetail.SubjectId && assignedQuestionIds.Contains(q.Id))
-                            .ToList();
-                        testQuestions.AddRange(subjectQuestions);
-                    }
+                        UserId = userId,
+                        QuestionId = question.Id,
+                        TestDetailId = Id,
+                        Question = question
+                    };
 
-                    var rng = new Random();
-                    testQuestions = testQuestions.ToList();
-                    var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
-                    questionsList = totalQuestions;
+                    _test.AssignedQuestions.Add(assignedQuestion);
                 }
-                return View(questionsList);
+
+                await _test.SaveChangesAsync(); 
+
+                questionsList = totalQuestions;
             }
+            else
+            {
+                var assignedQuestionIds = assignedQuestions.Select(aq => aq.QuestionId).ToList();
+                var testDetails = _test.TestsDetail
+                    .Include(td => td.Test)
+                    .Where(td => td.TestId == Id)
+                    .ToList();
+
+                var testQuestions = new List<MCQ>();
+                foreach (var testDetail in testDetails)
+                {
+                    var subjectQuestions = _test.MCQs.Include(q => q.Subject)
+                        .Where(q => q.SubjectId == testDetail.SubjectId && assignedQuestionIds.Contains(q.Id))
+                        .ToList();
+                    testQuestions.AddRange(subjectQuestions);
+                }
+
+                var rng = new Random();
+                testQuestions = testQuestions.ToList();
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
+                questionsList = totalQuestions;
+            }
+            return View(questionsList);
         }
+
 
         public IActionResult SubmitResult(Dictionary<int, string> answers)
         {
@@ -278,9 +281,13 @@ namespace AuthSystem.Controllers
             return Content($"Your score is {score}");
         }
         [HttpPost]
-        public IActionResult SaveUserResponse([FromBody] Dictionary<int, string> answers, int testId)
+        public async Task<IActionResult> SaveUserResponseAsync([FromBody] Dictionary<int, string> answers, int testId)
         {
-            var userId = 33;
+            var user = await _userManager.GetUserAsync(User);
+
+
+            var userId = user.Id;
+
             foreach (var answer in answers)
             {
                 var questionId = answer.Key;
@@ -288,8 +295,7 @@ namespace AuthSystem.Controllers
 
                 var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId && u.TestDetailId == testId).FirstOrDefault();
                 {
-                    Console.WriteLine(questionId);
-                    Console.WriteLine(selectedAnswer);
+                   
 
 
                     question.UserResponse = selectedAnswer;
@@ -299,9 +305,12 @@ namespace AuthSystem.Controllers
             return Json(new { success = "Done!" });
         }
         [HttpGet]
-        public IActionResult FetchUserResponses(int testId)
+        public async Task<IActionResult> FetchUserResponsesAsync(int testId)
         {
-            var userId = 33;
+            var user = await _userManager.GetUserAsync(User);
+
+
+            var userId = user.Id;
 
             var assignedQuestions = _test.AssignedQuestions
                 .Where(aq => aq.UserId == userId && aq.TestDetailId == testId)
@@ -362,26 +371,36 @@ namespace AuthSystem.Controllers
 
             return NotFound();
         }
-        public IActionResult SaveStartTime(int testId)
+        public async Task<IActionResult> SaveStartTimeAsync(int testId)
         {
-            var userId = 33;
+            var user = await _userManager.GetUserAsync(User);
+
+
+            var userId = user.Id;
+
             var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
-            if (testSession == null)
-            {
-                testSession = new UserTestSession
+                if (testSession == null)
                 {
-                    TestId = testId,
-                    UserId = userId,
-                    StartTime = DateTime.Now,
-                };
-                _test.UserTestSessions.Add(testSession);
-            }
-            _test.SaveChanges();
-            return Content("Done");
+                    testSession = new UserTestSession
+                    {
+                        TestId = testId,
+                        UserId = userId,
+                        StartTime = DateTime.Now,
+                    };
+                    _test.UserTestSessions.Add(testSession);
+                }
+                _test.SaveChanges();
+                return Content("Done");
+            
+          
         }
-        public IActionResult GetRemainingTime(int testId , int C_Id)
+
+        public async Task<IActionResult> GetRemainingTimeAsync(int testId , int C_Id)
         {
-            var userId = 33;
+            var user = await _userManager.GetUserAsync(User);
+
+
+            var userId = user.Id;
             var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
             var testCalendar = _test.TestCalenders.FirstOrDefault(q => q.TestId == testId && q.Id == C_Id);
