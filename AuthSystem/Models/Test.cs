@@ -10,7 +10,7 @@ namespace AuthSystem.Models
         public int Id { get; set; }
 
         [Required]
-       
+
         public string TestName { get; set; }
         public string CreatedBy { get; set; }
         public int Duration { get; set; }
@@ -19,5 +19,11 @@ namespace AuthSystem.Models
         public List<Subject> Subjects { get; set; }
         public List<TestDetail> TestDetails { get; set; }
         public List<TestCalenders> TestCalenders { get; set; }
+        public List<UserCalendars> UserCalendars { get; set; }
+        public Test()
+        {
+            UserCalendars = new List<UserCalendars>();
+        }
     }
+
 }

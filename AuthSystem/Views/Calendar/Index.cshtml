@@ -1,0 +1,43 @@
+﻿@model AuthSystem.Models.Test
+
+@{
+    ViewData["Title"] = "Calendars";
+}
+
+<div class="container-fluid border-4">
+    <div>
+        @foreach (var test in Model.TestList)
+        {
+            <div class="container">
+                <h2>@test.TestName</h2>
+                @if (test.TestCalenders != null && test.TestCalenders.Any())
+                {
+                    <ol>
+                        @foreach (var calendar in test.TestCalenders)
+                        {
+                            var applyButtonId = $"applyButton_{test.Id}_{calendar.Id}";
+                            var appliedMessageId = $"appliedMessage_{test.Id}_{calendar.Id}";
+                            var isApplied = Model.UserCalendars.Any(uc => uc.TestId == test.Id && uc.CalendarId == calendar.Id && uc.CalenderToken == calendar.CalendarToken );
+
+                            <li>
+                                <strong>
+                                    Date: @calendar.Date.ToString("D")
+                                    - From: @calendar.StartTime.ToString("HH:mm")
+                                    - To: @calendar.StartTime.AddMinutes(test.Duration).ToString("HH:mm")
+                                </strong>
+                            </li>
+                            <form method="post" asp-controller="Calendar" asp-action="SelectCalendar" asp-route-testId="@test.Id" asp-route-calendarId="@calendar.Id" asp-route-calendarToken="@calendar.CalendarToken">
+                                <button id="@applyButtonId" class="btn btn-dark" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
+                            </form>
+                        }
+                    </ol>
+                    <hr />
+                }
+                else
+                {
+                    <h6>No Calendars Available!</h6>
+                }
+            </div>
+        }
+    </div>
+</div>
