@@ -1,43 +1,59 @@
 ﻿@model AuthSystem.Models.Test
 
 @{
-    ViewData["Title"] = "Calendars";
+    ViewData["Title"] = "Apply";
 }
-
-<div class="container-fluid border-4">
-    <div>
-        @foreach (var test in Model.TestList)
-        {
-            <div class="container">
-                <h2>@test.TestName</h2>
-                @if (test.TestCalenders != null && test.TestCalenders.Any())
+  @if (Model.TestCalenders != null && Model.TestCalenders.Any())
+{
+    <div class="container-fluid border-4" style="margin:20px">
+            <table class="table table-responsive table-striped table-light table-hover ">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Composition</th>
+                        <th>Duration</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var test in Model.TestList)
                 {
-                    <ol>
-                        @foreach (var calendar in test.TestCalenders)
-                        {
-                            var applyButtonId = $"applyButton_{test.Id}_{calendar.Id}";
-                            var appliedMessageId = $"appliedMessage_{test.Id}_{calendar.Id}";
-                            var isApplied = Model.UserCalendars.Any(uc => uc.TestId == test.Id && uc.CalendarId == calendar.Id && uc.CalenderToken == calendar.CalendarToken );
 
-                            <li>
-                                <strong>
-                                    Date: @calendar.Date.ToString("D")
-                                    - From: @calendar.StartTime.ToString("HH:mm")
-                                    - To: @calendar.StartTime.AddMinutes(test.Duration).ToString("HH:mm")
-                                </strong>
-                            </li>
-                            <form method="post" asp-controller="Calendar" asp-action="SelectCalendar" asp-route-testId="@test.Id" asp-route-calendarId="@calendar.Id" asp-route-calendarToken="@calendar.CalendarToken">
-                                <button id="@applyButtonId" class="btn btn-dark" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
+                    var applyButtonId = $"applyButton_{test.Id}_{test.Id}";
+                       var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
+                     var isApplied = Model.UserCalendars.Any(uc => uc.TestId == test.Id && uc.CalendarId == test.Id);
+                    <tr>
+                        <td>@test.TestName</td>
+                        <td>
+                            @if (test.TestDetails != null)
+
+                            {
+                                @foreach (var detail in test.TestDetails)
+                                {
+                                    <p style="color:royalblue">@detail.Subject.SubjectName - @detail.Percentage%</p>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (test.Duration < 60)
+                            {
+                                @test.Duration <text> minutes</text>
+                            }
+                            else
+                            {
+                                @(test.Duration / 60)
+                                <text> hour(s)</text>
+                            }
+                        </td>
+
+                        <td>
+                            <form method="post" asp-controller="Calendar" asp-action="SelectTest" asp-route-testId="@test.Id"  >
+                                <button id="@applyButtonId" class="btn btn-danger" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
                             </form>
-                        }
-                    </ol>
-                    <hr />
-                }
-                else
-                {
-                    <h6>No Calendars Available!</h6>
-                }
-            </div>
-        }
+                         </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
     </div>
-</div>
+}

@@ -24,7 +24,7 @@ namespace AuthSystem.Controllers
                 TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
                 Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
                 TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
-                TestCalenders = _test.TestCalenders.Include(td => td.Test).ToList(),
+                TestCalenders = _test.TestCalenders.Include(td => td.Test).Include(td => td.TestCenter).ToList(),
             };
 
             var user = await _userManager.GetUserAsync(User);
@@ -39,7 +39,7 @@ namespace AuthSystem.Controllers
         }
 
 
-        public async Task<IActionResult> SelectCalendar(int testId, int calendarId, string calendarToken)
+        public async Task<IActionResult> SelectTest(int testId)
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -52,7 +52,7 @@ namespace AuthSystem.Controllers
 
             var existingUserCalendar = _test.UserCalendars.FirstOrDefault(uc => uc.UserId == userId && uc.TestId == testId);
 
-            if (existingUserCalendar != null)
+          /*  if (existingUserCalendar != null)
             {
                 existingUserCalendar.CalendarId = calendarId;
                 existingUserCalendar.SelectionTime = DateTime.Now;
@@ -60,7 +60,7 @@ namespace AuthSystem.Controllers
                 _test.UserCalendars.Update(existingUserCalendar);
                 _test.SaveChanges();
                 return Conflict("Calendar Updated!");
-            }
+            }*/
 
 
 
@@ -68,9 +68,9 @@ namespace AuthSystem.Controllers
             {
                 UserId = userId,
                 TestId = testId,
-                CalendarId = calendarId,
+               
                 SelectionTime = DateTime.Now,
-                CalenderToken = calendarToken
+              
             });
 
             _test.SaveChanges();
@@ -94,7 +94,7 @@ namespace AuthSystem.Controllers
             var userCalendars = _test.UserCalendars
                 .Where(uc => uc.UserId == userId)
                 .Include(uc => uc.Test)
-                .Include(uc => uc.Calendar)
+                .Include(uc => uc.Calendar).Include(uc => uc.Calendar.TestCenter)
                 .ToList();
 
             return View(userCalendars);

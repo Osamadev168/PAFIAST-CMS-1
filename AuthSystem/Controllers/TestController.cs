@@ -5,6 +5,7 @@ using DCMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 namespace AuthSystem.Controllers
@@ -24,15 +25,18 @@ namespace AuthSystem.Controllers
         [HttpGet]
         public IActionResult Test()
         {
+            ViewBag.TestCenters = new SelectList(_test.TestCenters, "Id", "TestCenterName");
             var viewModel = new Test
             {
                 TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
                 Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
                 TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
-                TestCalenders = _test.TestCalenders.Include(td => td.Test).ToList(),
+                TestCalenders = _test.TestCalenders.Include(td => td.Test).Include(td => td.TestCenter).ToList()
             };
+
             return View(viewModel);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan)
@@ -94,7 +98,7 @@ namespace AuthSystem.Controllers
             return RedirectToAction("Test");
         }
         [HttpPost]
-        public IActionResult CreateCalendar(int testId, DateOnly date, TimeOnly startTime)
+        public IActionResult CreateCalendar(int testId, DateOnly date, TimeOnly startTime, int centerId)
         {
             try
 
@@ -112,6 +116,7 @@ namespace AuthSystem.Controllers
                     Date = date,
                     StartTime = startTime,
                     EndTime = startTime.AddMinutes(test.TimeSpan),
+                    TestCenterId = centerId,
                     CalendarToken = token
 
                 };

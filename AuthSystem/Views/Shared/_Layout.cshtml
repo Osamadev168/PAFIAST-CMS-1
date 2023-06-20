@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]|PAF-IAST CMS</title>
+    <title>@ViewData["Title"] | PAF-IAST Entry Test Service</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -16,7 +16,7 @@ background: -webkit-linear-gradient(to right, #267871, #136a8a);  /* Chrome 10-2
 background: linear-gradient(to right, #267871, #136a8a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
      width : 100%">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">PAF-IAST Testing Service</a>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">PAF-IAST Entry Test Service</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -24,16 +24,16 @@ background: linear-gradient(to right, #267871, #136a8a); /* W3C, IE 10+/ Edge, F
                     <ul class="navbar-nav">
                      
                         <li class="nav-item">
-                            <a class="nav-link"   asp-action="Index" asp-controller="Subject" class="nav-bar-links">Question Bank</a>
+                            <a class="nav-link"   asp-action="Index" asp-controller="Subject" >Question Bank</a>
                         </li>
                          <li class="nav-item">
-                             <a class="nav-link" asp-action="Test" asp-controller="Test" class="nav-bar-links">Tests</a>
+                             <a class="nav-link" asp-action="Test" asp-controller="Test" >Tests</a>
                          </li>
                           <li class="nav-item">
-                             <a class="nav-link" asp-action="Index" asp-controller="Calendar" class="nav-bar-links">Calendars</a>
+                             <a class="nav-link" asp-action="Index" asp-controller="Calendar" >Apply</a>
                          </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="UserCalendars" asp-controller="Calendar" class="nav-bar-links">My Calendars</a>
+                            <a class="nav-link" asp-action="UserCalendars" asp-controller="Calendar">My Tests</a>
                         </li>
                     </ul>
                 </div>
@@ -52,7 +52,7 @@ background: linear-gradient(to right, #267871, #136a8a); /* W3C, IE 10+/ Edge, F
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - AuthSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2023 - PAF-IAST Entry Test Service - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
