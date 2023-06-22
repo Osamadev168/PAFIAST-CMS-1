@@ -32,23 +32,21 @@
     }
 
 </style>
+
     <h1>All subjects</h1>
     @foreach (var subject in Model.Subjects)
     {
-
-
     <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })">
-            <div class="column" style="width: 15rem; background-color:lightblue ; display:flex; flex-direction:row;" data-subject-id="@subject.SubjectId">                              
+            <div class="column" style="width: 25rem; background-color:lightblue ; display:flex; flex-direction:row;" data-subject-id="@subject.SubjectId">                              
                     <h3>@subject.SubjectName</h3>            
             </div>
-
     </a>
     }
-<h2>Create New Subject</h2>
-<form method="post" asp-controller="Subject" asp-action="Create" class="form-control-lg">
-    <input asp-for="SubjectName" placeholder="Enter new subject name" class="form-control" />
-    <button type="submit" class="btn btn-secondary">Create</button>
-</form>
+
+    <form method="post" asp-controller="Subject" asp-action="Create" class="form-control-lg" style="width:300px; height:300px;">
+        <input asp-for="SubjectName" placeholder="Enter new subject name" class="form-control" />
+        <button type="submit" class="btn btn-secondary">Create</button>
+    </form>
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -78,4 +76,5 @@
             });
         });
     </script>
+
 }
