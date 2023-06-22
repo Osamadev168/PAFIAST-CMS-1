@@ -26,6 +26,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<TestCalenders> TestCalenders { get; set; }
     public DbSet<UserCalendars> UserCalendars { get; set; }
     public DbSet<TestCenters> TestCenters { get; set; }
+    public DbSet<FeeVoucher> FeeVoucher { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<AssignedQuestions>()

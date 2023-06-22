@@ -12,6 +12,7 @@ namespace AuthSystem.Models
         public int? CalendarId { get; set; }
         public DateTime SelectionTime { get; set; }
         public string? CalenderToken { get; set; }
+        public bool? hasApplied { get; set; }
         // Navigation properties    
        
         [ForeignKey("UserId")]

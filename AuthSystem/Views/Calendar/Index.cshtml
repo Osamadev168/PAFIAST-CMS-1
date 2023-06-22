@@ -21,7 +21,7 @@
 
                     var applyButtonId = $"applyButton_{test.Id}_{test.Id}";
                        var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
-                     var isApplied = Model.UserCalendars.Any(uc => uc.TestId == test.Id && uc.CalendarId == test.Id);
+                     var isApplied = Model.UserCalendars.Any(uc => uc.TestId == test.Id);
                     <tr>
                         <td>@test.TestName</td>
                         <td>
@@ -49,6 +49,12 @@
                         <td>
                             <form method="post" asp-controller="Calendar" asp-action="SelectTest" asp-route-testId="@test.Id"  >
                                 <button id="@applyButtonId" class="btn btn-danger" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
+                                @if (isApplied)
+                                
+                                {
+
+                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity.Name })')">Print Fee Voucher</a>
+                                }
                             </form>
                          </td>
                     </tr>
@@ -57,3 +63,15 @@
             </table>
     </div>
 }
+<script>
+    function printFeeVoucher(url) {
+        var newWindow = window.open(url, "_blank");
+        newWindow.onload = function () {
+            newWindow.print();
+            newWindow.onafterprint = function () {
+                newWindow.close();
+            };
+        };
+    }
+</script>
+

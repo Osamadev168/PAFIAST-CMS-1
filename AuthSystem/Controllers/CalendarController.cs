@@ -1,5 +1,6 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
+using AuthSystem.Migrations;
 using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -52,28 +53,24 @@ namespace AuthSystem.Controllers
 
             var existingUserCalendar = _test.UserCalendars.FirstOrDefault(uc => uc.UserId == userId && uc.TestId == testId);
 
-          /*  if (existingUserCalendar != null)
+            if (existingUserCalendar == null)
             {
-                existingUserCalendar.CalendarId = calendarId;
-                existingUserCalendar.SelectionTime = DateTime.Now;
-                existingUserCalendar.CalenderToken = calendarToken;
-                _test.UserCalendars.Update(existingUserCalendar);
+                _test.UserCalendars.Add(new UserCalendars
+                {
+                    UserId = userId,
+                    TestId = testId,
+
+                    SelectionTime = DateTime.Now,
+
+                });
+
                 _test.SaveChanges();
                 return Conflict("Calendar Updated!");
-            }*/
+            }
 
 
 
-            _test.UserCalendars.Add(new UserCalendars
-            {
-                UserId = userId,
-                TestId = testId,
-               
-                SelectionTime = DateTime.Now,
-              
-            });
-
-            _test.SaveChanges();
+            
 
             return Ok("Applied Successfully!");
         }
@@ -96,9 +93,106 @@ namespace AuthSystem.Controllers
                 .Include(uc => uc.Test)
                 .Include(uc => uc.Calendar).Include(uc => uc.Calendar.TestCenter)
                 .ToList();
+            if (userCalendars != null) {
 
-            return View(userCalendars);
+                return View(userCalendars);
+
+            }
+            return NoContent();
+
         }
+        public IActionResult PrintVoucher(int testId, string testName , string applicantName)
+        {
+
+            try
+            {
+
+                var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
+                if (test != null) {
+
+                    var feeVoucher = new Models.FeeVoucher
+                    {
+
+                        TestName = test.TestName,
+                        Amount = 5000,
+                        ApplicantName = applicantName,
+                        isPaid = true
+
+
+                    };
+                     _test.FeeVoucher.Add(feeVoucher);
+                    _test.SaveChanges();
+                    return View("PrintVoucher", feeVoucher);
+                }
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+
+                return Json(new { Error = e.Message });
+
+
+            }
+
+
+        }
+        public async Task<IActionResult> SelectCalendar()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return Content("User not found");
+            }
+
+            var userId = user.Id;
+            var appliedTests = _test.TestCalenders
+                .Where(tc => _test.UserCalendars.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId))
+                .Include(tc => tc.Test)
+                .Include(tc => tc.TestCenter)
+                .ToList();
+
+            if (appliedTests.Count > 0)
+            {
+                ViewBag.UserID = userId;
+                return View("SelectCalendar", appliedTests);
+            }
+
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> SelectCalendarUser(int testId, int calendarId, string calendarToken)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return Content("User not found");
+            }
+
+            var userId = user.Id;
+            var appliedTest = _test.UserCalendars.FirstOrDefault(q => q.UserId == userId && q.TestId == testId);
+
+            if (appliedTest != null)
+            {
+                if (appliedTest.CalendarId != calendarId && appliedTest.CalenderToken != calendarToken)
+                {
+                    appliedTest.CalenderToken = calendarToken;
+                    appliedTest.CalendarId = calendarId;
+                    _test.SaveChanges();
+                }
+                else
+                {
+                    appliedTest.CalenderToken = calendarToken;
+                    _test.SaveChanges();
+                }
+            }
+
+            return Ok();
+        }
+
+
+
 
     }
 }

@@ -1,0 +1,75 @@
+﻿@model List<AuthSystem.Models.TestCalenders>
+@inject AuthSystem.Data.AuthDbContext _test // Inject AuthDbContext
+@{
+    ViewData["Title"] = "Book Seat";
+    string UserID = ViewBag.UserID;
+}
+<h2>Select a calendar for your test</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="container-sm table-responsive">
+        <table class="table table-responsive table-striped table-light table-hover ">
+            <thead>
+                <tr>
+                    <th>Test Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Test Center</th>
+                    <th>Center Location/Address</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    string currentTestName = "";
+                }
+                @foreach (var userCalendar in Model.OrderBy(t => t.Test.TestName))
+                {
+                    if (userCalendar.Test.TestName != currentTestName)
+                    {
+                        currentTestName = userCalendar.Test.TestName;
+                        <tr>
+                            <td colspan="10"><strong>@currentTestName</strong></td>
+                        </tr>
+                    }
+                    var CalendarID = _test.UserCalendars.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.CalendarId;
+                    <tr>
+                        <td>@userCalendar.Date.ToString("D")</td>
+                        <td>@userCalendar.StartTime</td>
+                        <td>@userCalendar.StartTime.AddMinutes(userCalendar.Test.Duration)</td>
+                        <td>@userCalendar.TestCenter.TestCenterName</td>
+                        <td>@userCalendar.TestCenter.TestCenterLocation</td>
+                        <td>
+                            <form method="post" asp-controller="Calendar" asp-action="SelectCalendarUser" asp-route-testId="@userCalendar.Test.Id" asp-route-calendarId="@userCalendar.Id" asp-route-calendarToken="@userCalendar.CalendarToken">
+                                @if (userCalendar.Id == CalendarID)
+                                {
+                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = userCalendar.TestId, applicantName = User.Identity.Name })')">Print Admit Card</a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-success" type="submit">Apply</button>
+                                }
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>No Calendars Available</p>
+}
+<script>
+    function printFeeVoucher(url) {
+        var newWindow = window.open(url, "_blank");
+        newWindow.onload = function () {
+            newWindow.print();
+            newWindow.onafterprint = function () {
+                newWindow.close();
+            };
+        };
+    }
+</script>
