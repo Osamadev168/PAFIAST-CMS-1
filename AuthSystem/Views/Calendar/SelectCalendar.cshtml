@@ -33,7 +33,7 @@
                             <td colspan="10"><strong>@currentTestName</strong></td>
                         </tr>
                     }
-                    var CalendarID = _test.UserCalendars.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.CalendarId;
+                    var CalendarID = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.CalendarId;
                     <tr>
                         <td>@userCalendar.Date.ToString("D")</td>
                         <td>@userCalendar.StartTime</td>
@@ -44,7 +44,8 @@
                             <form method="post" asp-controller="Calendar" asp-action="SelectCalendarUser" asp-route-testId="@userCalendar.Test.Id" asp-route-calendarId="@userCalendar.Id" asp-route-calendarToken="@userCalendar.CalendarToken">
                                 @if (userCalendar.Id == CalendarID)
                                 {
-                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = userCalendar.TestId, applicantName = User.Identity.Name })')">Print Admit Card</a>
+                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = userCalendar.Test.TestName, applicantName = User.Identity.Name , date = userCalendar.Date , centerName = userCalendar.TestCenter.TestCenterName , centerLocation = userCalendar.TestCenter.TestCenterLocation , startTime = userCalendar.StartTime , endTime = userCalendar.EndTime})')">Print Admit Card</a>
+                                    
                                 }
                                 else
                                 {

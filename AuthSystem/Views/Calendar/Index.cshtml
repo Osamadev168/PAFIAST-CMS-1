@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Apply";
+    bool showForm = false;
+
 }
   @if (Model.TestCalenders != null && Model.TestCalenders.Any())
 {
@@ -21,7 +23,7 @@
 
                     var applyButtonId = $"applyButton_{test.Id}_{test.Id}";
                        var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
-                     var isApplied = Model.UserCalendars.Any(uc => uc.TestId == test.Id);
+                     var isApplied = Model.TestApplications.Any(uc => uc.TestId == test.Id);
                     <tr>
                         <td>@test.TestName</td>
                         <td>
@@ -48,14 +50,35 @@
 
                         <td>
                             <form method="post" asp-controller="Calendar" asp-action="SelectTest" asp-route-testId="@test.Id"  >
-                                <button id="@applyButtonId" class="btn btn-danger" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
+                                <button id="@applyButtonId" class="btn btn-primary" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
                                 @if (isApplied)
-                                
                                 {
+                                  
 
                                     <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity.Name })')">Print Fee Voucher</a>
+                                    <a class="btn btn-outline-info" data-form-container="feeFormContainer_@test.Id">Submit Paid Fee Details</a>
+
+                                    
                                 }
                             </form>
+                            @if (isApplied)
+                            {
+                                @if (isApplied)
+                                {
+                                    <div id="feeFormContainer_@test.Id" style="display: none;">
+                                        <form class="form-group" asp-action="SubmitFeeDetails" asp-controller="Calendar" method="post" asp-route-testId="@test.Id">
+                                            <input type="text" placeholder="Voucher Number" class="form-control" required name="voucherNumber" />
+                                            <input type="text" placeholder="Bank (e.g., HBL, MCB, Allied)" class="form-control" required name="bankName" />
+                                            <input type="text" placeholder="Branch Name" class="form-control" required name="branchName" />
+                                            <input type="text" placeholder="Branch Code" class="form-control" required name="branchCode" />
+                                            <label for="voucher">Upload your Paid Fee Voucher:</label>
+                                            <input type="file" class="form-control" id="voucher" name="voucher" />
+                                            <input type="submit" class="btn btn-info" />
+                                        </form>
+                                    </div>
+                                }
+
+                            }
                          </td>
                     </tr>
                     }
@@ -73,5 +96,22 @@
             };
         };
     }
+    var submitButtons = document.querySelectorAll(".btn-outline-info");
+    submitButtons.forEach(function (button) {
+        button.addEventListener("click", showForm);
+    });
+
+    function showForm(event) {
+        var formContainerId = event.target.getAttribute("data-form-container");
+        var formContainer = document.getElementById(formContainerId);
+        var isFormVisible = formContainer.style.display === "block";
+
+        if (isFormVisible) {
+            formContainer.style.display = "none";
+        } else {
+            formContainer.style.display = "block";
+        }
+    }
+
 </script>
 

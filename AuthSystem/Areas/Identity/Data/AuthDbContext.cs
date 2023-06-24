@@ -24,9 +24,10 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AssignedQuestions> AssignedQuestions { get; set; }
     public DbSet<UserTestSession> UserTestSessions { get; set; }
     public DbSet<TestCalenders> TestCalenders { get; set; }
-    public DbSet<UserCalendars> UserCalendars { get; set; }
+    public DbSet<TestApplication> TestApplications { get; set; }
     public DbSet<TestCenters> TestCenters { get; set; }
     public DbSet<FeeVoucher> FeeVoucher { get; set; }
+    public DbSet<AdmitCard> AdmitCards { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<AssignedQuestions>()
@@ -40,13 +41,13 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
             .WithMany()
             .HasForeignKey(aq => aq.QuestionId)
             .OnDelete(DeleteBehavior.NoAction);
-        builder.Entity<UserCalendars>()
+        builder.Entity<TestApplication>()
                 .HasOne(uc => uc.Test)
                 .WithMany()
                 .HasForeignKey(uc => uc.TestId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<UserCalendars>()
+        builder.Entity<TestApplication>()
             .HasOne(uc => uc.Calendar)
             .WithMany()
             .HasForeignKey(uc => uc.CalendarId)

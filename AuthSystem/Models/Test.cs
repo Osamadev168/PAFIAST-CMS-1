@@ -19,10 +19,10 @@ namespace AuthSystem.Models
         public List<Subject> Subjects { get; set; }
         public List<TestDetail> TestDetails { get; set; }
         public List<TestCalenders> TestCalenders { get; set; }
-        public List<UserCalendars> UserCalendars { get; set; }
+        public List<TestApplication> TestApplications { get; set; }
         public Test()
         {
-            UserCalendars = new List<UserCalendars>();
+            TestApplications = new List<TestApplication>();
         }
     }
 

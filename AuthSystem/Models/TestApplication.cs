@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthSystem.Models
 {
-    public class UserCalendars
+    public class TestApplication
     {
         public int Id { get; set; }
         public string UserId { get; set; }
@@ -12,15 +12,16 @@ namespace AuthSystem.Models
         public int? CalendarId { get; set; }
         public DateTime SelectionTime { get; set; }
         public string? CalenderToken { get; set; }
-        public bool? hasApplied { get; set; }
-        // Navigation properties    
-       
+        public bool? IsPaid { get; set; }
+        public bool? IsVerified { get; set; }
+        public int? VoucherNumber { get; set; }
+        public string? BankName { get; set; }
+        public string? BranchCode { get; set; }
+        public string? BranchName { get; set; }
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
-
         [ForeignKey("TestId")]
         public Test Test { get; set; }
-
         [ForeignKey("TestCalendar")]
         public TestCalenders Calendar { get; set; }
     }

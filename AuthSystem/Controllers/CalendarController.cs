@@ -4,7 +4,11 @@ using AuthSystem.Migrations;
 using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Office.Interop.Excel;
+using System.Globalization;
+using System.Security.Cryptography;
 
 namespace AuthSystem.Controllers
 {
@@ -31,7 +35,7 @@ namespace AuthSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                viewModel.UserCalendars = _test.UserCalendars
+                viewModel.TestApplications = _test.TestApplications
                     .Where(uc => uc.UserId == user.Id)
                     .ToList();
             }
@@ -51,11 +55,11 @@ namespace AuthSystem.Controllers
 
             var userId = user.Id;
 
-            var existingUserCalendar = _test.UserCalendars.FirstOrDefault(uc => uc.UserId == userId && uc.TestId == testId);
+            var existingUserCalendar = _test.TestApplications.FirstOrDefault(uc => uc.UserId == userId && uc.TestId == testId);
 
             if (existingUserCalendar == null)
             {
-                _test.UserCalendars.Add(new UserCalendars
+                _test.TestApplications.Add(new TestApplication
                 {
                     UserId = userId,
                     TestId = testId,
@@ -65,19 +69,14 @@ namespace AuthSystem.Controllers
                 });
 
                 _test.SaveChanges();
-                return Conflict("Calendar Updated!");
+                return RedirectToAction("Index");
             }
-
-
-
-            
-
             return Ok("Applied Successfully!");
         }
 
 
 
-        public async Task<IActionResult> UserCalendars()
+        public async Task<IActionResult> TestApplications()
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -88,17 +87,17 @@ namespace AuthSystem.Controllers
 
             var userId = user.Id;
 
-            var userCalendars = _test.UserCalendars
+            var TestApplications = _test.TestApplications
                 .Where(uc => uc.UserId == userId)
                 .Include(uc => uc.Test)
                 .Include(uc => uc.Calendar).Include(uc => uc.Calendar.TestCenter)
                 .ToList();
-            if (userCalendars != null) {
+            if (TestApplications != null) {
 
-                return View(userCalendars);
+                return View(TestApplications);
 
             }
-            return NoContent();
+            return Content("<h1>No Calendars Available</h1>");
 
         }
         public IActionResult PrintVoucher(int testId, string testName , string applicantName)
@@ -147,7 +146,7 @@ namespace AuthSystem.Controllers
 
             var userId = user.Id;
             var appliedTests = _test.TestCalenders
-                .Where(tc => _test.UserCalendars.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId))
+                .Where(tc => _test.TestApplications.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId))
                 .Include(tc => tc.Test)
                 .Include(tc => tc.TestCenter)
                 .ToList();
@@ -158,7 +157,7 @@ namespace AuthSystem.Controllers
                 return View("SelectCalendar", appliedTests);
             }
 
-            return NotFound();
+            return View("NoCalendars");
         }
         [HttpPost]
         public async Task<IActionResult> SelectCalendarUser(int testId, int calendarId, string calendarToken)
@@ -171,7 +170,7 @@ namespace AuthSystem.Controllers
             }
 
             var userId = user.Id;
-            var appliedTest = _test.UserCalendars.FirstOrDefault(q => q.UserId == userId && q.TestId == testId);
+            var appliedTest = _test.TestApplications.FirstOrDefault(q => q.UserId == userId && q.TestId == testId);
 
             if (appliedTest != null)
             {
@@ -185,12 +184,83 @@ namespace AuthSystem.Controllers
                 {
                     appliedTest.CalenderToken = calendarToken;
                     _test.SaveChanges();
+                    return RedirectToAction("SelectCalendar");
                 }
             }
 
-            return Ok();
-        }
+            return RedirectToAction("SelectCalendar");
 
+        }
+        public IActionResult PrintAdmitCard(string testName , DateOnly date , TimeOnly startTime , TimeOnly endTime , string applicantName, string centerName , string centerLocation) {
+
+            try
+            {
+
+                var admitCard = new AdmitCard
+                {
+
+                   ApplicantName = applicantName,
+                   TestName = testName,
+                   TestCenterName = centerName,
+                   TestCenterLocation = centerLocation,
+                   Date = date,
+                   StartTime = startTime,
+                   EndTime = endTime
+
+
+                };
+                _test.AdmitCards.Add(admitCard);
+                _test.SaveChanges();
+                return View("AdmitCard", admitCard);
+
+            }
+
+            catch (Exception e) {
+
+                return Json(new { Error = e.Message });
+            
+            }
+        
+        
+        }
+        public async Task<IActionResult> SubmitFeeDetails(int testId , int voucherNumber , string bankName , string branchName , string branchCode) {
+
+            try 
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return Content("User not found");
+                }
+
+                var userId = user.Id;
+                var appliedTest = _test.TestApplications.FirstOrDefault(q => q.UserId == userId && q.TestId == testId);
+
+                if (appliedTest != null)
+                {
+                    {
+                        appliedTest.VoucherNumber = voucherNumber;
+                        appliedTest.BankName = bankName;
+                        appliedTest.BranchName = branchName;
+                        appliedTest.BranchCode = branchCode;
+                        appliedTest.IsPaid = true;
+                        _test.SaveChanges();
+                    }
+                    
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception e) {
+
+                return Json(new { Error = e.InnerException });
+            
+            
+            }
+        
+        
+        }
 
 
 
