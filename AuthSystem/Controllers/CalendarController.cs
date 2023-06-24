@@ -1,6 +1,5 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
-using AuthSystem.Migrations;
 using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,25 +34,28 @@ namespace AuthSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                viewModel.TestApplications = _test.TestApplications
+                /*viewModel.TestApplications = _test.TestApplications
                     .Where(uc => uc.UserId == user.Id)
-                    .ToList();
-            }
+                    .ToList();*/
+                var userId = user.Id;
+                ViewBag.UserId = userId;
 
+
+            }
             return View(viewModel);
         }
 
 
-        public async Task<IActionResult> SelectTest(int testId)
+        public async Task<IActionResult> SelectTest(int testId , string UserId)
         {
-            var user = await _userManager.GetUserAsync(User);
+           
 
-            if (user == null)
+            /*if (user == null)
             {
                 return NotFound("User not found");
-            }
+            }*/
 
-            var userId = user.Id;
+            var userId = UserId;
 
             var existingUserCalendar = _test.TestApplications.FirstOrDefault(uc => uc.UserId == userId && uc.TestId == testId);
 
@@ -73,9 +75,6 @@ namespace AuthSystem.Controllers
             }
             return Ok("Applied Successfully!");
         }
-
-
-
         public async Task<IActionResult> TestApplications()
         {
             var user = await _userManager.GetUserAsync(User);
