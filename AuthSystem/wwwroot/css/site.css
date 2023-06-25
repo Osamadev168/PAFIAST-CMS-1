@@ -79,24 +79,24 @@ body {
 }
 .no-of-questions {
 
-    color: mediumspringgreen;
+    color: darkslateblue;
     font-family  : 'Times New Roman', Times, serif;
     font-size : large
 
 }
 .total-percentage  {
     font-size :large;
-    color : forestgreen;
+    color : deepskyblue;
     font-family : 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     float : right
 }
 .total-percentage-err {
     font-size: large;
-    color: red
+    color: palevioletred
 }
 
 .nav-link:hover {
-    background-color: lightgray;
+    background-color: navajowhite;
     cursor: pointer;
 }
 
@@ -139,7 +139,7 @@ body {
     font-family:'Lucida Sans';
     font-weight : bold;
     color : darkslategrey;
-    background-color : cornsilk;
+    background-color : ghostwhite;
     border-radius : 20px;   
 }
 
