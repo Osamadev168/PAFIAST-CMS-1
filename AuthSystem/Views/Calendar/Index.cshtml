@@ -2,10 +2,8 @@
 @inject AuthSystem.Data.AuthDbContext _test;
 @{
     ViewData["Title"] = "Apply";
-    bool showForm = false;
     string UserId = ViewBag.UserId;
 }
-
     <div class="container-fluid border-4" style="margin:20px">
             <table class="table table-responsive table-striped table-light table-hover ">
                 <thead>
@@ -20,13 +18,13 @@
                 @foreach (var test in Model.TestList)
                 {
 
-                    var applyButtonId = $"applyButton_{test.Id}_{test.Id}";
-                       var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
+                var applyButtonId = $"applyButton_{test.Id}_{test.Id}";
+                var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
                 var TestID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id).FirstOrDefault()?.TestId;
                 var isApplied = test.Id == TestID;
-
-
-                    <tr>
+                var feeVerified = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsVerified;
+                var isPaid = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsPaid;
+                 <tr>
                         <td>@test.TestName</td>
                         <td>
                             @if (test.TestDetails != null)
@@ -50,40 +48,64 @@
                             }
                         </td>
 
-                        <td>
+                    <td>
                             <form method="post" asp-controller="Calendar" asp-action="SelectTest" asp-route-testId="@test.Id" asp-route-UserId="@UserId"  >
                             <button id="@applyButtonId" class="btn btn-primary" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
                                 @if (test.Id == TestID)
                                 {
-                                  
 
-                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity.Name })')">Print Fee Voucher</a>
+
+                                <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity.Name })')">Print Fee Voucher</a>
                                     <a class="btn btn-outline-info" data-form-container="feeFormContainer_@test.Id">Submit Paid Fee Details</a>
+                                @if (feeVerified == true && isPaid == true)
 
-                                    
+                                {
+
+                                    <button class="btn btn-success" disabled>Fee Verified</button>
+
                                 }
+                                else if (isPaid == true && feeVerified == null)
+                                {
+
+
+                                    <button class="btn btn-warning" disabled> Fee Under Verification</button>
+                                }
+                                else if (isPaid == true && feeVerified == false)
+                                
+                                {
+                                    
+                                 <button class="btn btn-danger" disabled>Rejected</button>
+                                
+                                }
+                                else if (isPaid == false && feeVerified == false)
+                                {
+                                    <p></p>
+
+                                }
+                            }
                             </form>
                         @if (test.Id == TestID)
-                            {
+                        {
                             @if (test.Id == TestID)
-                                {
+                             {
                                     <div id="feeFormContainer_@test.Id" style="display: none;">
-                                        <form class="form-group" asp-action="SubmitFeeDetails" asp-controller="Calendar" method="post" asp-route-testId="@test.Id">
+                                    <form class="form-group" asp-action="SubmitFeeDetails" asp-controller="Calendar" method="post" asp-route-testId="@test.Id" enctype="multipart/form-data">
                                             <input type="text" placeholder="Voucher Number" class="form-control" required name="voucherNumber" />
                                             <input type="text" placeholder="Bank (e.g., HBL, MCB, Allied)" class="form-control" required name="bankName" />
                                             <input type="text" placeholder="Branch Name" class="form-control" required name="branchName" />
                                             <input type="text" placeholder="Branch Code" class="form-control" required name="branchCode" />
                                             <label for="voucher">Upload your Paid Fee Voucher:</label>
-                                            <input type="file" class="form-control" id="voucher" name="voucher" />
+                                            <input type="file" class="form-control" id="voucher" name="voucherPhoto" required/>
                                             <input type="submit" class="btn btn-info" />
                                         </form>
                                     </div>
-                                }
-
                             }
-                         </td>
-                    </tr>
-                    }
+                        }
+                        
+                     </td>
+                    
+                 </tr>
+                }
                 </tbody>
             </table>
     </div>
@@ -114,6 +136,5 @@
             formContainer.style.display = "block";
         }
     }
-
 </script>
 

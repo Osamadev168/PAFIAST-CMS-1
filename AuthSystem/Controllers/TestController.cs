@@ -144,7 +144,7 @@ namespace AuthSystem.Controllers
 
                 if (startTime == null)
                 {
-                    return BadRequest("Invalid start time"); 
+                    return BadRequest("Invalid start time");
                 }
 
                 var testEndTime = startTime.AddMinutes(test.TimeSpan);
@@ -152,7 +152,7 @@ namespace AuthSystem.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(500, e.Message); 
+                return StatusCode(500, e.Message);
             }
         }
 

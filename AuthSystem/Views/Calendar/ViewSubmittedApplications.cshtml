@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@model List<AuthSystem.Models.TestApplication>
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "View | Test Applications";
+}
+@{
+    var groupedApplications = Model.OrderBy(u => u.UserId).GroupBy(u => u.UserId);
+}
+
+@foreach (var group in groupedApplications)
+{
+    var user = await UserManager.FindByIdAsync(group.Key);
+    var userName = user != null ? await UserManager.GetUserNameAsync(user) : "";
+    var firstName = user != null ? user.FirstName : "";
+    var lastName = user != null ? user.LastName : "";
+    var userMail = user != null ? user.Email : "";
+    <table class="table">
+
+        <thead>
+            <h5>Applicant Name: @firstName @lastName</h5>
+            <h6>Applicant Email : @userMail</h6>
+            <tr>
+                 <th>Test Name</th>
+                 <th>Bank Name</th>
+                 <th>Branch Name</th>
+                 <th>Branch Code</th>
+                 <th>Voucher Number</th>
+                <th>Voucher Photo</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var application in group)
+            {
+                <tr>
+                    <td>@application.Test.TestName </td>
+                   <td>@application.BankName</td>
+                   <td>@application.BranchName</td>
+                    <td>@application.BranchCode</td>
+                    <td>@application.VoucherNumber</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(application.VoucherPhotoPath))
+                        {
+                            <a href="@application.VoucherPhotoPath"  class="btn btn-primary">
+                                View Voucher
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (application.IsVerified == true)
+
+                        {
+
+                            <h4>Fee Verified</h4>
+
+                        }
+                        else if (application.IsVerified == false)
+                        
+                        {
+                            
+                          <h5>Dumped</h5>
+                        
+                        }
+                        else
+                        {
+
+                            <form asp-action="VerifyFee" asp-controller="Calendar" asp-route-testId="@application.Test.Id" asp-route-userId="@application.UserId" method="post">
+                                <input class="btn btn-success" type="submit" value="Verify" />
+                            </form>
+                            <form asp-action="DumpFee" asp-controller="Calendar" asp-route-testId="@application.Test.Id" asp-route-userId="@application.UserId" method="post">
+                                <input class="btn btn-danger" type="submit" value="Dump" />
+                            </form>
+                        }
+
+                    </td>
+                </tr>
+                    
+            }
+        </tbody>
+    </table>
+}

@@ -10,6 +10,6 @@ namespace AuthSystem.Models
         public string ApplicantName { get; set; }
         public string TestName { get; set; }
         public bool isPaid { get; set; }
-       
+
     }
 }

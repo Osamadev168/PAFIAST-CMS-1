@@ -1,5 +1,4 @@
 ﻿using AuthSystem.Areas.Identity.Data;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthSystem.Models
@@ -18,6 +17,8 @@ namespace AuthSystem.Models
         public string? BankName { get; set; }
         public string? BranchCode { get; set; }
         public string? BranchName { get; set; }
+        public string? VoucherPhotoPath { get; set; }
+
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         [ForeignKey("TestId")]
