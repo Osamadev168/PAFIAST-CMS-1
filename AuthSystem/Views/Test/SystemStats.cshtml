@@ -1,0 +1,38 @@
+﻿
+@{
+
+    ViewData["Title"] = "System Stats";
+}
+
+<head>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+</head>
+<table id="example" class="display table table-light table-hover table-striped" style="width:100%" >
+    <thead>
+        <tr>
+            <th>Session</th>
+            <th>Number of Tests</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+           
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Fall 2023</td>
+            <td>@ViewBag.TotalTests</td>
+            <td>12-06-2022</td>
+            <td>12-09-2022</td>
+            
+        </tr>
+        </tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<script>
+
+    $('#example').DataTable();
+
+</script>

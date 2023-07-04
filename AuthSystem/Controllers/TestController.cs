@@ -439,6 +439,15 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e.Message });
             }
         }
+        public IActionResult SystemStats() {
+
+            var tests = _test.Tests.ToList();
+            var totalTests = tests.Count;
+
+            ViewBag.TotalTests = totalTests;
+            return View(tests);
+        
+        }
 
     }
 }

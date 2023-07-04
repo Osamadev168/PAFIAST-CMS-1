@@ -17,11 +17,14 @@
     var firstName = user != null ? user.FirstName : "";
     var lastName = user != null ? user.LastName : "";
     var userMail = user != null ? user.Email : "";
+    var userPhoneNumber = user.PhoneNumber == null ? "NOT PROVIDED" : user.PhoneNumber;
+
     <table class="table">
 
         <thead>
             <h5>Applicant Name: @firstName @lastName</h5>
             <h6>Applicant Email : @userMail</h6>
+             <h7>Applicant Phone Number: @userPhoneNumber</h7>
             <tr>
                  <th>Test Name</th>
                  <th>Bank Name</th>
@@ -57,7 +60,7 @@
                             <h4>Fee Verified</h4>
 
                         }
-                        else if (application.IsVerified == false)
+                        else if (application.IsVerified == false && application.isRejected == true && application.IsPaid == true)
                         
                         {
                             

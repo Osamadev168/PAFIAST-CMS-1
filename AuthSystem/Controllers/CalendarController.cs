@@ -26,7 +26,7 @@ namespace AuthSystem.Controllers
                 TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
                 Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
                 TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
-                TestCalenders = _test.TestCalenders.Include(td => td.Test).Include(td => td.TestCenter).ToList(),
+                TestCalenders = _test.TestCalenders.Include(td => td.Test ).Include(td => td.TestCenter).ToList(),
             };
 
             var user = await _userManager.GetUserAsync(User);
@@ -85,7 +85,7 @@ namespace AuthSystem.Controllers
             var userId = user.Id;
 
             var TestApplications = _test.TestApplications
-                .Where(uc => uc.UserId == userId)
+                .Where(uc => uc.UserId == userId && uc.IsVerified == true)
                 .Include(uc => uc.Test)
                 .Include(uc => uc.Calendar).Include(uc => uc.Calendar.TestCenter)
                 .ToList();
@@ -145,7 +145,7 @@ namespace AuthSystem.Controllers
 
             var userId = user.Id;
             var appliedTests = _test.TestCalenders
-                .Where(tc => _test.TestApplications.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId))
+                .Where(tc => _test.TestApplications.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId && uc.IsVerified == true && uc.IsPaid == true))
                 .Include(tc => tc.Test)
                 .Include(tc => tc.TestCenter)
                 .ToList();
@@ -247,6 +247,8 @@ namespace AuthSystem.Controllers
                         appliedTest.BranchName = branchName;
                         appliedTest.BranchCode = branchCode;
                         appliedTest.IsPaid = true;
+                        appliedTest.isRejected = false;
+                        appliedTest.IsVerified = false;
 
                         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(voucherPhoto.FileName);
                         string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FeeVouchers");
@@ -319,6 +321,7 @@ namespace AuthSystem.Controllers
             {
                 var testApplication = _test.TestApplications.Where(w => w.TestId == testId && w.UserId == userId && w.IsPaid == true).FirstOrDefault();
                 testApplication.IsVerified = false;
+                testApplication.isRejected = true;
                 _test.SaveChanges();
                 return RedirectToAction("ViewSubmittedApplications");
             }

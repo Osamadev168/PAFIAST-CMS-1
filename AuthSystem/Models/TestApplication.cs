@@ -19,6 +19,8 @@ namespace AuthSystem.Models
         public string? BranchName { get; set; }
         public string? VoucherPhotoPath { get; set; }
 
+        public bool? isRejected { get; set; }
+
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         [ForeignKey("TestId")]
