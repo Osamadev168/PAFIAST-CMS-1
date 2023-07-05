@@ -5,21 +5,27 @@ namespace AuthSystem.Models
 {
     public class TestApplication
     {
+        public TestApplication()
+        {
+            IsPaid = false;
+            IsVerified = false;
+            IsRejected = false;
+        }
         public int Id { get; set; }
         public string UserId { get; set; }
         public int TestId { get; set; }
         public int? CalendarId { get; set; }
         public DateTime SelectionTime { get; set; }
         public string? CalenderToken { get; set; }
-        public bool? IsPaid { get; set; }
-        public bool? IsVerified { get; set; }
+        public bool? IsPaid { get; set; } = false;
+        public bool? IsVerified { get; set; } = false;
         public int? VoucherNumber { get; set; }
         public string? BankName { get; set; }
         public string? BranchCode { get; set; }
         public string? BranchName { get; set; }
         public string? VoucherPhotoPath { get; set; }
 
-        public bool? isRejected { get; set; }
+        public bool? IsRejected { get; set; } = false;
 
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }

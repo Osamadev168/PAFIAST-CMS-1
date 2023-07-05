@@ -15,6 +15,8 @@ namespace AuthSystem.Models
         public string CreatedBy { get; set; }
         public int Duration { get; set; }
         public int TimeSpan { get; set; }
+
+        public int SessionId { get; set; }
         public List<Test> TestList { get; set; }
         public List<Subject> Subjects { get; set; }
         public List<TestDetail> TestDetails { get; set; }

@@ -26,6 +26,7 @@ namespace AuthSystem.Controllers
         public IActionResult Test()
         {
             ViewBag.TestCenters = new SelectList(_test.TestCenters, "Id", "TestCenterName");
+            ViewBag.Session = new SelectList(_test.Sessions, "Id", "SessionName");
             var viewModel = new Test
             {
                 TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
@@ -39,7 +40,7 @@ namespace AuthSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan)
+        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan , int sessionId)
         {
             if (string.IsNullOrEmpty(testName))
             {
@@ -59,7 +60,7 @@ namespace AuthSystem.Controllers
             }
             else
             {
-                var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration };
+                var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration , SessionId = sessionId };
 
                 if (timeSpan <= 0)
                 {
@@ -439,15 +440,142 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e.Message });
             }
         }
-        public IActionResult SystemStats() {
+        public IActionResult SystemStats()
+        {
+            try
+            {
 
-            var tests = _test.Tests.ToList();
-            var totalTests = tests.Count;
+                var sessions = _test.Sessions.OrderBy(w => w.StartDate).ToList();
 
-            ViewBag.TotalTests = totalTests;
-            return View(tests);
+
+                return View(sessions);
+            }
+            catch (Exception e) {
+
+
+                return Json(new { Error = e.Message });
+            }
+        }
+
+        public IActionResult SessionTests(int sessionId)
+        {
+
+
+            try
+            {
+                var viewModel = new Test
+                {
+                    TestList = _test.Tests.OrderByDescending(q => q.Id).Where(w=> w.SessionId == sessionId).ToList(),
+                    Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
+                    TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
+                    TestCalenders = _test.TestCalenders.Include(td => td.Test).Include(td => td.TestCenter).ToList()
+                };
+
+                return View(viewModel);
+            }
+
+            catch (Exception e) {
+
+                return Json(new { Erorr = e.Message });
+            
+            }
+
+        
         
         }
+        public IActionResult ApplicantsDetails(int testId)
+        {
+            try
+            {
+                var testApplications = _test.TestApplications.Where(w => w.TestId == testId).ToList();
+                var userIds = testApplications.Select(ta => ta.UserId).ToList();
+
+                var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                return View(applicants);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public IActionResult UnpaidApplicantsDetails(int testId)
+        {
+            try
+            {
+                var testApplications = _test.TestApplications.Where(w => w.TestId == testId && w.IsPaid == false && w.IsVerified == false).ToList();
+                var userIds = testApplications.Select(ta => ta.UserId).ToList();
+
+                var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                return View(applicants);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public IActionResult VerifiedApplicantsDetails(int testId)
+        {
+            try
+            {
+                var testApplications = _test.TestApplications.Where(w => w.TestId == testId && w.IsVerified == true).ToList();
+                var userIds = testApplications.Select(ta => ta.UserId).ToList();
+
+                var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                return View(applicants);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public IActionResult UnVerifiedApplicantsDetails(int testId)
+        {
+            try
+            {
+                var testApplications = _test.TestApplications.Where(w => w.TestId == testId && w.IsPaid == true && w.IsVerified == false).ToList();
+                var userIds = testApplications.Select(ta => ta.UserId).ToList();
+
+                var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                return View(applicants);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public IActionResult NonSelectedTestCenters(int testId)
+        {
+            try
+            {
+                var testApplications = _test.TestApplications.Where(w => w.TestId == testId && w.IsPaid == true && w.IsVerified == true  && w.CalendarId == null).ToList();
+                var userIds = testApplications.Select(ta => ta.UserId).ToList();
+
+                var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                return View(applicants);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public IActionResult SelectedTestCenters(int testId)
+        {
+            try
+            {
+                var testApplications = _test.TestApplications.Where(w => w.TestId == testId && w.IsPaid == true && w.IsVerified == true && w.CalendarId != null).ToList();
+                var userIds = testApplications.Select(ta => ta.UserId).ToList();
+
+                var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                return View(applicants);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
 
     }
 }

@@ -1,0 +1,98 @@
+﻿@model AuthSystem.Models.Test;
+@inject AuthSystem.Data.AuthDbContext _test;
+@{
+
+    ViewData["Title"] = "Tests Stats";
+}
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+</head>
+<div style="background-color : lavender">
+    <table id="example" class="display table table-light table-hover table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Test Name</th>
+                <th>Total Calendars</th>
+                <th>Total Applicants</th>
+                <th>No of Verified Applicants</th>
+                <th>Unpaid Applicants</th>
+                <th>UnVerified Applicants</th>
+                <th>Number of Non-Selected Center</th>
+                <th>Number of Selected Centers</th>
+                <th>Composition</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var test in Model.TestList)
+            {
+                var totalApplicants = _test.TestApplications.Where(w => w.TestId == test.Id).Count();
+                var unpaidApplicants = _test.TestApplications.Where(w => w.TestId == test.Id && w.IsPaid == false && w.IsVerified == false && w.IsRejected == false).Count();
+                var unVerifiedApplicants = _test.TestApplications.Where(w => w.TestId == test.Id && w.IsPaid == true && w.IsVerified == false).Count();
+                var verifiedApplicants = _test.TestApplications.Where(w => w.TestId == test.Id && w.IsVerified == true).Count();
+                var selectedCenterApplicants = _test.TestApplications.Where(w => w.TestId == test.Id  && w.IsVerified == true && w.CalendarId != null).Count();
+                var nonSelectionCenter = _test.TestApplications.Where(w => w.TestId == test.Id && w.IsPaid == true && w.IsVerified == true && w.CalendarId == null).Count();
+                var totalCalendars = _test.TestCalenders.Where(w => w.TestId == test.Id).Count();
+                <tr>
+                    <td>@test.TestName</td>
+                    <td>@totalCalendars</td>
+                    <td>
+                        <a class="btn btn-success" asp-action="ApplicantsDetails" asp-controller="Test" asp-route-testId="@test.Id">@totalApplicants</a>
+                    </td>
+                    <td><a class="btn btn-primary" asp-action="VerifiedApplicantsDetails" asp-controller="Test" asp-route-testId="@test.Id">@verifiedApplicants</a></td>
+                    @if (totalApplicants != 0)
+                    {
+                        <td><a class="btn btn-danger" asp-action="UnpaidApplicantsDetails" asp-controller="Test" asp-route-testId="@test.Id">@unpaidApplicants</a></td>
+                    }
+                    else
+                    {
+                        <td>------</td>
+                    }
+                    @if (totalApplicants != 0)
+                    {
+                        <td><a class="btn btn-outline-primary" asp-action="UnVerifiedApplicantsDetails" asp-controller="Test" asp-route-testId="@test.Id">@unVerifiedApplicants</a></td>
+                    }
+                    else
+                    {
+                        <td>------</td>
+                    }
+                    @if (totalApplicants != 0)
+                    {
+                        <td><a class="btn btn-warning" asp-action="NonSelectedTestCenters" asp-controller="Test" asp-route-testId="@test.Id">@nonSelectionCenter</a></td>
+
+                    }
+                    else
+                    {
+                        <td>------</td>
+                    }
+                    @if (totalApplicants != 0)
+                    {
+                        <td><a class="btn btn-outline-success" asp-action="SelectedTestCenters" asp-controller="Test" asp-route-testId="@test.Id">@selectedCenterApplicants</a></td>
+
+                    }
+                    else
+                    {
+                        <td>------</td>
+                    }
+                 
+                    <td>
+                        @foreach (var subject in test.TestDetails)
+                        {
+                            <strong>
+                                @subject.Subject.SubjectName
+                                @subject.Percentage%
+                            </strong>
+                        }
+                    </td>
+                    <td>@test.Duration Minutes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+    $('#example').DataTable();
+</script>

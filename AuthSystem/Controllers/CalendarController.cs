@@ -247,7 +247,7 @@ namespace AuthSystem.Controllers
                         appliedTest.BranchName = branchName;
                         appliedTest.BranchCode = branchCode;
                         appliedTest.IsPaid = true;
-                        appliedTest.isRejected = false;
+                        appliedTest.IsRejected = false;
                         appliedTest.IsVerified = false;
 
                         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(voucherPhoto.FileName);
@@ -321,7 +321,7 @@ namespace AuthSystem.Controllers
             {
                 var testApplication = _test.TestApplications.Where(w => w.TestId == testId && w.UserId == userId && w.IsPaid == true).FirstOrDefault();
                 testApplication.IsVerified = false;
-                testApplication.isRejected = true;
+                testApplication.IsRejected = true;
                 _test.SaveChanges();
                 return RedirectToAction("ViewSubmittedApplications");
             }

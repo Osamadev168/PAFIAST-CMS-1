@@ -9,6 +9,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Session</th>
                         <th>Composition</th>
                         <th>Duration</th>
                         <th>Action</th>
@@ -24,14 +25,16 @@
                 var isApplied = test.Id == testID;
                 var feeVerified = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsVerified;
                 var isPaid = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsPaid;
-                var isRejected  = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.isRejected;
+                var isRejected  = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsRejected;
                 var branchCode = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.BranchCode;
                 var bankName = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.BankName;
                 var branchName = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.BranchName;
                 var voucherNumber = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.VoucherNumber;
+                var sessionName = _test.Sessions.Where(w => w.Id == test.SessionId).FirstOrDefault()?.SessionName;
                 var calendarsContainerId = $"calendarsContainer_{test.Id}";
                 <tr>
                     <td>@test.TestName</td>
+                    <td>@sessionName</td>   
                     <td>
                         @if (test.TestDetails != null)
                         {
@@ -57,7 +60,7 @@
                             <button id="@applyButtonId" class="btn btn-primary" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
                             @if (test.Id == testID)
                             {
-                                if (feeVerified == null || isPaid == true && feeVerified == false   )
+                                if (feeVerified == false || isPaid == true && feeVerified == false   )
                                 
                                 {
                                     <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity.Name })')">Print Fee Voucher</a>
