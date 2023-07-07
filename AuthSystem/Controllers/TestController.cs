@@ -491,6 +491,8 @@ namespace AuthSystem.Controllers
                 var userIds = testApplications.Select(ta => ta.UserId).ToList();
 
                 var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                var testName = _test.Tests.Where(w => w.Id == testId).FirstOrDefault().TestName;
+                ViewBag.TestName = testName;
                 return View(applicants);
             }
             catch (Exception)
@@ -506,6 +508,8 @@ namespace AuthSystem.Controllers
                 var userIds = testApplications.Select(ta => ta.UserId).ToList();
 
                 var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                var testName = _test.Tests.Where(w => w.Id == testId).FirstOrDefault().TestName;
+                ViewBag.TestName = testName;
                 return View(applicants);
             }
             catch (Exception)
@@ -521,6 +525,8 @@ namespace AuthSystem.Controllers
                 var userIds = testApplications.Select(ta => ta.UserId).ToList();
 
                 var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                var testName = _test.Tests.Where(w => w.Id == testId).FirstOrDefault().TestName;
+                ViewBag.TestName = testName;
                 return View(applicants);
             }
             catch (Exception)
@@ -536,6 +542,8 @@ namespace AuthSystem.Controllers
                 var userIds = testApplications.Select(ta => ta.UserId).ToList();
 
                 var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                var testName = _test.Tests.Where(w => w.Id == testId).FirstOrDefault().TestName;
+                ViewBag.TestName = testName;
                 return View(applicants);
             }
             catch (Exception)
@@ -552,6 +560,8 @@ namespace AuthSystem.Controllers
                 var userIds = testApplications.Select(ta => ta.UserId).ToList();
 
                 var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                var testName = _test.Tests.Where(w => w.Id == testId).FirstOrDefault().TestName;
+                ViewBag.TestName = testName;
                 return View(applicants);
             }
             catch (Exception)
@@ -567,6 +577,8 @@ namespace AuthSystem.Controllers
                 var userIds = testApplications.Select(ta => ta.UserId).ToList();
 
                 var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
+                var testName = _test.Tests.Where(w => w.Id == testId).FirstOrDefault().TestName;
+                ViewBag.TestName = testName;
                 return View(applicants);
             }
             catch (Exception)

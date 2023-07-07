@@ -10,34 +10,38 @@
 <head>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
 </head>
-<table id="example" class="display table table-light table-hover table-striped" style="width:100%">
-    <thead>
-        <tr>
-            <th>Applicant Name</th>
-            <th>Applicant Email</th>
-            <th>Applicant Phone Number</th>
-
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var applicant in Model)
-        {
+<body style="background-color: whitesmoke">
+    <h2 style="font-family: 'Times New Roman', Times, serif; color:cadetblue">Total applicants for: @ViewBag.TestName</h2>
+    <table id="example" class="display table table-light table-hover table-striped" style="width:100%">
+        <thead>
             <tr>
-                <td>@applicant.FirstName @applicant.LastName</td>
-                <td>@applicant.Email</td>
-                <td>@applicant.PhoneNumber</td>
+                <th>Applicant Name</th>
+                <th>Applicant Email</th>
+                <th>Applicant Phone Number</th>
+
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var applicant in Model)
+            {
+                <tr>
+                    <td>@applicant.FirstName @applicant.LastName</td>
+                    <td>@applicant.Email</td>
+                    <td>@applicant.PhoneNumber</td>
+                </tr>
 
-        }
+            }
 
 
 
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
+
+</body>
 <script>
 
     $('#example').DataTable();

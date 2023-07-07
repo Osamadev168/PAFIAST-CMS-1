@@ -1,0 +1,53 @@
+﻿@model List<AuthSystem.Models.TestApplication>
+@inject AuthSystem.Data.AuthDbContext _test;
+@{
+    ViewData["Title"] = "My Applications";
+
+}
+<h4>My Applications</h4>
+<p>Total Applications so far: @Model.Count</p>
+@foreach (var application in Model)
+      {
+        string testCenterName;
+        string startTime;
+        string centerLocation;
+        string endTime;
+        string testDate;
+    if (application.Calendar != null)
+    {
+              testCenterName = _test.TestCenters.Where(w => w.Id == application.Calendar.TestCenterId).FirstOrDefault()?.TestCenterName;
+              centerLocation = _test.TestCenters.Where(w => w.Id == application.Calendar.TestCenterId).FirstOrDefault()?.TestCenterLocation;
+              startTime = application.Calendar.StartTime.ToString();
+              endTime = application.Calendar.StartTime.AddMinutes(application.Test.Duration).ToString();
+              testDate = application.Calendar.Date.ToString("D");
+
+
+    }
+        else
+        {
+                testCenterName = "Not Selected!";
+                startTime = "N/A";
+                endTime = "N/A";
+                centerLocation = "N/A";
+         testDate = "N/A";
+    }
+        <div style="border: 2px solid #000;border-radius: 10px;padding: 20px;background-color: #f2f2f2;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); font-family : Georgia, 'Times New Roman', Times, serif">
+            <p>Application Id: @application.Id</p>
+            <p>Test: <strong>@application.Test.TestName</strong></p>
+            <p>Test Duration: @(application.Test.Duration >= 60 ? (application.Test.Duration / 60) + " hour(s)" : application.Test.Duration + " minutes")</p>
+            <p>Test Center: @testCenterName</p>
+            <p>Test Center Location: @centerLocation</p>
+             <p>Test Date: @testDate</p>
+            <p>Start Time: @startTime</p>
+            <p>End Time: @endTime</p>
+            <h5 style="text-decoration: underline;">Test Composition</h5>
+            @foreach (var testDetail in application.Test.TestDetails)
+            {
+                foreach (var subject in _test.Subjects.Where(w => w.SubjectId == testDetail.SubjectId).ToList())
+                {
+                    <p>@subject.SubjectName @testDetail.Percentage%</p>
+                }
+            }
+           <hr />
+        </div>
+}

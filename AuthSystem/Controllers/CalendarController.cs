@@ -4,6 +4,7 @@ using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace AuthSystem.Controllers
 {
@@ -44,7 +45,7 @@ namespace AuthSystem.Controllers
         }
 
 
-        public async Task<IActionResult> SelectTest(int testId, string UserId)
+        public IActionResult SelectTest(int testId, string UserId)
         {
 
 
@@ -100,40 +101,40 @@ namespace AuthSystem.Controllers
         }
         public IActionResult PrintVoucher(int testId, string testName, string applicantName)
         {
-
             try
             {
-
                 var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
                 if (test != null)
                 {
+                    var existingVoucher = _test.FeeVoucher.Where(w => w.ApplicantName == applicantName && w.TestName == testName && w.TestId == testId && w.isPaid == true).FirstOrDefault();
+                    if (existingVoucher != null)
+                    {
+                        return View("PrintVoucher", existingVoucher);
+                    }
 
                     var feeVoucher = new Models.FeeVoucher
                     {
-
                         TestName = test.TestName,
                         Amount = 5000,
                         ApplicantName = applicantName,
-                        isPaid = true
-
-
+                        isPaid = true,
+                         TestId = testId
                     };
+
                     _test.FeeVoucher.Add(feeVoucher);
                     _test.SaveChanges();
+
                     return View("PrintVoucher", feeVoucher);
                 }
+
                 return NotFound();
             }
             catch (Exception e)
             {
-
                 return Json(new { Error = e.Message });
-
-
             }
-
-
         }
+
         public async Task<IActionResult> SelectCalendar()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -145,7 +146,7 @@ namespace AuthSystem.Controllers
 
             var userId = user.Id;
             var appliedTests = _test.TestCalenders
-                .Where(tc => _test.TestApplications.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId && uc.IsVerified == true && uc.IsPaid == true))
+                .Where(tc => _test.TestApplications.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId && uc.IsVerified == true))
                 .Include(tc => tc.Test)
                 .Include(tc => tc.TestCenter)
                 .ToList();
@@ -330,6 +331,71 @@ namespace AuthSystem.Controllers
             {
                 return Json(new { Error = e.Message });
             }
+        }
+
+
+        public IActionResult SendCenterChangeRequest(int testId , string userId , int PreCalendarId ,string PreCalendarToken ,int NewCalendarId ,string NewCalendarToken  , string PreCenterName , string NewCenterName) {
+
+
+            try
+            {
+                var centerChangeRequest = new CenterChangeRequest
+                {
+
+
+                     TestId = testId,
+                     UserId = userId,
+                     PreCalendarId = PreCalendarId,
+                     PreCalendarToken = PreCalendarToken,
+                     DesiredCalendarId = NewCalendarId,
+                     DesiredCalendarToken = NewCalendarToken,
+                     PreCenterName = PreCenterName,
+                     DesiredCenterName = NewCenterName,
+
+
+                };
+
+                _test.CenterChangeRequests.Add(centerChangeRequest);
+                _test.SaveChanges();
+                return RedirectToAction("SelectCalendar");
+
+            }
+            catch (Exception e) {
+
+                return Json(new { Error = e.Message });
+            }
+        
+        
+        }
+        public IActionResult CenterChangeRequests() 
+        {
+            try
+            {
+                var centerChangeRequests = _test.CenterChangeRequests.ToList();
+                return View("CenterChangeRequests" , centerChangeRequests);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+        public IActionResult HandleCenterChange() {
+
+
+            try
+            {
+                return View("CenterChangeRequests");
+            }
+
+            catch (Exception e) {
+
+
+                return Json(new { Error = e.Message });
+            
+            
+            }        
+        
+        
         }
 
 

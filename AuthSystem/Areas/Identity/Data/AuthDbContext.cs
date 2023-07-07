@@ -29,6 +29,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<FeeVoucher> FeeVoucher { get; set; }
     public DbSet<AdmitCard> AdmitCards { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<CenterChangeRequest> CenterChangeRequests { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<AssignedQuestions>()

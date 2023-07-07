@@ -19,7 +19,9 @@ namespace AuthSystem.Models
         public string? CalenderToken { get; set; }
         public bool? IsPaid { get; set; } = false;
         public bool? IsVerified { get; set; } = false;
-        public int? VoucherNumber { get; set; }
+        public bool? HasChangedCenter { get; set; } = false;
+/*         public int? TestCenterId { get; set; }
+*/        public int? VoucherNumber { get; set; }
         public string? BankName { get; set; }
         public string? BranchCode { get; set; }
         public string? BranchName { get; set; }

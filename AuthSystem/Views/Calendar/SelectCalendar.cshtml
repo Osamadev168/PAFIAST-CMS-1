@@ -34,6 +34,10 @@
                         </tr>
                     }
                     var CalendarID = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.CalendarId;
+                    var CalendarToken = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.CalenderToken;
+                    var HasSelected = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.CalendarId != null;
+                    var HasSelectedAgain = _test.CenterChangeRequests.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId && t.DesiredCalendarId == userCalendar.Id).Any();
+
                     <tr>
                         <td>@userCalendar.Date.ToString("D")</td>
                         <td>@userCalendar.StartTime</td>
@@ -41,17 +45,53 @@
                         <td>@userCalendar.TestCenter.TestCenterName</td>
                         <td>@userCalendar.TestCenter.TestCenterLocation</td>
                         <td>
-                            <form method="post" asp-controller="Calendar" asp-action="SelectCalendarUser" asp-route-testId="@userCalendar.Test.Id" asp-route-calendarId="@userCalendar.Id" asp-route-calendarToken="@userCalendar.CalendarToken">
-                                @if (userCalendar.Id == CalendarID)
-                                {
-                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = userCalendar.Test.TestName, applicantName = User.Identity.Name , date = userCalendar.Date , centerName = userCalendar.TestCenter.TestCenterName , centerLocation = userCalendar.TestCenter.TestCenterLocation , startTime = userCalendar.StartTime , endTime = userCalendar.EndTime})')">Print Admit Card</a>
-                                    
-                                }
-                                else
-                                {
-                                    <button class="btn btn-success" type="submit">Select Calendar</button>
-                                }
-                            </form>
+                            @if (HasSelected == false)
+                            {
+                                <form method="post" asp-controller="Calendar" asp-action="SelectCalendarUser" asp-route-testId="@userCalendar.Test.Id" asp-route-calendarId="@userCalendar.Id" asp-route-calendarToken="@userCalendar.CalendarToken">
+                                    @if (userCalendar.Id == CalendarID)
+                                    {
+                                        <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = userCalendar.Test.TestName, applicantName = User.Identity.Name , date = userCalendar.Date , centerName = userCalendar.TestCenter.TestCenterName , centerLocation = userCalendar.TestCenter.TestCenterLocation , startTime = userCalendar.StartTime , endTime = userCalendar.EndTime})')">Print Admit Card</a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-success" type="submit">Select Calendar</button>
+                                    }
+                                </form>
+                            }
+                            else
+                            {
+                                var PreCenterId = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.Calendar.TestCenterId;
+                                var PreCenterName = _test.TestCenters.Where(t => t.Id == PreCenterId).FirstOrDefault()?.TestCenterName;
+                                var desiredCalendarId = _test.CenterChangeRequests.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId).FirstOrDefault()?.DesiredCalendarId;
+                                var Approved = _test.CenterChangeRequests.Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId ).FirstOrDefault()?.Approved;
+
+                                <form method="post" asp-controller="Calendar" asp-action="SendCenterChangeRequest" asp-route-testId="@userCalendar.Test.Id" asp-route-PreCalendarId="@CalendarID" asp-route-PreCalendarToken="@CalendarToken" asp-route-PreCenterName="@PreCenterName" asp-route-NewCenterName="@userCalendar.TestCenter.TestCenterName" asp-route-userId="@UserID" asp-route-NewCalendarId="@userCalendar.Id" asp-route-NewCalendarToken="@userCalendar.CalendarToken">
+                                    @if (userCalendar.Id == CalendarID)
+                                    {
+                                        <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = userCalendar.Test.TestName, applicantName = User.Identity.Name , date = userCalendar.Date , centerName = userCalendar.TestCenter.TestCenterName , centerLocation = userCalendar.TestCenter.TestCenterLocation , startTime = userCalendar.StartTime , endTime = userCalendar.EndTime})')">Print Admit Card</a>
+                                    }
+                                    else
+                                    {
+                                        if (HasSelectedAgain)
+                                        {
+                                            <h1>Request Under Review</h1>
+                                        }
+                                        else if (desiredCalendarId == userCalendar.Id)
+                                        {
+                                            <h1>Request Under Review</h1>
+                                        }
+                                        else if (Approved== true)
+                                        
+                                        {
+
+                                            <button class="btn btn-success" type="submit">Change Center</button>
+
+
+                                        }
+                                        
+                                    }
+                                </form>
+                            }
                         </td>
                     </tr>
                 }

@@ -63,7 +63,7 @@
                                 if (feeVerified == false || isPaid == true && feeVerified == false   )
                                 
                                 {
-                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity.Name })')">Print Fee Voucher</a>
+                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity.Name, testName = test.TestName })')">Print Fee Voucher</a>
                                     <a class="btn btn-outline-info" data-form-container="feeFormContainer_@test.Id">Submit Paid Fee Details</a>
                                     <a class="btn btn-info">Pay Online</a>
 
@@ -79,9 +79,7 @@
                                 else if (isPaid == true && feeVerified == false && isRejected == true)
                                 {
                                     <button class="btn btn-danger" disabled>Rejected</button>
-                                }
-                                
-                              
+                                }                            
                             }
                         </form>
                         @if (test.Id == testID)

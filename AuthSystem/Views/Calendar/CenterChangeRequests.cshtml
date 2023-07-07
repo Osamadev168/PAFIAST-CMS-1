@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@model List<CenterChangeRequest>;
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Center Change Requests";
+    var groupedRequests = Model.GroupBy(request => request.UserId);
+}
+
+<h1>Requests for changing centers</h1>
+
+@foreach (var group in groupedRequests)
+{
+    var applicant = await UserManager.FindByIdAsync(group.Key);
+    var applicantName = applicant.FirstName + " " + applicant.LastName;
+    <h2>@applicantName</h2>
+    foreach (var request in group)
+    {
+        <h3>Previous Center: @request.PreCenterName</h3>
+        <h3>Desired Center: @request.DesiredCenterName</h3>
+        @* <h3>@request.PreCalendarId</h3>
+        <h3>@request.DesiredCalendarId</h3> *@
+        <h6>Request Id: @request.Id</h6>
+        <a class="btn btn-success">Approve</a>
+        <a class="btn btn-danger">Reject</a>
+    }
+}
