@@ -4,8 +4,6 @@ using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
-
 namespace AuthSystem.Controllers
 {
     public class CalendarController : Controller
@@ -13,9 +11,8 @@ namespace AuthSystem.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AuthDbContext _test;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        public CalendarController(AuthDbContext test, UserManager<ApplicationUser> userManager , IWebHostEnvironment hostEnvironment)
+        public CalendarController(AuthDbContext test, UserManager<ApplicationUser> userManager, IWebHostEnvironment hostEnvironment)
         {
-
             _test = test;
             _userManager = userManager;
             _hostingEnvironment = hostEnvironment;
@@ -27,48 +24,28 @@ namespace AuthSystem.Controllers
                 TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
                 Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
                 TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
-                TestCalenders = _test.TestCalenders.Include(td => td.Test ).Include(td => td.TestCenter).ToList(),
+                TestCalenders = _test.TestCalenders.Where(t => t.Date.Day >= DateTime.UtcNow.Day).Include(td => td.Test).Include(td => td.TestCenter).ToList(),
             };
-
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                /*viewModel.TestApplications = _test.TestApplications
-                    .Where(uc => uc.UserId == user.Id)
-                    .ToList();*/
                 var userId = user.Id;
                 ViewBag.UserId = userId;
-
-
             }
             return View(viewModel);
         }
-
-
         public IActionResult SelectTest(int testId, string UserId)
         {
-
-
-            /*if (user == null)
-            {
-                return NotFound("User not found");
-            }*/
-
             var userId = UserId;
-
             var existingUserCalendar = _test.TestApplications.FirstOrDefault(uc => uc.UserId == userId && uc.TestId == testId);
-
             if (existingUserCalendar == null)
             {
                 _test.TestApplications.Add(new TestApplication
                 {
                     UserId = userId,
                     TestId = testId,
-
                     SelectionTime = DateTime.Now,
-
                 });
-
                 _test.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -77,14 +54,11 @@ namespace AuthSystem.Controllers
         public async Task<IActionResult> TestApplications()
         {
             var user = await _userManager.GetUserAsync(User);
-
             if (user == null)
             {
                 return Content("User not found");
             }
-
             var userId = user.Id;
-
             var TestApplications = _test.TestApplications
                 .Where(uc => uc.UserId == userId && uc.IsVerified == true)
                 .Include(uc => uc.Test)
@@ -92,9 +66,7 @@ namespace AuthSystem.Controllers
                 .ToList();
             if (TestApplications != null)
             {
-
                 return View(TestApplications);
-
             }
             return Content("<h1>No Calendars Available</h1>");
 
@@ -111,22 +83,18 @@ namespace AuthSystem.Controllers
                     {
                         return View("PrintVoucher", existingVoucher);
                     }
-
                     var feeVoucher = new Models.FeeVoucher
                     {
                         TestName = test.TestName,
                         Amount = 5000,
                         ApplicantName = applicantName,
                         isPaid = true,
-                         TestId = testId
+                        TestId = testId
                     };
-
                     _test.FeeVoucher.Add(feeVoucher);
                     _test.SaveChanges();
-
                     return View("PrintVoucher", feeVoucher);
                 }
-
                 return NotFound();
             }
             catch (Exception e)
@@ -134,29 +102,24 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e.Message });
             }
         }
-
         public async Task<IActionResult> SelectCalendar()
         {
             var user = await _userManager.GetUserAsync(User);
-
             if (user == null)
             {
                 return Content("User not found");
             }
-
             var userId = user.Id;
             var appliedTests = _test.TestCalenders
-                .Where(tc => _test.TestApplications.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId && uc.IsVerified == true))
+                .Where(tc => _test.TestApplications.Any(uc => uc.UserId == userId && uc.TestId == tc.TestId && uc.IsVerified == true) && tc.Date.Day >= DateTime.UtcNow.Day)
                 .Include(tc => tc.Test)
                 .Include(tc => tc.TestCenter)
                 .ToList();
-
             if (appliedTests.Count > 0)
             {
                 ViewBag.UserID = userId;
                 return View("SelectCalendar", appliedTests);
             }
-
             return View("NoCalendars");
         }
         [HttpPost]
@@ -193,10 +156,8 @@ namespace AuthSystem.Controllers
         }
         public IActionResult PrintAdmitCard(string testName, DateOnly date, TimeOnly startTime, TimeOnly endTime, string applicantName, string centerName, string centerLocation)
         {
-
             try
             {
-
                 var admitCard = new AdmitCard
                 {
 
@@ -207,36 +168,26 @@ namespace AuthSystem.Controllers
                     Date = date,
                     StartTime = startTime,
                     EndTime = endTime
-
-
                 };
                 _test.AdmitCards.Add(admitCard);
                 _test.SaveChanges();
                 return View("AdmitCard", admitCard);
-
             }
-
             catch (Exception e)
             {
-
                 return Json(new { Error = e.Message });
 
             }
-
-
         }
-        public async Task<IActionResult> SubmitFeeDetails(int testId, int voucherNumber, string bankName, string branchName, string branchCode , IFormFile voucherPhoto)
+        public async Task<IActionResult> SubmitFeeDetails(int testId, int voucherNumber, string bankName, string branchName, string branchCode, IFormFile voucherPhoto)
         {
-
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-
                 if (user == null)
                 {
                     return Content("User not found");
                 }
-
                 var userId = user.Id;
                 var appliedTest = _test.TestApplications.FirstOrDefault(q => q.UserId == userId && q.TestId == testId);
 
@@ -261,143 +212,148 @@ namespace AuthSystem.Controllers
                         {
                             await voucherPhoto.CopyToAsync(fileStream);
                         }
-
                         appliedTest.VoucherPhotoPath = Path.Combine("\\FeeVouchers", fileName);
-
                         _test.SaveChanges();
-
                     }
                 }
-
                 return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult ViewSubmittedApplications()
+        {
+            try
+            {
+                var testApplications = _test.TestApplications.Where(w => w.IsPaid == true).Include(tc => tc.Test).ToList();
+                return View(testApplications);
             }
             catch (Exception e)
             {
 
                 return Json(new { Error = e.Message });
 
-
             }
-
-
-        }
-        public IActionResult ViewSubmittedApplications()
-        {
-            
-            try
-            {
-
-                var testApplications = _test.TestApplications.Where(w=> w.IsPaid == true).Include(tc => tc.Test).ToList();
-
-                return View(testApplications);
-            }
-            catch (Exception e) {
-
-                return Json(new { Error = e.Message });
-            
-            }
-        
-        
         }
         [HttpPost]
-        public IActionResult VerifyFee(int testId , string userId) {
-
+        public IActionResult VerifyFee(int testId, string userId)
+        {
             try
             {
                 var testApplication = _test.TestApplications.Where(w => w.TestId == testId && w.UserId == userId && w.IsPaid == true).FirstOrDefault();
-                testApplication.IsVerified = true;
-                _test.SaveChanges();
+                if (testApplication != null) {
+
+                    testApplication.IsVerified = true;
+                    _test.SaveChanges();
+
+                }
                 return RedirectToAction("ViewSubmittedApplications");
-            
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 return Json(new { Error = e.Message });
             }
-        
-        
         }
         public IActionResult DumpFee(int testId, string userId)
         {
             try
             {
                 var testApplication = _test.TestApplications.Where(w => w.TestId == testId && w.UserId == userId && w.IsPaid == true).FirstOrDefault();
-                testApplication.IsVerified = false;
-                testApplication.IsRejected = true;
-                _test.SaveChanges();
+                if (testApplication != null) {
+
+                    testApplication.IsVerified = false;
+                    testApplication.IsRejected = true;
+                    _test.SaveChanges();
+
+                }
                 return RedirectToAction("ViewSubmittedApplications");
             }
-
             catch (Exception e)
             {
                 return Json(new { Error = e.Message });
             }
         }
-
-
-        public IActionResult SendCenterChangeRequest(int testId , string userId , int PreCalendarId ,string PreCalendarToken ,int NewCalendarId ,string NewCalendarToken  , string PreCenterName , string NewCenterName) {
-
-
+        public IActionResult SendCenterChangeRequest(int testId, string userId, int newCalendarId)
+        {
             try
             {
+                var existingRequest = _test.CenterChangeRequests.FirstOrDefault(r => r.TestId == testId && r.UserId == userId && r.Approved == false);
+                if (existingRequest != null)
+                {
+                    return Json(new { Message = "Request already exists!" });
+                }
                 var centerChangeRequest = new CenterChangeRequest
                 {
-
-
-                     TestId = testId,
-                     UserId = userId,
-                     PreCalendarId = PreCalendarId,
-                     PreCalendarToken = PreCalendarToken,
-                     DesiredCalendarId = NewCalendarId,
-                     DesiredCalendarToken = NewCalendarToken,
-                     PreCenterName = PreCenterName,
-                     DesiredCenterName = NewCenterName,
-
-
+                    TestId = testId,
+                    UserId = userId,
+                    DesiredCalendarId = newCalendarId,
                 };
 
                 _test.CenterChangeRequests.Add(centerChangeRequest);
                 _test.SaveChanges();
+
                 return RedirectToAction("SelectCalendar");
-
-            }
-            catch (Exception e) {
-
-                return Json(new { Error = e.Message });
-            }
-        
-        
-        }
-        public IActionResult CenterChangeRequests() 
-        {
-            try
-            {
-                var centerChangeRequests = _test.CenterChangeRequests.ToList();
-                return View("CenterChangeRequests" , centerChangeRequests);
             }
             catch (Exception e)
             {
                 return Json(new { Error = e.Message });
             }
         }
-        public IActionResult HandleCenterChange() {
-
-
+        public IActionResult CenterChangeRequests()
+        {
             try
             {
-                return View("CenterChangeRequests");
+                var centerChangeRequests = _test.CenterChangeRequests.Where(w => w.Approved == false).ToList();
+                return View("CenterChangeRequests", centerChangeRequests);
             }
-
-            catch (Exception e) {
-
-
+            catch (Exception e)
+            {
                 return Json(new { Error = e.Message });
-            
-            
-            }        
-        
-        
+            }
         }
-
+        [HttpPost]
+        public IActionResult HandleCenterChange(string userId, int testId, int calendarId, string calendarToken)
+        {
+            try
+            {
+                var testApplication = _test.TestApplications.FirstOrDefault(w => w.TestId == testId && w.UserId == userId);
+                var request = _test.CenterChangeRequests.FirstOrDefault(w => w.TestId == testId && w.UserId == userId && w.DesiredCalendarId == calendarId && w.Approved == false);
+                if (testApplication != null && request != null)
+                {
+                    testApplication.CalendarId = calendarId;
+                    testApplication.CalenderToken = calendarToken;
+                    testApplication.HasChangedCenter = true;
+                    request.Approved = true;
+                    _test.CenterChangeRequests.Remove(request);
+                    _test.SaveChanges();
+                }
+                return RedirectToAction("CenterChangeRequests");
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+        public IActionResult HandleCenterReject(int testId, string userId, int calendarId)
+        {
+            try
+            {
+                var request = _test.CenterChangeRequests.FirstOrDefault(w => w.TestId == testId && w.UserId == userId && w.DesiredCalendarId == calendarId && w.Approved == false);
+                if (request != null)
+                {
+                    _test.CenterChangeRequests.Remove(request);
+                    _test.SaveChanges();
+                }
+                return RedirectToAction("CenterChangeRequests");
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
 
 
     }

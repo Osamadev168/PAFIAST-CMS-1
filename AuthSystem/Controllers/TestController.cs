@@ -143,10 +143,7 @@ namespace AuthSystem.Controllers
                     return NotFound();
                 }
 
-                if (startTime == null)
-                {
-                    return BadRequest("Invalid start time");
-                }
+              
 
                 var testEndTime = startTime.AddMinutes(test.TimeSpan);
                 return Content(testEndTime.ToString());
