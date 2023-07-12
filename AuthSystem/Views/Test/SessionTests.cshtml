@@ -32,10 +32,9 @@
                 var verifiedApplicants = _test.TestApplications.Where(w => w.TestId == test.Id && w.IsVerified == true).Count();
                 var selectedCenterApplicants = _test.TestApplications.Where(w => w.TestId == test.Id  && w.IsVerified == true && w.CalendarId != null).Count();
                 var nonSelectionCenter = _test.TestApplications.Where(w => w.TestId == test.Id && w.IsPaid == true && w.IsVerified == true && w.CalendarId == null).Count();
-                var totalCalendars = _test.TestCalenders.Where(w => w.TestId == test.Id).Count();
                 <tr>
                     <td>@test.TestName</td>
-                    <td>@totalCalendars</td>
+                    <td>@test.TestCalenders.Count</td>
                     <td>
                         <a class="btn btn-success" asp-action="ApplicantsDetails" asp-controller="Test" asp-route-testId="@test.Id">@totalApplicants</a>
                     </td>

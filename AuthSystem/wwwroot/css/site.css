@@ -18,7 +18,53 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    padding-top: 30px; /* Height of the fixed navbar */
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Ensure the sidebar stays on top of the content */
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Enable scrolling if the content overflows */
+    background-color: #f8f9fa;
+}
+
+    .sidebar .nav-link {
+        padding: 10px;
+    }
+
+.main-content {
+    margin-left: 300px; /* Same as the width of the sidebar */
+    padding: 25px;
+}
+
+@media (max-width: 767.98px) {
+    .sidebar {
+        position: fixed;
+        top: 100px;
+        bottom: 0;
+        left: -250px;
+        z-index: 100;
+        width: 250px;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        transition: left 0.3s ease-in-out;
+        background-color: #f8f9fa;
+    }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+    .main-content {
+        margin-left: 0;
+        padding: 25px;
+    }
 }
 
 /*tab navigation*/
@@ -96,8 +142,10 @@ body {
 }
 
 .nav-link:hover {
-    background-color: navajowhite;
+    background-color: lavender;
     cursor: pointer;
+    color : darkslateblue;
+    border-radius : 10px
 }
 
 .question-type  {
@@ -243,4 +291,21 @@ font-weight : bold;
     100% {
         transform: rotate(180deg);
     }
+}
+.logo-image {
+    height: 40px;
+    width: 40px;
+    border-radius: 30px;
+}
+
+    .logo-image:hover {
+        transform: rotateY(20deg);
+        transition: height 0.3s ease-in-out, transform 0.9s ease-in-out;
+        opacity: 0.8;
+    }
+
+.navbar-color {
+
+    background-color : midnightblue;
+    border-radius : 0px 0px 15px 15px
 }

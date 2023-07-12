@@ -111,20 +111,31 @@ namespace AuthSystem.Controllers
                 string token = Convert.ToBase64String(randomBytes);
                 string tokenValue = Convert.ToBase64String(randomBytes);
                 calendarToken.ToInt();
-                var calendar = new TestCalenders
+                var existingCalendar = _test.TestCalenders.Where(c => c.StartTime == startTime && c.TestCenterId == centerId && c.Date == date).FirstOrDefault();
+                if (existingCalendar == null)
                 {
-                    TestId = testId,
-                    Date = date,
-                    StartTime = startTime,
-                    EndTime = startTime.AddMinutes(test.TimeSpan),
-                    TestCenterId = centerId,
-                    CalendarToken = token
 
-                };
+                    var calendar = new TestCalenders
+                    {
+                        TestId = testId,
+                        Date = date,
+                        StartTime = startTime,
+                        EndTime = startTime.AddMinutes(test.TimeSpan),
+                        TestCenterId = centerId,
+                        CalendarToken = token
 
-                _test.TestCalenders.Add(calendar);
+                    };
 
-                _test.SaveChanges();
+                    _test.TestCalenders.Add(calendar);
+
+                    _test.SaveChanges();
+                }
+                else {
+
+
+                    ViewBag.CalendarError = "Same calendar for that time already exists for that center!";
+                    return View("CalendarError");
+                }
 
                 return RedirectToAction("Test");
             }
@@ -356,6 +367,7 @@ namespace AuthSystem.Controllers
                 var minutesPassed = (endTime - currentTime).TotalMinutes;
                 Console.WriteLine(minutesPassed + "Minutes");
                 if (minutesPassed >= test.Duration)
+
                 {
                     var duration = test.Duration;
                     return Json(duration);

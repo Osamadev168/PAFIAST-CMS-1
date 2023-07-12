@@ -51,6 +51,7 @@
 
         <div class="form-group">
             <label for="duration">Duration (minutes):</label>
+            <span>@TempData["duration"]</span>
             <input type="number" id="duration" name="duration" class="form-control" required placeholder="Enter test duration in minutes" min="10" />
             <span id="durationHours"></span>
             <div class="form-group">
@@ -139,7 +140,7 @@
                         <label class="control-label"> Select a Test Center</label>
                         <select class="form-control" asp-items="@ViewBag.TestCenters" name="centerId" required></select>
                     </div>
-                    
+                    <span>@ViewBag.CalendarError</span>
                     <button type="submit" id="addCalendarBtn" class="btn btn-primary">Add Calendar</button>
                 </form>
          </div>

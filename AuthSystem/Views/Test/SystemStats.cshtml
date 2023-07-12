@@ -16,11 +16,9 @@
             <th>Number of Tests</th>
             <th>Start Date</th>
             <th>End Date</th>
-           
         </tr>
     </thead>
     <tbody>
-  
             @foreach (var session in Model)
             {
                 var totalTests = _test.Tests.Where(t => t.SessionId == session.Id).Count();
@@ -31,9 +29,6 @@
                 <td>@session.EndDate</td>
             </tr>
             }
-            
-            
-  
         </tbody>
 </table>
 
