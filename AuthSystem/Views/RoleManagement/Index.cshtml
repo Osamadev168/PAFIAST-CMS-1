@@ -1,0 +1,21 @@
+﻿@model List<Microsoft.AspNetCore.Identity.IdentityRole>
+
+<h1>Role Management</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Available Roles!</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a class="btn btn-warning" asp-action="Create" asp-controller="RoleManagement">Create a new role</a>
+

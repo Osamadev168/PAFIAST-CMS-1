@@ -31,6 +31,7 @@ body {
     overflow-x: hidden;
     overflow-y: auto; /* Enable scrolling if the content overflows */
     background-color: #f8f9fa;
+    border : 1px solid lightblue;
 }
 
     .sidebar .nav-link {
@@ -305,7 +306,9 @@ font-weight : bold;
     }
 
 .navbar-color {
-
-    background-color : midnightblue;
-    border-radius : 0px 0px 15px 15px
+    background-color: midnightblue;
+    border-radius: 0px 0px 15px 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
+
+

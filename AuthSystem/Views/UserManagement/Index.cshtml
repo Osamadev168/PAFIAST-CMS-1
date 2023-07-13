@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Users";
+
+}
+<h1>User Management</h1>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+</head>
+<body style="background-color: whitesmoke">
+    <table id="example" class="display table table-primary table-hover table-responsive" style="width:100%">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                var User = await UserManager.FindByIdAsync(user.Id);
+                var userName = User != null ? await UserManager.GetUserNameAsync(User) : string.Empty;
+                var firstName = User != null ? User.FirstName : string.Empty;
+                var lastName = User != null ? User.LastName : string.Empty;
+                <tr>
+                    <td>@firstName @lastName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <a asp-action="AssignRole" asp-route-userId="@user.Id" class="btn btn-warning">Assign Role</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+
+</body>
+<script>
+
+    $('#example').DataTable();
+
+</script>

@@ -98,6 +98,7 @@ namespace AuthSystem.Controllers
 
             return RedirectToAction("Test");
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult CreateCalendar(int testId, DateOnly date, TimeOnly startTime, int centerId)
         {

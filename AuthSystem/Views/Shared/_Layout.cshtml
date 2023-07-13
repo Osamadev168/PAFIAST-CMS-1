@@ -9,11 +9,12 @@
     <link rel="stylesheet" href="~/AuthSystem.styles.css" asp-append-version="true" />
   
 </head>
-<body style="background-color: ghostwhite">
+<body style="background-color: ghostwhite" class="navbar-custom">
     <nav class="navbar navbar-expand-md navbar-color fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/Home/Index">  <img src="~/logo.png"  class="logo-image"/>
-                </a>
+                
+            </a>
           
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -29,6 +30,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="https://paf-iast.edu.pk/contact/">Contact Us</a>
                     </li>
+                    <li class="nav-item" style="color :white">
+                        <partial name="_LoginPartial" />
+
+                    </li>
                 </ul>
             </div>
         </div>
@@ -36,41 +41,84 @@
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column" style="margin-top: 50px;">
-                     
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="Subject">Question Bank</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Test" asp-controller="Test">Tests</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="Calendar">Apply</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="SelectCalendar" asp-controller="Calendar">Book Seat</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="ViewSubmittedApplications" asp-controller="Calendar">View Test Applications</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="SystemStats" asp-controller="Test">System Stats</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Applications" asp-controller="Applicant">My Applications</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="CenterChangeRequests" asp-controller="Calendar">Center Requests</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+            @if (User.Identity.IsAuthenticated)
+            {
+                
+            
+                <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                    <div class="position-sticky pt-3">
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+
+
+                        <ul class="nav flex-column" style="margin-top: 50px;">
+
+
+                            @{
+                                bool isAdmin = User.IsInRole("Admin");
+                                bool isTest = User.IsInRole("Test");
+                                bool isAdminis = User.IsInRole("Adminis");
+                                bool isSuperAdmin = User.IsInRole("Super Admin");
+                            }
+
+                            @if (isAdmin || isTest || isAdminis)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Index" asp-controller="Subject">Question Bank</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Test" asp-controller="Test">Tests</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="CenterChangeRequests" asp-controller="Calendar">Center Requests</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="SystemStats" asp-controller="Test">System Stats</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="ViewSubmittedApplications" asp-controller="Calendar">View Test Applications</a>
+                                </li>
+                            }
+
+                            @if (isSuperAdmin)
+                            {
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Index" asp-controller="RoleManagement">Role Management</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Index" asp-controller="UserManagement">User Management</a>
+                                </li>
+                            }
+
+                            @if (!isAdmin && !isTest && !isAdminis && !isSuperAdmin)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Index" asp-controller="Calendar">Apply</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="SelectCalendar" asp-controller="Calendar">Book Seat</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Applications" asp-controller="Applicant">My Applications</a>
+                                </li>
+                            }
+
+
+
+
+
+
+                        </ul>
+
+
+
+                    </div>
+                </nav>
+
+            }
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content" style="margin-top :30px">
                 <header class="pb-2">
-                    <h1></h1>
+                  
                 </header>
                 @RenderBody()
             </main>
