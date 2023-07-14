@@ -11,6 +11,14 @@ public class ApplicationUser : IdentityUser
     [PersonalData]
     [Column(TypeName = "nvarchar(100)")]
     public string LastName { get; set; }
+    [PersonalData]
+    public string? Dob { get; set; }
+
+    public string? Country { get; set; }
+    public string? Province { get; set; }
+    public string? City { get; set; }
+
+    public string? ProfilePhoto { get; set; }
 
 
 }

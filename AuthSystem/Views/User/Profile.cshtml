@@ -1,0 +1,228 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Profile";
+    var user = await UserManager.GetUserAsync(User);
+    var userName = user != null ? await UserManager.GetUserNameAsync(user) : string.Empty;
+    var firstName = user != null ? user.FirstName : string.Empty;
+    var lastName = user != null ? user.LastName : string.Empty;
+    string name = firstName + " " + lastName;
+    string phoneNumber = user.PhoneNumber != null ? user.PhoneNumber : "Not Provided";
+    string email = user.Email;
+    string dateOfBirth = user.Dob != null ? user.Dob : string.Empty;
+    string country = user.Country;
+    string province = user.Province;
+    string city = user.City;
+    string PP = user.ProfilePhoto;
+}
+
+<h1>Profile Management</h1>
+
+
+<form asp-action="EditProfile" asp-controller="User"  method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="FirstName">First Name</label>
+        <input type="text" id="FirstName" name="firstName" class="form-control" value="@firstName" />
+    </div>
+    <div class="form-group">
+        <label for="LastName">Last Name</label>
+        <input type="text" id="LastName" name="lastName" class="form-control" value="@lastName" />
+    </div>
+    <div class="form-group">
+        <label for="Dob">DOB</label>
+        <input type="date" id="Dob" name="dob" class="form-control" value="@dateOfBirth" />
+    </div>
+    <div class="form-group">
+        <label for="PP" class="control-label">Profile Photo</label>
+        <input id="PP" name="PP" type="file" class="form-control-file" value="@PP" />
+      
+    </div>
+
+    <p>Profile Picture</p>
+
+    <img src="@Url.Content(@PP)" />
+
+    <select class="form-select" aria-label="Default select example" id="countrySelect" name="country">
+        @if (country != null)
+        {
+
+            <option selected>@country</option>
+
+        }
+        else
+
+        {
+
+            <option selected>Select Country</option>
+
+        }
+    </select>
+    <select class="form-select" aria-label="Default select example" id="statesSelect" name="province">
+        @if (province != null)
+        {
+
+            <option selected>@province</option>
+
+        }
+        else
+
+        {
+
+            <option selected>Select Province</option>
+
+        }
+    </select>
+    <select class="form-select" aria-label="Default select example" id="citySelect" name="city">
+        @if (city != null)
+        {
+
+            <option selected>@city</option>
+
+        }
+        else
+
+        {
+
+            <option selected>Select City</option>
+
+        }
+    </select>
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+  </form>
+
+
+<script>
+    function populateStates(country) {
+        console.log(country)
+        const statesSelect = document.getElementById("statesSelect");
+        // Clear existing options
+        statesSelect.innerHTML = '<option selected>Select Province</option>';
+
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                country: country
+            })
+        };
+
+        // Fetch states based on selected country
+        fetch("https://countriesnow.space/api/v0.1/countries/states", options)
+            .then(response => response.json())
+
+            .then(data => {
+                console.log(data.data.states)
+                data.data.states.forEach(state => {
+                    const option = document.createElement("option");
+                    option.value = state.name;
+                    option.textContent = state.name;
+                    statesSelect.appendChild(option);
+                });
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+
+    function populateCities(country, state) {
+        const citySelect = document.getElementById("citySelect");
+        // Clear existing options
+        citySelect.innerHTML = '<option selected>Select City</option>';
+
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                country: country,
+                state: state
+            })
+        };
+
+        // Fetch cities based on selected country and state
+        fetch("https://countriesnow.space/api/v0.1/countries/state/cities", options)
+            .then(response => response.json())
+            .then(data => {
+                data.data.forEach(city => {
+                    const option = document.createElement("option");
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+
+    document.getElementById("countrySelect").addEventListener("focus", function () {
+        const countrySelect = document.getElementById("countrySelect");
+        const stateSelect = document.getElementById("statesSelect");
+        const citySelect = document.getElementById("citySelect");
+
+        // Clear existing options
+        stateSelect.innerHTML = '<option selected>Select Province</option>';
+        citySelect.innerHTML = '<option selected>Select City</option>';
+
+        // Fetch countries when the user opens the select field
+        fetch("https://countriesnow.space/api/v0.1/countries")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.data)
+                data.data.forEach(country => {
+                    const option = document.createElement("option");
+                    option.value = country.country;
+                    option.textContent = country.country;
+                    countrySelect.appendChild(option);
+                });
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    });
+
+    document.getElementById("countrySelect").addEventListener("change", function () {
+        const countrySelect = document.getElementById("countrySelect");
+        const stateSelect = document.getElementById("statesSelect");
+        const citySelect = document.getElementById("citySelect");
+
+        // Clear existing options
+        stateSelect.innerHTML = '<option selected>Select Province</option>';
+        citySelect.innerHTML = '<option selected>Select City</option>';
+
+        const selectedCountry = countrySelect.options[countrySelect.selectedIndex].text;
+        const selectedState = stateSelect.options[stateSelect.selectedIndex].text;
+
+        if (selectedCountry !== "Select Country") {
+            populateStates(selectedCountry);
+        }
+
+        if (selectedCountry !== "Select Country" && selectedState !== "Select Province") {
+            populateCities(selectedCountry, selectedState);
+        }
+    });
+
+    document.getElementById("statesSelect").addEventListener("change", function () {
+        const countrySelect = document.getElementById("countrySelect");
+        const stateSelect = document.getElementById("statesSelect");
+        const citySelect = document.getElementById("citySelect");
+
+        // Clear existing options
+        citySelect.innerHTML = '<option selected>Select City</option>';
+
+        const selectedCountry = countrySelect.options[countrySelect.selectedIndex].text;
+        const selectedState = stateSelect.options[stateSelect.selectedIndex].text;
+
+        if (selectedCountry !== "Select Country" && selectedState !== "Select Province") {
+            populateCities(selectedCountry, selectedState);
+        }
+    });
+</script>
+
