@@ -1,0 +1,13 @@
+﻿@model List<TestCalenders>
+
+@{
+    ViewData["Title"] = "TestCalendars";
+
+}
+
+<h1>Test Calendars</h1>
+@foreach (var calendar in Model) {
+
+    <a asp-action="CalendarApplicants" asp-controller="Calendar" asp-route-testId="@calendar.TestId" asp-route-calendarId="@calendar.Id" asp-route-calendarToken="@calendar.CalendarToken"><p>@calendar.Date @calendar.StartTime @calendar.EndTime</p></a>
+
+}

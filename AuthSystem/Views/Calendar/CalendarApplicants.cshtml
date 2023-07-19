@@ -1,0 +1,85 @@
+﻿@model List<AuthSystem.Areas.Identity.Data.ApplicationUser>
+@inject AuthSystem.Data.AuthDbContext _test;
+
+@{
+    ViewData["Title"] = "Calendar Applicants";
+    int testId = ViewBag.TestId;
+    int calendarId = ViewBag.CalendarId;
+    string   calendarToken = ViewBag.CalendarToken;
+
+}
+
+<h1>Attendance Sheet for this Calendar</h1>
+<form method="post" asp-action="MarkAttendance" asp-controller="Calendar">
+    <input type="hidden" name="testId" value="@testId" />
+    <input type="hidden" name="calendarId" value="@calendarId" />
+
+    <table>
+        <thead>
+            <tr>
+                <th>Applicant Name</th>
+                <th>Actions</th>
+                <th>Attendance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var applicant in Model)
+            {
+                bool present = _test.TestApplications.Where(t => t.TestId == testId && t.CalendarId == calendarId && t.UserId == applicant.Id).FirstOrDefault()?.IsPresent == true;
+                <tr>
+                    <td>@applicant.FirstName @applicant.LastName</td>
+                    <td>
+                        <label class="form-check-label" for="present'@applicant.Id'">Present</label>
+                        <input type="checkbox" value="@applicant.Id" name="userIds" class="form-check-input" id="present@applicant.Id" @(present ? "checked" : "") />
+                    </td>
+                    <td>
+                        @if (present)
+                        {
+                            <span class="present">Present</span>
+                        }
+                        else
+                        {
+                            <span class="absent">Absent</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn-attendance">Submit Attendance</button>
+</form>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .present {
+        color: green;
+        font-weight: bold;
+    }
+
+    .absent {
+        color: red;
+        font-weight: bold;
+    }
+
+    .btn-attendance {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px; /* Add margin to separate the table and button */
+    }
+</style>

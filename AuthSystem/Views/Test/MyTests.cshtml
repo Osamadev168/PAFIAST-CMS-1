@@ -1,0 +1,17 @@
+﻿@model List<TestApplication>
+
+@{
+    ViewData["Title"] = "My Tests";
+}
+
+<h1>My Tests</h1>
+
+
+@foreach (var test in Model)
+{
+    
+    <p>@test.Test.TestName</p>
+    <a href="@Url.Action("DemoTest", "Test", new { id = @test.TestId , C_Id = test.CalendarId , C_token = test.CalenderToken})" class="link-success">Start Test</a>
+
+
+}

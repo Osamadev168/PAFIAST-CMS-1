@@ -354,6 +354,99 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e.Message });
             }
         }
+        public IActionResult Attendance()
+        {
+            try
+            {
+
+                var viewModel = new Test
+                {
+                    TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
+                    Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
+                    TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
+                    TestCalenders = _test.TestCalenders
+                        .Include(td => td.Test)
+                        .Include(td => td.TestCenter)
+                        .ToList()
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+
+        public IActionResult TestCalendars(int testId)
+        {
+            try
+            {
+                var currentDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+                var testCalendars = _test.TestCalenders
+                    .Where(t => t.TestId == testId && t.Date == currentDate)
+                    .ToList();
+
+
+
+                return View(testCalendars);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+        public IActionResult CalendarApplicants(int calendarId , int testId , string calendarToken)
+        {
+            try
+            {
+                var currentDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+
+                var calendarApplicants = _test.TestApplications
+                    .Where(t => t.TestId == testId && t.CalendarId == calendarId && t.CalenderToken == calendarToken && t.IsVerified == true).Select(u => u.UserId)
+                    .ToList();
+
+
+                var applicants = _userManager.Users.Where(u => calendarApplicants.Contains(u.Id)).ToList();
+                ViewBag.TestId = testId;
+                ViewBag.CalendarId = calendarId;
+                ViewBag.CalendarToken = calendarToken;
+
+
+                return View(applicants);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+
+        public IActionResult MarkAttendance(string[] userIds, int testId, int calendarId)
+        {
+            try
+            {
+                foreach (var userId in userIds)
+                {
+                    var testApplication = _test.TestApplications.FirstOrDefault(c => c.UserId == userId && c.TestId == testId && c.CalendarId == calendarId && c.IsVerified == true);
+
+                    if (testApplication != null)
+                    {
+                        testApplication.IsPresent = true;
+                        _test.SaveChanges();
+
+                    }
+                }
+
+                return RedirectToAction("CalendarApplicants", new { testId, calendarId });
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+
+
+
 
 
     }

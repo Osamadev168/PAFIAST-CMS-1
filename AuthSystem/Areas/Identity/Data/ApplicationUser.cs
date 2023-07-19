@@ -20,6 +20,10 @@ public class ApplicationUser : IdentityUser
 
     public string? ProfilePhoto { get; set; }
 
+    public string? FatherName { get; set; }
+
+    public string? Address { get; set; }
+
 
 }
 

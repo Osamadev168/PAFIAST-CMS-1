@@ -1,5 +1,4 @@
 ﻿using AuthSystem.Areas.Identity.Data;
-using AuthSystem.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +27,7 @@ namespace AuthSystem.Controllers
         
         }
         [HttpPost]
-        public async Task<IActionResult> EditProfile(string firstName , string lastName , string dob , string country , string province , string city ,  IFormFile PP)
+        public async Task<IActionResult> EditProfile(string firstName , string lastName , string dob , string country , string province , string city ,  IFormFile PP , string fatherName , string address)
         {
             
                 var user = await _userManager.GetUserAsync(User);
@@ -38,6 +37,9 @@ namespace AuthSystem.Controllers
                 user.Country = country;
                 user.Province = province;
                 user.City = city;
+                user.FatherName = fatherName;
+                user.Address = address;
+
             if (PP != null) {
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(PP.FileName);
 

@@ -1,0 +1,14 @@
+﻿@model AuthSystem.Models.Test;
+
+
+@{
+    ViewData["Title"] = "Attendance";
+
+}
+<h1>Attendance</h1>
+@foreach (var applicant in Model.TestList) {
+
+    <a class="btn btn-success" asp-action="TestCalendars" asp-controller="Calendar" asp-route-testId="@applicant.Id">@applicant.TestName</a>
+
+
+}

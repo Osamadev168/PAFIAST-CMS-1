@@ -77,6 +77,13 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="ViewSubmittedApplications" asp-controller="Calendar">View Test Applications</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Profile" asp-controller="User">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Attendance" asp-controller="Calendar">Attendance</a>
+                                </li>
+
                             }
 
                             @if (isSuperAdmin)
@@ -103,6 +110,9 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="Profile" asp-controller="User">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="MyTests" asp-controller="Test">My Tests</a>
                                 </li>
                             }
 

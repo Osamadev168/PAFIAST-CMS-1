@@ -10,6 +10,7 @@ namespace AuthSystem.Models
             IsPaid = false;
             IsVerified = false;
             IsRejected = false;
+            IsPresent = false;
         }
         public int Id { get; set; }
         public string UserId { get; set; }
@@ -26,6 +27,8 @@ namespace AuthSystem.Models
         public string? BranchCode { get; set; }
         public string? BranchName { get; set; }
         public string? VoucherPhotoPath { get; set; }
+
+        public bool? IsPresent { get; set; } = false;
 
         public bool? IsRejected { get; set; } = false;
 

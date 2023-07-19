@@ -28,6 +28,8 @@
         var NewCenterName = _test.TestCenters.Where(t => t.Id == NewCenterId).FirstOrDefault()?.TestCenterName;
         var NewCenterDate = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.Date;
         var NewCenterStartTime = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.StartTime;
+        var NewCalendarToken = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.CalendarToken;
+
         var NewCenterEndTime = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.StartTime.AddMinutes(TestDuration);
         var PreCenterCapacity = _test.TestCenters.Where(t => t.Id == PreCenterId).FirstOrDefault()?.Capacity;
         var PreCenterApplicantations = _test.TestApplications.Where(t => t.Calendar.TestCenterId == PreCenterId && t.CalendarId != null && t.Calendar.Date == PreCenterDate && t.Calendar.StartTime == PreCenterStartTime ).Count();
@@ -54,10 +56,10 @@
                     <p>Desired center applications: @NewCenterApplications</p>
                  </div>
                 <div style="display: flex; flex-direction : row; padding: 10px; align-items : center; ">
-                    <form method="post" asp-action="HandleCenterChange" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId">
+                    <form method="post" asp-action="HandleCenterChange" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId" asp-route-calendarToken="@NewCalendarToken">
                         <button class="btn btn-success" type="submit">Approve</button>
                     </form>
-                    <form method="post" asp-action="HandleCenterReject" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId">
+                    <form method="post" asp-action="HandleCenterReject" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId" >
                         <button class="btn btn-danger" type="submit">Reject</button>
                     </form>
                 </div>

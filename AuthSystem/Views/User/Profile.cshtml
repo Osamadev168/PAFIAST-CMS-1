@@ -10,6 +10,9 @@
     var userName = user != null ? await UserManager.GetUserNameAsync(user) : string.Empty;
     var firstName = user != null ? user.FirstName : string.Empty;
     var lastName = user != null ? user.LastName : string.Empty;
+    var fatherName = user != null ? user.FatherName : string.Empty;
+    var address = user != null ? user.Address : string.Empty;
+
     string name = firstName + " " + lastName;
     string phoneNumber = user.PhoneNumber != null ? user.PhoneNumber : "Not Provided";
     string email = user.Email;
@@ -24,27 +27,37 @@
 
 
 <form asp-action="EditProfile" asp-controller="User"  method="post" enctype="multipart/form-data">
+    <p>Profile Photo</p>
+
+    <img src="@Url.Content(@PP)" style="width: 60px; height : 60px; border-radius : 40px" />
     <div class="form-group">
-        <label for="FirstName">First Name</label>
-        <input type="text" id="FirstName" name="firstName" class="form-control" value="@firstName" />
+        <label for="PP" class="control-label form-label">Update Profile Photo</label>
+        <input id="PP" name="PP" type="file" class="form-control form-control-file" value="@PP" accept="image/*" />
+
     </div>
     <div class="form-group">
-        <label for="LastName">Last Name</label>
-        <input type="text" id="LastName" name="lastName" class="form-control" value="@lastName" />
+        <label for="FirstName" class="control-label form-label">First Name</label>
+        <input type="text" id="FirstName" name="firstName" class=" form form-control" value="@firstName" />
     </div>
     <div class="form-group">
-        <label for="Dob">DOB</label>
+        <label for="LastName" class="control-label form-label">Last Name</label>
+        <input type="text" id="LastName" name="lastName" class="form form-control" value="@lastName" />
+    </div>
+    <div class="form-group">
+        <label for="FatherName" class="control-label form-label">Father Name</label>
+        <input type="text" id="FatherName" name="fatherName" class=" form form-control" value="@fatherName" />
+    </div>
+    <div class="form-group">
+        <label for="address" class="control-label form-label">Address</label>
+        <input type="text" id="address" name="address" class=" form form-control" value="@address" />
+    </div>
+    <div class="form-group">
+        <label for="Dob" class="control-label form-label">DOB</label>
         <input type="date" id="Dob" name="dob" class="form-control" value="@dateOfBirth" />
     </div>
-    <div class="form-group">
-        <label for="PP" class="control-label">Profile Photo</label>
-        <input id="PP" name="PP" type="file" class="form-control-file" value="@PP" />
-      
-    </div>
+  
 
-    <p>Profile Picture</p>
-
-    <img src="@Url.Content(@PP)" />
+   
 
     <select class="form-select" aria-label="Default select example" id="countrySelect" name="country">
         @if (country != null)
