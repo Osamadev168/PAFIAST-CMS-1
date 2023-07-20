@@ -107,11 +107,16 @@ namespace AuthSystem.Controllers
             {
                 var test = _test.Tests.Where(q => q.Id == testId).FirstOrDefault();
                 var calendarToken = RandomNumberGenerator.Create();
+                int calendarCode;
                 byte[] randomBytes = new byte[16];
                 calendarToken.GetBytes(randomBytes);
                 string token = Convert.ToBase64String(randomBytes);
                 string tokenValue = Convert.ToBase64String(randomBytes);
                 calendarToken.ToInt();
+                int _min = 1000;
+                int _max = 9999;
+                Random _rdm = new Random();
+                calendarCode = _rdm.Next(_min, _max);
                 var existingCalendar = _test.TestCalenders.Where(c => c.StartTime == startTime && c.TestCenterId == centerId && c.Date == date).FirstOrDefault();
                 if (existingCalendar == null)
                 {
@@ -123,7 +128,8 @@ namespace AuthSystem.Controllers
                         StartTime = startTime,
                         EndTime = startTime.AddMinutes(test.TimeSpan),
                         TestCenterId = centerId,
-                        CalendarToken = token
+                        CalendarToken = token,
+                        Code = calendarCode
 
                     };
 
@@ -184,7 +190,7 @@ namespace AuthSystem.Controllers
             var isPresent = _test.TestApplications.Where(a => a.UserId == userId && a.IsVerified == true && a.CalendarId == C_Id && a.TestId == Id && a.CalenderToken == C_token).FirstOrDefault()?.IsPresent == true;
             if (testCalendar == null)
             {
-                return Content("Not Available");
+                return Content("Internal Error");
             }
 
             if (testCalendar.Date.Day != DateTime.Today.Day ||
@@ -196,7 +202,7 @@ namespace AuthSystem.Controllers
             }
             if (!isPresent)
             {
-                return Content("Not Available");
+                return Content("Attendance due!");
             }
 
 

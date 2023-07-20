@@ -4,6 +4,8 @@ using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+
 namespace AuthSystem.Controllers
 {
     public class CalendarController : Controller
@@ -134,13 +136,14 @@ namespace AuthSystem.Controllers
 
             var userId = user.Id;
             var appliedTest = _test.TestApplications.FirstOrDefault(q => q.UserId == userId && q.TestId == testId);
-
+            var calendarCode = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault()?.Code;
             if (appliedTest != null)
             {
                 if (appliedTest.CalendarId != calendarId && appliedTest.CalenderToken != calendarToken)
                 {
                     appliedTest.CalenderToken = calendarToken;
                     appliedTest.CalendarId = calendarId;
+                    appliedTest.CalendarCode = calendarCode;
                     _test.SaveChanges();
                 }
                 else
@@ -321,11 +324,13 @@ namespace AuthSystem.Controllers
             {
                 var testApplication = _test.TestApplications.FirstOrDefault(w => w.TestId == testId && w.UserId == userId);
                 var request = _test.CenterChangeRequests.FirstOrDefault(w => w.TestId == testId && w.UserId == userId && w.DesiredCalendarId == calendarId && w.Approved == false);
+                var calendarCode = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault()?.Code;
                 if (testApplication != null && request != null)
                 {
                     testApplication.CalendarId = calendarId;
                     testApplication.CalenderToken = calendarToken;
                     testApplication.HasChangedCenter = true;
+                    testApplication.CalendarCode = calendarCode;
                     request.Approved = true;
                     _test.CenterChangeRequests.Remove(request);
                     _test.SaveChanges();
@@ -411,6 +416,8 @@ namespace AuthSystem.Controllers
                 ViewBag.TestId = testId;
                 ViewBag.CalendarId = calendarId;
                 ViewBag.CalendarToken = calendarToken;
+                var pinCode = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault()?.Code;
+                ViewBag.CalendarCode = pinCode;
 
 
                 return View(applicants);
@@ -421,13 +428,13 @@ namespace AuthSystem.Controllers
             }
         }
 
-        public IActionResult MarkAttendance(string[] userIds, int testId, int calendarId)
+        public IActionResult MarkAttendance(string[] userIds, int testId, int code)
         {
             try
             {
                 foreach (var userId in userIds)
                 {
-                    var testApplication = _test.TestApplications.FirstOrDefault(c => c.UserId == userId && c.TestId == testId && c.CalendarId == calendarId && c.IsVerified == true);
+                    var testApplication = _test.TestApplications.FirstOrDefault(c => c.UserId == userId && c.TestId == testId &&  c.IsVerified == true && c.CalendarCode == code);
 
                     if (testApplication != null)
                     {
@@ -437,13 +444,63 @@ namespace AuthSystem.Controllers
                     }
                 }
 
-                return RedirectToAction("CalendarApplicants", new { testId, calendarId });
+                return RedirectToAction("AttendanceSheetOpen", new { code });
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+
+
+        }
+        public IActionResult AttendanceSheet ()
+        {
+           
+            
+            return View();
+
+
+        }
+        public IActionResult AttendanceSheetOpen(int code)
+        {
+            try
+            {
+                var currentDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+
+                var calendarApplicants = _test.TestApplications
+                    .Where(t => t.CalendarCode == code && t.IsVerified == true)
+                    .Select(u => u.UserId)
+                    .ToList();
+
+                if (calendarApplicants.Count == 0)
+                {
+                    return Content("Error: No calendar applicants found.");
+                }
+
+                var applicants = _userManager.Users
+                    .Where(u => calendarApplicants.Contains(u.Id))
+                    .ToList();
+
+                if (applicants.Count == 0)
+                {
+                    return Content("Error: No matching users found.");
+                }
+
+                var testId = _test.TestCalenders
+                    .Where(c => c.Code == code)
+                    .FirstOrDefault()?.TestId;
+
+                ViewBag.TestId = testId;
+                ViewBag.Code = code;
+
+                return View(applicants);
             }
             catch (Exception e)
             {
                 return Json(new { Error = e.Message });
             }
         }
+
 
 
 

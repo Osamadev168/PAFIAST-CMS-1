@@ -32,6 +32,8 @@ namespace AuthSystem.Models
 
         public bool? IsRejected { get; set; } = false;
 
+        public int? CalendarCode { get; set; }
+
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         [ForeignKey("TestId")]

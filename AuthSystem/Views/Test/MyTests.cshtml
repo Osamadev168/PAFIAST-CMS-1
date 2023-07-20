@@ -5,13 +5,37 @@
 }
 
 <h1>My Tests</h1>
+<hr />
 
 
 @foreach (var test in Model)
 {
-    
-    <p>@test.Test.TestName</p>
-    <a href="@Url.Action("DemoTest", "Test", new { id = @test.TestId , C_Id = test.CalendarId , C_token = test.CalenderToken})" class="link-success">Start Test</a>
-
-
+    <div class="mytest">
+        <div class="test-info">
+            <h3>@test.Test.TestName</h3>
+        </div>
+        <div class="test-action">
+            <a href="@Url.Action("DemoTest", "Test", new { id = @test.TestId , C_Id = test.CalendarId , C_token = test.CalenderToken})" class="btn btn-success">Start Test</a>
+        </div>
+    </div>
 }
+
+<style>
+    .mytest {
+        border: 1px solid;
+        margin: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content : center;
+        align-items : center
+    }
+
+    .test-info {
+        flex: 1;
+    }
+
+    .test-action {
+        margin-left: auto;
+        margin-right : 5px;
+    }
+</style>

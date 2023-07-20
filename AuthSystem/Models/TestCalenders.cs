@@ -21,5 +21,7 @@ namespace AuthSystem.Models
         public TestCenters TestCenter { get; set; }
 
         public string CalendarToken { get; set; }
+
+        public int Code { get; set; }
     }
 }

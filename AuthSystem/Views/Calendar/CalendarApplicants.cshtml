@@ -5,6 +5,7 @@
     ViewData["Title"] = "Calendar Applicants";
     int testId = ViewBag.TestId;
     int calendarId = ViewBag.CalendarId;
+    int calendarCode = ViewBag.CalendarCode;
     string   calendarToken = ViewBag.CalendarToken;
 
 }
@@ -13,6 +14,8 @@
 <form method="post" asp-action="MarkAttendance" asp-controller="Calendar">
     <input type="hidden" name="testId" value="@testId" />
     <input type="hidden" name="calendarId" value="@calendarId" />
+    <input type="hidden" name="calendarToken" value="@calendarToken" />
+
 
     <table>
         <thead>
@@ -25,12 +28,12 @@
         <tbody>
             @foreach (var applicant in Model)
             {
-                bool present = _test.TestApplications.Where(t => t.TestId == testId && t.CalendarId == calendarId && t.UserId == applicant.Id).FirstOrDefault()?.IsPresent == true;
+                bool present = _test.TestApplications.Where(t => t.TestId == testId && t.CalendarId == calendarId && t.UserId == applicant.Id && t.CalenderToken == calendarToken).FirstOrDefault()?.IsPresent == true;
                 <tr>
                     <td>@applicant.FirstName @applicant.LastName</td>
                     <td>
                         <label class="form-check-label" for="present'@applicant.Id'">Present</label>
-                        <input type="checkbox" value="@applicant.Id" name="userIds" class="form-check-input" id="present@applicant.Id" @(present ? "checked" : "") />
+                        <input type="checkbox" value="@applicant.Id" name="userIds" class="form-check-input" id="present'@applicant.Id'" @(present ? "checked" : "") />
                     </td>
                     <td>
                         @if (present)
@@ -48,7 +51,34 @@
     </table>
 
     <button type="submit" class="btn-attendance">Submit Attendance</button>
+    <button type="button" class="btn btn-warning" id="btn-copy-link">Copy Link</button>
+    <h2>Attendance Sheet Pincode: <span id="pincode" style="display: none;">@calendarCode</span></h2>
+    <button type="button" id="showPincodeButton">Show Pincode</button>
 </form>
+<script>
+  document.getElementById("btn-copy-link").addEventListener("click", function() {
+    const url = window.location.href;
+    copyToClipboard(url);
+    alert("Link copied to clipboard!");
+  });
+
+  function copyToClipboard(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  }
+    document.getElementById("showPincodeButton").addEventListener("click", function () {
+        const pincodeElement = document.getElementById("pincode");
+        if (pincodeElement.style.display === "none") {
+            pincodeElement.style.display = "inline"; 
+        } else {
+            pincodeElement.style.display = "none"; 
+        }
+    });
+</script>
 
 <style>
     table {
