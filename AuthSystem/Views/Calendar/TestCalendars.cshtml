@@ -8,6 +8,12 @@
 <h1>Test Calendars</h1>
 @foreach (var calendar in Model) {
 
-    <a asp-action="CalendarApplicants" asp-controller="Calendar" asp-route-testId="@calendar.TestId" asp-route-calendarId="@calendar.Id" asp-route-calendarToken="@calendar.CalendarToken"><p>@calendar.Date @calendar.StartTime @calendar.EndTime</p></a>
+    <form asp-action="CalendarApplicants" asp-controller="Calendar" method="post">
+        <input type="hidden" name="testId" value="@calendar.TestId" />
+        <input type="hidden" name="id" value="@calendar.Id" />
+        <button type="submit" class="btn btn-secondary">
+            <p>@calendar.Date @calendar.StartTime @calendar.EndTime</p>
+        </button>
+    </form>
 
 }

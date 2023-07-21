@@ -21,8 +21,8 @@ namespace AuthSystem.Models
         public bool? IsPaid { get; set; } = false;
         public bool? IsVerified { get; set; } = false;
         public bool? HasChangedCenter { get; set; } = false;
-/*         public int? TestCenterId { get; set; }
-*/        public int? VoucherNumber { get; set; }
+      
+        public int? VoucherNumber { get; set; }
         public string? BankName { get; set; }
         public string? BranchCode { get; set; }
         public string? BranchName { get; set; }
@@ -33,6 +33,8 @@ namespace AuthSystem.Models
         public bool? IsRejected { get; set; } = false;
 
         public int? CalendarCode { get; set; }
+
+        public bool? HasAttempted  {get; set;}
 
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }

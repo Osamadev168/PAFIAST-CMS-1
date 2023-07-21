@@ -401,25 +401,24 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e.Message });
             }
         }
-        public IActionResult CalendarApplicants(int calendarId , int testId , string calendarToken)
+        public IActionResult CalendarApplicants(int testId , int id)
         {
             try
             {
                 var currentDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
 
                 var calendarApplicants = _test.TestApplications
-                    .Where(t => t.TestId == testId && t.CalendarId == calendarId && t.CalenderToken == calendarToken && t.IsVerified == true).Select(u => u.UserId)
+                    .Where(t => t.TestId == testId &&  t.CalendarId == id &&t.IsVerified == true).Select(u => u.UserId)
                     .ToList();
-
-
                 var applicants = _userManager.Users.Where(u => calendarApplicants.Contains(u.Id)).ToList();
                 ViewBag.TestId = testId;
-                ViewBag.CalendarId = calendarId;
+              
+                ViewBag.CalendarId = id;
+                var calendarCode = _test.TestCalenders.Where(c => c.Id == id).FirstOrDefault()?.Code;
+                var calendarToken = _test.TestCalenders.Where(c => c.Id == id).FirstOrDefault()?.CalendarToken;
+
+                ViewBag.CalendarCode = calendarCode;
                 ViewBag.CalendarToken = calendarToken;
-                var pinCode = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault()?.Code;
-                ViewBag.CalendarCode = pinCode;
-
-
                 return View(applicants);
             }
             catch (Exception e)
@@ -453,28 +452,58 @@ namespace AuthSystem.Controllers
 
 
         }
-        public IActionResult AttendanceSheet ()
+        public IActionResult MarkAttendanceAdmin(string[] userIds, int testId, int id)
         {
-           
-            
+            try
+            {
+                foreach (var userId in userIds)
+                {
+                    var testApplication = _test.TestApplications.FirstOrDefault(c => c.UserId == userId && c.TestId == testId && c.IsVerified == true && c.CalendarId == id);
+
+                    if (testApplication != null)
+                    {
+                        testApplication.IsPresent = true;
+                        _test.SaveChanges();
+
+                    }
+                }
+                ViewBag.TestId = testId;
+
+                ViewBag.CalendarId = id;
+                var calendarCode = _test.TestCalenders.Where(c => c.Id == id).FirstOrDefault()?.Code;
+                ViewBag.CalendarCode = calendarCode;
+
+                return RedirectToAction("CalendarApplicants",  new { testId , id});
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+
+
+        }
+        public IActionResult AttendanceSheet (string token)
+        {
+
+            ViewBag.CalendarToken = token;
             return View();
 
 
         }
-        public IActionResult AttendanceSheetOpen(int code)
+        public IActionResult AttendanceSheetOpen(string token, int code)
         {
             try
             {
                 var currentDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
 
                 var calendarApplicants = _test.TestApplications
-                    .Where(t => t.CalendarCode == code && t.IsVerified == true)
+                    .Where(t => t.CalenderToken == token && t.CalendarCode == code && t.IsVerified == true)
                     .Select(u => u.UserId)
                     .ToList();
 
                 if (calendarApplicants.Count == 0)
                 {
-                    return Content("Error: No calendar applicants found.");
+                    return Content("Invalid Pin Code!");
                 }
 
                 var applicants = _userManager.Users
