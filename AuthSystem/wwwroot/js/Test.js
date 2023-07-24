@@ -141,4 +141,23 @@ window.addEventListener('load', function () {
     getTestDuration();
     getTestName();
     fetchUserResponses();
+
+});
+// Function to request full screen
+function requestFullScreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
+
+// Attach a click event to the fullScreenButton
+document.getElementById('fullScreenButton').addEventListener('click', function () {
+    // Request full screen when the button is clicked
+    requestFullScreen(document.documentElement);
 });

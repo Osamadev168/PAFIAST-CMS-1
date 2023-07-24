@@ -431,6 +431,7 @@ namespace AuthSystem.Controllers
         {
             try
             {
+                string token = "";
                 foreach (var userId in userIds)
                 {
                     var testApplication = _test.TestApplications.FirstOrDefault(c => c.UserId == userId && c.TestId == testId &&  c.IsVerified == true && c.CalendarCode == code);
@@ -438,12 +439,13 @@ namespace AuthSystem.Controllers
                     if (testApplication != null)
                     {
                         testApplication.IsPresent = true;
+                        token = testApplication.CalenderToken;
                         _test.SaveChanges();
 
                     }
                 }
 
-                return RedirectToAction("AttendanceSheetOpen", new { code });
+                return RedirectToAction("AttendanceSheetOpen" , new { code , token });
             }
             catch (Exception e)
             {

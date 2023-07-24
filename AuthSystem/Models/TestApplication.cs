@@ -36,6 +36,8 @@ namespace AuthSystem.Models
 
         public bool? HasAttempted  {get; set;}
 
+        public bool? HasFinished { get; set; }
+
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         [ForeignKey("TestId")]

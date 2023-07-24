@@ -219,13 +219,18 @@ namespace AuthSystem.Controllers
                         .Include(td => td.Test)
                         .Where(td => td.TestId == Id)
                         .ToList();
+                var testApplication = _test.TestApplications.Where(a => a.UserId == userId && a.TestId == Id && a.CalendarId == C_Id && a.CalenderToken == C_token).FirstOrDefault();
+                if (testApplication != null) {
 
+                    testApplication.HasAttempted = true;
+
+                }
                     var testQuestions = new List<MCQ>();
                     foreach (var testDetail in testDetails)
                     {
                         var subjectQuestions = _test.MCQs.Include(q => q.Subject)
                             .Where(q => q.SubjectId == testDetail.SubjectId)
-                            .OrderBy(x => Guid.NewGuid()) // randomize order of questions
+                            .OrderBy(x => Guid.NewGuid()) 
                             .Take(Math.Max((int)(testDetail.Percentage / 100.0 * 100), 1))
                             .ToList();
 
@@ -237,7 +242,7 @@ namespace AuthSystem.Controllers
 
                     var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
 
-                    // save the assigned questions for the user in the database
+                
                     foreach (var question in totalQuestions)
                     {
                         var assignedQuestion = new AssignedQuestions
@@ -610,24 +615,24 @@ namespace AuthSystem.Controllers
 
 
         public async Task<IActionResult> MyTests() { 
-        
          try
          {
                 var user = await _userManager.GetUserAsync(User);
-
-
+                var currentDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+                var currentTime = TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay);
                 var userId = user.Id;
-                var tests = _test.TestApplications.Where(a => a.UserId == userId && a.IsVerified == true).Include(t => t.Test).ToList();
-                return View(tests);
-
+                var tests = _test.TestApplications
+                            .Where(a => a.UserId == userId && a.IsVerified == true
+                                    && a.Calendar.Date == currentDate
+                                    && a.Calendar.StartTime <= currentTime
+                                    && a.Calendar.EndTime >= currentTime)
+                            .Include(t => t.Test)
+                            .ToList(); return View(tests);
             }
 
             catch (Exception e)
             {
-
-
                 return Json(new { Error = e.Message });
-
             }
         
         }
