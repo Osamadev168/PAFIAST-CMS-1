@@ -117,7 +117,12 @@ function getTestDuration() {
                         hours--;
                         minutes = 59;
                         seconds = 59;
-                    } else {
+                    }
+                    else if (minutes < 2) {
+                        document.getElementById('test-duration').style.backgroundColor = 'red';
+                        
+                    }
+else {
                         clearInterval(timer);
                         $('#test-duration').text('Test is finished');
                     }
@@ -129,7 +134,6 @@ function SaveStartTime() {
     var url = window.location.href;
     var testId = url.split("/").pop().split("?")[0];
     fetch('/Test/SaveStartTime?testId=' + testId).then(() => {
-        console.log('Done')
     })
 }
 window.addEventListener('load', function () {
@@ -137,4 +141,23 @@ window.addEventListener('load', function () {
     getTestDuration();
     getTestName();
     fetchUserResponses();
+
+});
+// Function to request full screen
+function requestFullScreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
+
+// Attach a click event to the fullScreenButton
+document.getElementById('fullScreenButton').addEventListener('click', function () {
+    // Request full screen when the button is clicked
+    requestFullScreen(document.documentElement);
 });

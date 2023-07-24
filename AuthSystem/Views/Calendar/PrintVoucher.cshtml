@@ -1,0 +1,11 @@
+﻿@model AuthSystem.Models.FeeVoucher
+@{
+    ViewData["Title"] = "Fee Voucher || Print";
+}
+<div style="display: flex; flex-direction : column; justify-content:center; align-items :center; font-family : 'Times New Roman'; font-size :larger;">
+    <h2>Fee Voucher</h2>
+    <p>Voucher Number: @Model.Id</p>
+    <p>Applicant Name: @Model.ApplicantName</p>
+    <p>Test Name: @Model.TestName</p>
+    <p>Fee: @Model.Amount</p>
+</div>

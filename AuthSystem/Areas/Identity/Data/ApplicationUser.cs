@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthSystem.Areas.Identity.Data;
 
-// Add profile data for application users by adding properties to the ApplicationUser class
 public class ApplicationUser : IdentityUser
 {
     [PersonalData]
@@ -12,7 +11,20 @@ public class ApplicationUser : IdentityUser
     [PersonalData]
     [Column(TypeName = "nvarchar(100)")]
     public string LastName { get; set; }
+    [PersonalData]
+    public string? Dob { get; set; }
 
+    public string? Country { get; set; }
+    public string? Province { get; set; }
+    public string? City { get; set; }
+
+    public string? ProfilePhoto { get; set; }
+
+    public string? FatherName { get; set; }
+
+    public string? Address { get; set; }
+
+    public string CNIC { get; set; }
 
 }
 

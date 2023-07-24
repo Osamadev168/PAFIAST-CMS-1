@@ -1,5 +1,6 @@
 using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,12 @@ var connectionString = builder.Configuration.GetConnectionString("connectionStri
 
 builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AuthDbContext>();
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+})
+.AddRoles<IdentityRole>() // Add this line to enable roles
+.AddEntityFrameworkStores<AuthDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -24,6 +30,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
+app.UseAuthentication(); // Add this line before UseAuthorization()
 app.UseAuthorization();
 
 app.MapControllerRoute(

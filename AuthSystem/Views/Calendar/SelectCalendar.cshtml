@@ -1,0 +1,115 @@
+﻿@model List<AuthSystem.Models.TestCalenders>
+@inject AuthSystem.Data.AuthDbContext _test
+@{
+    ViewData["Title"] = "Book Seat";
+    string UserID = ViewBag.UserID;
+    string currentTestName = "";
+}
+<h2>Book a calendar</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="container-sm table-responsive">
+        <table class="table table-responsive table-striped table-light table-hover">
+            <thead>
+                <tr>
+                    <th>Test Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Test Center</th>
+                    <th>Center Location/Address</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userCalendar in Model.OrderBy(t => t.Test.TestName))
+                {
+                    if (userCalendar.Test.TestName != currentTestName)
+                    {
+                        currentTestName = userCalendar.Test.TestName;
+                        <tr>
+                            <td colspan="30"><strong>@currentTestName</strong></td>
+                        </tr>
+                    }
+                    var calendarId = _test.TestApplications
+                    .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
+                    .FirstOrDefault()?.CalendarId;
+                    var calendarToken = _test.TestApplications
+                    .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
+                    .FirstOrDefault()?.CalenderToken;
+                    var hasSelected = calendarId != null;
+                    <tr>
+                        <td>@userCalendar.Date.ToString("D")</td>
+                        <td>@userCalendar.StartTime</td>
+                        <td>@userCalendar.StartTime.AddMinutes(userCalendar.Test.Duration)</td>
+                        <td>@userCalendar.TestCenter.TestCenterName</td>
+                        <td>@userCalendar.TestCenter.TestCenterLocation</td>
+                        <td>
+                            @if (!hasSelected)
+                            {
+                                <form method="post" asp-controller="Calendar" asp-action="SelectCalendarUser" asp-route-testId="@userCalendar.Test.Id" asp-route-calendarId="@userCalendar.Id" asp-route-calendarToken="@userCalendar.CalendarToken">
+                                    <button class="btn btn-success" type="submit">Select Calendar</button>
+                                </form>
+                            }
+                            else 
+                            {
+                                var Approved = _test.CenterChangeRequests
+                                .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId )
+                                .FirstOrDefault()?.Approved;
+                              
+                                var desiredCalendarId = _test.CenterChangeRequests
+                                .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
+                                .FirstOrDefault()?.DesiredCalendarId;
+                                var approved = _test.CenterChangeRequests
+                                .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
+                                .FirstOrDefault()?.Approved;
+                                var hasSelectedAgain = _test.CenterChangeRequests
+                                .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
+                                .FirstOrDefault()?.DesiredCalendarId != null;
+
+                                <form method="post" asp-controller="Calendar" asp-action="SendCenterChangeRequest" asp-route-testId="@userCalendar.Test.Id" asp-route-PreCalendarId="@calendarId" asp-route-PreCalendarToken="@calendarToken" asp-route-userId="@UserID" asp-route-newCalendarId="@userCalendar.Id" asp-route-newCalendarToken="@userCalendar.CalendarToken">
+                                    @if (userCalendar.Id == calendarId)
+                                    {
+                                        <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = userCalendar.Test.TestName, applicantName = User.Identity?.Name , date = userCalendar.Date , centerName = userCalendar.TestCenter.TestCenterName , centerLocation = userCalendar.TestCenter.TestCenterLocation , startTime = userCalendar.StartTime , endTime = userCalendar.EndTime})')">Print Admit Card</a>
+                                    }
+                                    else if (desiredCalendarId == userCalendar.Id)
+                                    {
+                                        <button class="btn btn-warning" disabled>Request Under Review</button>
+                                    }
+                                    else if (hasSelectedAgain && Approved == false)
+                                    {
+                                        <button class="btn btn-danger" disabled>N/A</button>
+                                    }
+                                    else 
+                                    {
+                                        <button class="btn btn-success" type="submit">Request for this calendar</button>
+
+                                    }
+                                    
+
+                                </form>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>No calendars available yet!</p>
+}
+
+<script>
+    function printFeeVoucher(url) {
+        var newWindow = window.open(url, "_blank");
+        newWindow.onload = function () {
+            newWindow.print();
+            newWindow.onafterprint = function () {
+                newWindow.close();
+            };
+        };
+    }
+</script>

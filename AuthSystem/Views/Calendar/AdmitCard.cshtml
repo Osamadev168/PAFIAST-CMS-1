@@ -1,0 +1,15 @@
+﻿@model AuthSystem.Models.AdmitCard
+@{
+    ViewData["Title"] = "Admit Card || Print";
+}
+<div style="display : flex; justify-content : center; align-items : center; flex-direction :column">
+    <h2>Admit Card</h2>
+    <p>Student Name: @Model.ApplicantName</p>
+    <p>Test Name: @Model.TestName</p>
+    <p>Test Center: @Model.TestCenterName</p>
+    <p>Test Center Location: @Model.TestCenterLocation</p>
+    <p>Test Date: @Model.Date</p>
+    <p>Test Start Time: @Model.StartTime</p>
+    <p>Test End Time: @Model.EndTime</p>
+    <hr />
+</div>

@@ -20,6 +20,10 @@
             <span id="testNameError" style="font-size: larger"></span>
             
         </div>
+        <div class="form form-control" style="margin-top :20px; padding :30px">
+            <label class="control-label"> Select a Session</label>
+            <select class="form-control" asp-items="@ViewBag.Session" name="sessionId" required></select>
+        </div>
 
         <div id="subjects-container" class="subjects-container">
             <h6>Please select at least one subject!</h6>
@@ -47,6 +51,7 @@
 
         <div class="form-group">
             <label for="duration">Duration (minutes):</label>
+            <span>@TempData["duration"]</span>
             <input type="number" id="duration" name="duration" class="form-control" required placeholder="Enter test duration in minutes" min="10" />
             <span id="durationHours"></span>
             <div class="form-group">
@@ -72,7 +77,7 @@
 @if (Model.TestList.Count == 0)
 {
     
-<h1>NO TESTS CREATED YET!</h1>
+<h1>NO TESTS CREATED YET! Please wait till we add some tests :)</h1>
 
 }
 @foreach (var test in Model.TestList)
@@ -107,6 +112,8 @@
                                 <strong>(Link will be valid from @calendar.StartTime.ToString("HH:mm") to @calendar.EndTime.ToString("HH:mm") on @calendar.Date.ToString("D"))</strong>
 
                             </li>
+                            <p>Test Center :@calendar.TestCenter.TestCenterName</p>
+                            <p>Location :@calendar.TestCenter.TestCenterLocation</p>
                             <a href="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken})">Test Link</a>
                             <a class="btn btn-primary copy-button" data-test-link="@Url.Action("DemoTest", "Test", new { id = @test.Id , C_Id = calendar.Id , C_token = calendar.CalendarToken })">Copy Test Link</a>
                         }
@@ -129,9 +136,15 @@
                     <label>Start Time:</label>
                     <input type="time" name="startTime" required id="startTimeInput" />
                      <span id="endTime"></span>
+                    <div class="form form-control" style="margin-top :20px; padding :30px">
+                        <label class="control-label"> Select a Test Center</label>
+                        <select class="form-control" asp-items="@ViewBag.TestCenters" name="centerId" required></select>
+                    </div>
+                    <span>@ViewBag.CalendarError</span>
                     <button type="submit" id="addCalendarBtn" class="btn btn-primary">Add Calendar</button>
                 </form>
          </div>
+          
         </div>
         <hr />
        

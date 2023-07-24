@@ -157,19 +157,19 @@ document.getElementById('duration').addEventListener('input', () => {
     
 })
 document.getElementById('timeSpan').addEventListener('input', () => {
-    var timeSpanInput = parseInt(document.getElementById('timeSpan').value);
+    var timeSpanInput = document.getElementById('timeSpan').value;
     var timeSpanHoursElement = document.getElementById('timeSpanHours');
-    var hours = Math.floor(timeSpanInput / 60).toPrecision();
+    var hours = Math.floor(timeSpanInput / 60);
     var minutes = timeSpanInput % 60;
     var timeString = hours + " hours " + minutes + " minutes";
     timeSpanHoursElement.innerHTML = timeString;
-
     var durationInput = parseInt(document.getElementById('duration').value);
     var durationError = document.getElementById('durationError');
     if (timeSpanInput < durationInput) {
         durationError.innerHTML = 'Timespan cannot be less than duration';
 
-    } else {
+    }
+    else {
         durationError.innerHTML = "";
     }
     

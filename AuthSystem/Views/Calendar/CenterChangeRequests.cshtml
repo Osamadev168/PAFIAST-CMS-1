@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@inject AuthSystem.Data.AuthDbContext _test
+@model List<CenterChangeRequest>;
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Center Change Requests";
+    var groupedRequests = Model.GroupBy(request => request.UserId);
+}
+<h1>Requests for changing centers/calendars</h1>
+<hr />
+@foreach (var group in groupedRequests)
+{
+    var applicant = await UserManager.FindByIdAsync(group.Key);
+    var applicantName = applicant?.FirstName + " " + applicant?.LastName;
+    <h4>Applicant: <strong>@applicantName</strong></h4>
+    foreach (var request in group)
+    {
+        var TestDuration = _test.Tests.Where(t => t.Id == request.TestId).FirstOrDefault().Duration;
+        var TestName = _test.Tests.FirstOrDefault(w => w.Id == request.TestId)?.TestName;
+        var PreCalendarId = _test.TestApplications.Where(w => w.TestId == request.TestId && w.UserId == request.UserId).FirstOrDefault()?.CalendarId;
+        var PreCenterId = _test.TestCalenders.Where(t => t.Id == PreCalendarId).FirstOrDefault()?.TestCenterId;
+        var PreCenterDate = _test.TestCalenders.Where(t => t.Id == PreCalendarId).FirstOrDefault()?.Date;
+        var PreCenterStartTime = _test.TestCalenders.Where(t => t.Id == PreCalendarId).FirstOrDefault()?.StartTime;
+        var PreCenterEndTime = _test.TestCalenders.Where(t => t.Id == PreCalendarId).FirstOrDefault()?.StartTime.AddMinutes(TestDuration);
+        var NewCenterId = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.TestCenterId;
+        var PreCenterName = _test.TestCenters.Where(t => t.Id == PreCenterId).FirstOrDefault()?.TestCenterName;
+        var NewCenterName = _test.TestCenters.Where(t => t.Id == NewCenterId).FirstOrDefault()?.TestCenterName;
+        var NewCenterDate = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.Date;
+        var NewCenterStartTime = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.StartTime;
+        var NewCalendarToken = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.CalendarToken;
+
+        var NewCenterEndTime = _test.TestCalenders.Where(t => t.Id == request.DesiredCalendarId).FirstOrDefault()?.StartTime.AddMinutes(TestDuration);
+        var PreCenterCapacity = _test.TestCenters.Where(t => t.Id == PreCenterId).FirstOrDefault()?.Capacity;
+        var PreCenterApplicantations = _test.TestApplications.Where(t => t.Calendar.TestCenterId == PreCenterId && t.CalendarId != null && t.Calendar.Date == PreCenterDate && t.Calendar.StartTime == PreCenterStartTime ).Count();
+        var NewCenterCapacity = _test.TestCenters.Where(t => t.Id == NewCenterId).FirstOrDefault()?.Capacity;
+        var NewCenterApplications = _test.TestApplications.Where(t => t.Calendar.TestCenterId == NewCenterId && t.CalendarId != null && t.Calendar.Date == NewCenterDate && t.Calendar.StartTime == NewCenterStartTime).Count();
+         <div style="border: 1px solid black; background-color : navajowhite">
+             <div style="font-family : Georgia, 'Times New Roman', Times, serif; padding : 20px">
+                <h8>Request Id: @request.Id</h8>
+                <h2>Test: @TestName</h2>
+                <div style="border: 2px solid; margin: 10px; background-color : darkkhaki; padding :5px ">
+                    <h3>Previous Center: @PreCenterName</h3>
+                    <p><strong>Previous Center Test Date: @PreCenterDate</strong></p>
+                    <p>Previous center start time: @PreCenterStartTime</p>
+                    <p>Previous center end time: @PreCenterEndTime</p>
+                    <p>Previous center capacity: @PreCenterCapacity</p>
+                    <p>Previous center applications: @PreCenterApplicantations</p>
+                </div>
+                <div style="border : 2px solid; margin: 10px; background-color : lightsteelblue; padding :5px ">
+                    <h3>Desired Center: @NewCenterName</h3>
+                    <p><strong>Desired center test date: @NewCenterDate</strong></p>
+                    <p>Desired center test start time: @NewCenterStartTime</p>
+                    <p>Desired center test end time: @NewCenterEndTime</p>
+                    <p>Desired center capacity: @NewCenterCapacity</p>
+                    <p>Desired center applications: @NewCenterApplications</p>
+                 </div>
+                <div style="display: flex; flex-direction : row; padding: 10px; align-items : center; ">
+                    <form method="post" asp-action="HandleCenterChange" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId" asp-route-calendarToken="@NewCalendarToken">
+                        <button class="btn btn-success" type="submit">Approve</button>
+                    </form>
+                    <form method="post" asp-action="HandleCenterReject" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId" >
+                        <button class="btn btn-danger" type="submit">Reject</button>
+                    </form>
+                </div>
+             </div>
+         </div>
+    }
+    <hr />
+}
