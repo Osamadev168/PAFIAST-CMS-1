@@ -9,7 +9,7 @@ namespace AuthSystem.Models
 
         public int Id { get; set; }
 
-        [Required]
+   
 
         public string TestName { get; set; }
         public string CreatedBy { get; set; }

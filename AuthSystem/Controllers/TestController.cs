@@ -38,15 +38,31 @@ namespace AuthSystem.Controllers
             return View(viewModel);
         }
 
+        public IActionResult Create()
+        {
+            ViewBag.TestCenters = new SelectList(_test.TestCenters, "Id", "TestCenterName");
+            ViewBag.Session = new SelectList(_test.Sessions, "Id", "SessionName");
+            var viewModel = new Test
+            {
+                TestList = _test.Tests.OrderByDescending(q => q.Id).ToList(),
+                Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
+                TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
+                TestCalenders = _test.TestCalenders.Include(td => td.Test).Include(td => td.TestCenter).ToList()
+            };
+
+            return View(viewModel);
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string testName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan , int sessionId)
+        public IActionResult CreateTest(string TestName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan , int sessionId)
         {
-            if (string.IsNullOrEmpty(testName))
+            if (string.IsNullOrEmpty(TestName))
             {
                 TempData["testName"] = "Test name must be provided";
             }
-            else if (_test.Tests.Any(t => t.TestName == testName))
+            else if (_test.Tests.Any(t => t.TestName == TestName))
             {
                 TempData["testName"] = "Test name must be unique.";
             }
@@ -60,7 +76,7 @@ namespace AuthSystem.Controllers
             }
             else
             {
-                var test = new Test { TestName = testName, CreatedBy = "Admin", Duration = duration , SessionId = sessionId };
+                var test = new Test { TestName = TestName, CreatedBy = "Admin", Duration = duration , SessionId = sessionId };
 
                 if (timeSpan <= 0)
                 {
@@ -72,9 +88,9 @@ namespace AuthSystem.Controllers
                 }
 
                 _test.Tests.Add(test);
-                await _test.SaveChangesAsync();
+                 _test.SaveChanges();
 
-                if (selectedSubjectIds != null)
+                if (selectedSubjectIds != null )
                 {
                     foreach (var subjectId in selectedSubjectIds)
                     {
@@ -89,7 +105,7 @@ namespace AuthSystem.Controllers
                     }
                 }
 
-                await _test.SaveChangesAsync();
+                 _test.SaveChanges();
 
                 return RedirectToAction("Test");
             }
