@@ -56,6 +56,8 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(uc => uc.CalendarId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.Entity<UserRolesViewModel>()
+           .HasNoKey();
         base.OnModelCreating(builder);
 
         // Customize the ASP.NET Identity model and override the defaults if needed.
