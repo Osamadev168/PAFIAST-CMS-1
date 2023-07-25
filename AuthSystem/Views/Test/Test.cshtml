@@ -1,20 +1,17 @@
 ﻿@model AuthSystem.Models.Test;
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Create Test";
 }
 
-<div class="create-test-page-title">
+
 <h1>Create a new test</h1>
 
-</div>
-<form method="post" asp-action="Create" asp-controller="Test" class="form form-control">
+@*<form method="post" asp-action="Create" asp-controller="Test" class="form form-control">
     <h2>Test Composition</h2>
    <div class="test-details">
         <div>
-            <input type="text" id="testName" name="testName" class="form-control" required placeholder="Test name" oninvalid="this.setCustomValidity('Test name is required!')"
-                   oninput="this.setCustomValidity('')"  />
+            <input id="testName" name="TestName" class="form-control" required placeholder="Test name" />
             @TempData["testname"]
 
             <span id="testNameError" style="font-size: larger"></span>
@@ -63,12 +60,12 @@
         </div>
    </div>
    <div class="create-test-button">
-        <button type="submit" id="submit-btn" disabled class="btn btn-success" disabled>Create</button>
+        <button type="submit" id="submit-btn"  class="btn btn-success" >Create</button>
    </div>
 
     
 </form>
-
+*@
 <hr />
 
 <h2>Created Tests</h2>
@@ -151,4 +148,46 @@
        
     </div>
 }
-<script src="/js/CreateTest.js"></script>
+<script>
+    
+function copyTestLink(event) {
+    var testLink = event.target.dataset.testLink;
+    navigator.clipboard.writeText("http://localhost:5173" + testLink)
+        .then(function () {
+            alert("Test link copied to clipboard!");
+        })
+        .catch(function (error) {
+            console.error("Failed to copy test link: ", error);
+        });
+}
+
+var copyButtons = document.querySelectorAll(".copy-button");
+copyButtons.forEach(function (button) {
+    button.addEventListener("click", function (event) {
+        event.preventDefault();
+        copyTestLink(event);
+    });
+});
+var calendarForms = document.querySelectorAll('#calendars-container form');
+
+calendarForms.forEach(function (form) {
+    var startTimeInput = form.querySelector('input[name="startTime"]');
+    var testIdInput = form.querySelector('input[name="testId"]');
+    var endTimeElement = form.querySelector('#endTime');
+
+    startTimeInput.addEventListener('input', function () {
+        var testId = testIdInput.value;
+        var startTime = startTimeInput.value;
+        fetch(`/Test/GetTestEndTime?testId=${testId}&startTime=${startTime}`)
+            .then(function (response) {
+                return response.text();
+            })
+            .then(function (data) {
+                endTimeElement.innerHTML = "The end time for this calendar will be " + "<strong>" + data + "</strong>";
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+    });
+});
+</script>
