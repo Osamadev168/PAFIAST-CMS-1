@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "User Info";
+    var userName = ViewBag.UserName;
+    var fullname = ViewBag.FullName;
+    var fatherName = ViewBag.FatherName;
+    var email = ViewBag.Email;
+    var phoneNumber = ViewBag.PhoneNumber;
+    var address = ViewBag.Address;
+    var city = ViewBag.City;
+    var country = ViewBag.Country;
+    var province = ViewBag.Province;
+    var profilePicture = ViewBag.Photo;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        h2 {
+            color: #555;
+        }
+
+        .user-info {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-picture {
+            max-width: 200px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+        .details {
+            margin-bottom: 10px;
+        }
+
+            .details label {
+                font-weight: bold;
+            }
+
+            .details span {
+                color: #666;
+            }
+    </style>
+</head>
+<body>
+    <div class="user-info">
+        <h1>User Info</h1>
+        <img class="profile-picture" src="@profilePicture" alt="Profile Picture">
+        <div class="details">
+            <label>Username:</label>
+            <span>@userName</span>
+        </div>
+        <div class="details">
+            <label>Full Name:</label>
+            <span>@fullname</span>
+        </div>
+        <div class="details">
+            <label>Father's Name:</label>
+            <span>@fatherName</span>
+        </div>
+        <div class="details">
+            <label>Email:</label>
+            <span>@email</span>
+        </div>
+        <div class="details">
+            <label>Phone Number:</label>
+            <span>@phoneNumber</span>
+        </div>
+        <div class="details">
+            <label>Address:</label>
+            <span>@address</span>
+        </div>
+        <div class="details">
+            <label>City:</label>
+            <span>@city</span>
+        </div>
+        <div class="details">
+            <label>Country:</label>
+            <span>@country</span>
+        </div>
+        <div class="details">
+            <label>Province:</label>
+            <span>@province</span>
+        </div>
+    </div>
+</body>
+</html>
