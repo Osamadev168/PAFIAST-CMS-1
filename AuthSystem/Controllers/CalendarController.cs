@@ -39,6 +39,13 @@ namespace AuthSystem.Controllers
         public IActionResult SelectTest(int testId, string UserId)
         {
             var userId = UserId;
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user != null && user.ProfilePhoto == null || user.FatherName == null || user.City == null || user.Address == null || user.CNIC == null || user.Country == null || user.Province == null) {
+
+
+                return RedirectToAction("ProfileIncomplete");
+            
+            }
             var existingUserCalendar = _test.TestApplications.FirstOrDefault(uc => uc.UserId == userId && uc.TestId == testId);
             if (existingUserCalendar == null)
             {
@@ -52,6 +59,12 @@ namespace AuthSystem.Controllers
                 return RedirectToAction("Index");
             }
             return Ok("Applied Successfully!");
+        }
+
+        public IActionResult ProfileIncomplete() {
+
+
+            return View();
         }
         public async Task<IActionResult> TestApplications()
         {

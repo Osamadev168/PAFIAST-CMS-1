@@ -16,7 +16,7 @@
                 <th>Applicant Name</th>
                 <th>Applicant Email</th>
                 <th>Applicant Phone Number</th>
-
+                <th>Details</th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +26,8 @@
                     <td>@applicant.FirstName @applicant.LastName</td>
                     <td>@applicant.Email</td>
                     <td>@applicant.PhoneNumber</td>
+                    <td><a class="btn btn-success" asp-route-userId="@applicant.Id" asp-action="ViewUserInfo" asp-controller="User">View Profile</a></td>
+
                 </tr>
 
             }

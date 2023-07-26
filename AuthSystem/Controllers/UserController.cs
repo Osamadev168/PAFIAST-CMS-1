@@ -53,25 +53,42 @@ namespace AuthSystem.Controllers
                     await PP.CopyToAsync(fileStream);
                 }
                 user.ProfilePhoto = Path.Combine("\\ProfilePhotos", fileName);
-                // Update other custom fields
             }
 
             var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    // Profile update successful, redirect to a success page or perform other actions
                     return RedirectToAction("Profile");
                 }
 
-                // Handle the case where the update failed (e.g., display error messages)
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             
 
-            // If the model is not valid, return to the view with the validation errors
             return RedirectToAction("Profile");
+        }
+
+        public IActionResult ViewUserInfo(string userId) {
+
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user == null)
+            {
+                return Content("Error fetching user's data");
+            }
+            ViewBag.UserName = user.Email;
+            ViewBag.FullName = user.FirstName + " " + user.LastName;
+            ViewBag.FatherName = user.FatherName;
+            ViewBag.Email = user.Email;
+            ViewBag.PhoneNumber = user.PhoneNumber;
+            ViewBag.Address = user.Address;
+            ViewBag.City = user.City;
+            ViewBag.Country = user.Country;
+            ViewBag.Province = user.Province;
+            ViewBag.Photo = user.ProfilePhoto;
+            return View();
+        
         }
 
     }
