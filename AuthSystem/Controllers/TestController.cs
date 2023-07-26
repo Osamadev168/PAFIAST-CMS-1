@@ -58,61 +58,75 @@ namespace AuthSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateTest(string TestName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan , int sessionId)
         {
-            if (string.IsNullOrEmpty(TestName))
+            
+            try
             {
-                TempData["testName"] = "Test name must be provided";
-            }
-            else if (_test.Tests.Any(t => t.TestName == TestName))
-            {
-                TempData["testName"] = "Test name must be unique.";
-            }
-            else if (selectedSubjectIds == null || !selectedSubjectIds.Any())
-            {
-                TempData["selectedSubjectIds"] = "At least one subject must be selected.";
-            }
-            else if (duration <= 0)
-            {
-                TempData["duration"] = "Please provide a valid duration for this test";
-            }
-            else
-            {
-                var test = new Test { TestName = TestName, CreatedBy = "Admin", Duration = duration , SessionId = sessionId };
-
-                if (timeSpan <= 0)
+                if (string.IsNullOrEmpty(TestName))
                 {
-                    test.TimeSpan = duration;
+                    TempData["testName"] = "Test name must be provided";
+                }
+                else if (_test.Tests.Any(t => t.TestName == TestName))
+                {
+                    TempData["testName"] = "Test name must be unique.";
+                    return RedirectToAction("Create");
+                }
+                else if (selectedSubjectIds == null || !selectedSubjectIds.Any())
+                {
+                    TempData["selectedSubjectIds"] = "At least one subject must be selected.";
+                }
+                else if (duration <= 0)
+                {
+                    TempData["duration"] = "Please provide a valid duration for this test";
                 }
                 else
                 {
-                    test.TimeSpan = timeSpan;
-                }
+                    var test = new Test { TestName = TestName, CreatedBy = "Admin", Duration = duration, SessionId = sessionId };
 
-                _test.Tests.Add(test);
-                 _test.SaveChanges();
-
-                if (selectedSubjectIds != null )
-                {
-                    foreach (var subjectId in selectedSubjectIds)
+                    if (timeSpan <= 0)
                     {
-                        var testDetail = new TestDetail
-                        {
-                            TestId = test.Id,
-                            SubjectId = subjectId,
-                            Percentage = percentages[subjectId]
-                        };
+                        test.TimeSpan = duration;
+                    }
+                    else
+                    {
+                        test.TimeSpan = timeSpan;
+                    }
 
-                        _test.TestsDetail.Add(testDetail);
+                    _test.Tests.Add(test);
+                    _test.SaveChanges();
+
+                    if (selectedSubjectIds != null)
+                    {
+                        foreach (var subjectId in selectedSubjectIds)
+                        {
+                            var testDetail = new TestDetail
+                            {
+                                TestId = test.Id,
+                                SubjectId = subjectId,
+                                Percentage = percentages[subjectId]
+                            };
+
+                            _test.TestsDetail.Add(testDetail);
+                        }
+
+
+                        _test.SaveChanges();
+
+                        return RedirectToAction("Test");
                     }
                 }
 
-                 _test.SaveChanges();
 
                 return RedirectToAction("Test");
+
+
             }
 
+            catch (Exception e) {
 
 
-            return RedirectToAction("Test");
+                return Json(new { Error = e });
+            
+            }
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -184,12 +198,9 @@ namespace AuthSystem.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(500, e.Message);
+                return Json(new { Error = e });
             }
         }
-
-
-
         public async Task<IActionResult> DemoTest(int Id, int C_Id, string C_token)
         {
             var user = await _userManager.GetUserAsync(User);

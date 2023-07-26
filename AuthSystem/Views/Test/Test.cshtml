@@ -1,81 +1,12 @@
 ﻿@model AuthSystem.Models.Test;
-
 @{
     ViewData["Title"] = "Create Test";
 }
-
-
-<h1>Create a new test</h1>
-
-@*<form method="post" asp-action="Create" asp-controller="Test" class="form form-control">
-    <h2>Test Composition</h2>
-   <div class="test-details">
-        <div>
-            <input id="testName" name="TestName" class="form-control" required placeholder="Test name" />
-            @TempData["testname"]
-
-            <span id="testNameError" style="font-size: larger"></span>
-            
-        </div>
-        <div class="form form-control" style="margin-top :20px; padding :30px">
-            <label class="control-label"> Select a Session</label>
-            <select class="form-control" asp-items="@ViewBag.Session" name="sessionId" required></select>
-        </div>
-
-        <div id="subjects-container" class="subjects-container">
-            <h6>Please select at least one subject!</h6>
-
-            @if (Model.Subjects.Count == 0)
-            {
-                <h2>No Subjects Available</h2>
-            }
-            @foreach (var subject in Model.Subjects)
-            {
-                <div class="form-check">
-                    <input type="checkbox" name="selectedSubjectIds" value="@subject.SubjectId" id="subject_@subject.SubjectId" class="form-check-input" data-subject-id="@subject.SubjectId" />
-                    <label for="subject_@subject.SubjectId">@subject.SubjectName.ToUpper()</label>
-                    <input type="number" name="percentages[@subject.SubjectId]" id="percentage_@subject.SubjectId" class="percentage-input form-control-sm" disabled min="1" max="100" required />
-                    %
-                    <span id="question-count-@subject.SubjectId" class="no-of-questions"></span>
-                    <span id="question-count-@subject.SubjectId" ></span>
-                    <span id="err-message-@subject.SubjectId" class="err-message-questions"></span>
-                </div>
-            }
-            <div class="total-percentage" id="total-percentage">
-                Total Percentage: <span id="totalPercentage">0</span>%
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="duration">Duration (minutes):</label>
-            <span>@TempData["duration"]</span>
-            <input type="number" id="duration" name="duration" class="form-control" required placeholder="Enter test duration in minutes" min="10" />
-            <span id="durationHours"></span>
-            <div class="form-group">
-                <label for="duration">TimeSpan (minutes):</label>
-                <input type="number" id="timeSpan" name="timeSpan" class="form-control"  placeholder="Enter a test span in minutes (optional)" min="10" />
-                <span id="timeSpanHours"></span>
-            </div>
-            <span id="durationError" style="color:red"></span>
-        </div>
-   </div>
-   <div class="create-test-button">
-        <button type="submit" id="submit-btn"  class="btn btn-success" >Create</button>
-   </div>
-
-    
-</form>
-*@
-<hr />
-
 <h2>Created Tests</h2>
-
 <hr />
 @if (Model.TestList.Count == 0)
 {
-    
 <h1>NO TESTS CREATED YET! Please wait till we add some tests :)</h1>
-
 }
 @foreach (var test in Model.TestList)
 {
@@ -97,7 +28,6 @@
             @if (test.TestCalenders != null && test.TestCalenders.Any())
             {
                 <h3>Available Calendars</h3>
-
                 <ol>
                     @foreach (var calendar in test.TestCalenders)
                     {
@@ -117,8 +47,6 @@
                     }
                 </ol>
             }
-
-
             else
             {
                 <h6>No Calenders Added Yet!</h6>
@@ -135,59 +63,56 @@
                      <span id="endTime"></span>
                     <div class="form form-control" style="margin-top :20px; padding :30px">
                         <label class="control-label"> Select a Test Center</label>
-                        <select class="form-control" asp-items="@ViewBag.TestCenters" name="centerId" required></select>
+                        <select class="form-control" asp-items="@ViewBag.TestCenters" name="centerId" required>
+                            <option value="">Please select a test center for this calendar</option>
+                        </select>
                     </div>
                     <span>@ViewBag.CalendarError</span>
                     <button type="submit" id="addCalendarBtn" class="btn btn-primary">Add Calendar</button>
                 </form>
          </div>
-          
         </div>
         <hr />
-       
-       
     </div>
 }
 <script>
-    
-function copyTestLink(event) {
-    var testLink = event.target.dataset.testLink;
-    navigator.clipboard.writeText("http://localhost:5173" + testLink)
-        .then(function () {
-            alert("Test link copied to clipboard!");
-        })
-        .catch(function (error) {
-            console.error("Failed to copy test link: ", error);
-        });
-}
 
-var copyButtons = document.querySelectorAll(".copy-button");
-copyButtons.forEach(function (button) {
-    button.addEventListener("click", function (event) {
-        event.preventDefault();
-        copyTestLink(event);
-    });
-});
-var calendarForms = document.querySelectorAll('#calendars-container form');
-
-calendarForms.forEach(function (form) {
-    var startTimeInput = form.querySelector('input[name="startTime"]');
-    var testIdInput = form.querySelector('input[name="testId"]');
-    var endTimeElement = form.querySelector('#endTime');
-
-    startTimeInput.addEventListener('input', function () {
-        var testId = testIdInput.value;
-        var startTime = startTimeInput.value;
-        fetch(`/Test/GetTestEndTime?testId=${testId}&startTime=${startTime}`)
-            .then(function (response) {
-                return response.text();
-            })
-            .then(function (data) {
-                endTimeElement.innerHTML = "The end time for this calendar will be " + "<strong>" + data + "</strong>";
+    function copyTestLink(event) {
+        var testLink = event.target.dataset.testLink;
+        navigator.clipboard.writeText("http://localhost:5173" + testLink)
+            .then(function () {
+                alert("Test link copied to clipboard!");
             })
             .catch(function (error) {
-                console.error(error);
+                console.error("Failed to copy test link: ", error);
             });
+    }
+    var copyButtons = document.querySelectorAll(".copy-button");
+    copyButtons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            copyTestLink(event);
+        });
     });
-});
+    var calendarForms = document.querySelectorAll('#calendars-container form');
+    calendarForms.forEach(function (form) {
+        var startTimeInput = form.querySelector('input[name="startTime"]');
+        var testIdInput = form.querySelector('input[name="testId"]');
+        var endTimeElement = form.querySelector('#endTime');
+
+        startTimeInput.addEventListener('input', function () {
+            var testId = testIdInput.value;
+            var startTime = startTimeInput.value;
+            fetch(`/Test/GetTestEndTime?testId=${testId}&startTime=${startTime}`)
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (data) {
+                    endTimeElement.innerHTML = "The end time for this calendar will be " + "<strong>" + data + "</strong>";
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        });
+    });
 </script>

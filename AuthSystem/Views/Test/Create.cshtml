@@ -12,16 +12,15 @@
     <div class="test-details">
         <div>
             <input id="testName" name="testName" class="form-control" required placeholder="Test name" />
-            @TempData["testname"]
-
+            @TempData["testName"]
             <span id="testNameError" style="font-size: medium"></span>
-
         </div>
         <div class="form form-control" style="margin-top :20px; padding :30px">
             <label class="control-label"> Select a Session</label>
-            <select class="form-control" asp-items="@ViewBag.Session" name="sessionId" required></select>
+            <select class="form-control" asp-items="@ViewBag.Session" name="sessionId" required>
+                <option value="">Please Select a Session</option>
+            </select>
         </div>
-
         <div id="subjects-container" class="subjects-container">
             <h6>Please select at least one subject!</h6>
 

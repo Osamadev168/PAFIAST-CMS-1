@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewData["Title"] = "Manage";
+}
+
+<h1>Create Test Center</h1>
+<form asp-action="Create" asp-controller="TestCenters" class="form-control">
+
+    <input  name="centerName" placeholder="Name" class="form-control-sm"/>
+    <input name="centerLocation" placeholder="Address" class="form-control-sm" />
+    <input name="capacity" placeholder="Capacity" class="form-control-sm" />
+    <input type="submit" title="Create" class="btn btn-primary"/>
+
+</form>
