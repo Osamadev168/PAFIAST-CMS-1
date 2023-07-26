@@ -34,7 +34,20 @@
                 var nonSelectionCenter = _test.TestApplications.Where(w => w.TestId == test.Id && w.IsPaid == true && w.IsVerified == true && w.CalendarId == null).Count();
                 <tr>
                     <td>@test.TestName</td>
-                    <td>@test.TestCalenders.Count</td>
+                    <td>@if (@test.TestCalenders != null)
+                        
+                        {
+                            @test.TestCalenders.Count
+
+                        }
+                        else
+                        
+                        {
+                         <p>0</p>
+                        }
+
+                    </td>
+
                     <td>
                         <a class="btn btn-success" asp-action="ApplicantsDetails" asp-controller="Test" asp-route-testId="@test.Id">@totalApplicants</a>
                     </td>

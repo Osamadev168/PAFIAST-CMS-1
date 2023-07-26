@@ -2,7 +2,6 @@
     var totalPercentage = 0;
     document.getElementById('testName').value;
     var percentageInputs = document.querySelectorAll('#subjects-container input[type="number"]:enabled');
-
     percentageInputs.forEach(function (input) {
         if (input.value) {
             totalPercentage += parseInt(input.value);
@@ -96,46 +95,7 @@ checkboxes.forEach(function (checkbox) {
     checkbox.addEventListener('click', handleCheckboxClick);
 });
 
-function copyTestLink(event) {
-    var testLink = event.target.dataset.testLink;
-    navigator.clipboard.writeText("http://localhost:5173" + testLink)
-        .then(function () {
-            alert("Test link copied to clipboard!");
-        })
-        .catch(function (error) {
-            console.error("Failed to copy test link: ", error);
-        });
-}
 
-var copyButtons = document.querySelectorAll(".copy-button");
-copyButtons.forEach(function (button) {
-    button.addEventListener("click", function (event) {
-        event.preventDefault();
-        copyTestLink(event);
-    });
-});
-var calendarForms = document.querySelectorAll('#calendars-container form');
-
-calendarForms.forEach(function (form) {
-    var startTimeInput = form.querySelector('input[name="startTime"]');
-    var testIdInput = form.querySelector('input[name="testId"]');
-    var endTimeElement = form.querySelector('#endTime');
-
-    startTimeInput.addEventListener('input', function () {
-        var testId = testIdInput.value;
-        var startTime = startTimeInput.value;
-        fetch(`/Test/GetTestEndTime?testId=${testId}&startTime=${startTime}`)
-            .then(function (response) {
-                return response.text();
-            })
-            .then(function (data) {
-                endTimeElement.innerHTML = "The end time for this calendar will be " + "<strong>" + data + "</strong>";
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
-    });
-});
 
 document.getElementById('duration').addEventListener('input', () => {
     var durationInput = document.getElementById('duration').value;
@@ -177,9 +137,6 @@ document.getElementById('timeSpan').addEventListener('input', () => {
 
 var testNameInput = document.getElementById('testName').value
 document.getElementById('testName').addEventListener('blur', () => {
-
-
-
     var testName = document.getElementById('testName').value;
     var submitButton = document.getElementById('submit-btn');
     if (testName !== "") {
