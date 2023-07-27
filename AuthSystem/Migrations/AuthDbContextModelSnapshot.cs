@@ -600,6 +600,15 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TDId"));
 
+                    b.Property<int>("Easy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Hard")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Medium")
+                        .HasColumnType("int");
+
                     b.Property<int>("Percentage")
                         .HasColumnType("int");
 

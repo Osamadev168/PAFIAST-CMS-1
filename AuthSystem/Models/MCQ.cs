@@ -5,7 +5,9 @@ namespace AuthSystem.Models
 {
     public class MCQ
     {
+
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Content { get; set; }
         public string Answer { get; set; }

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using System.Linq;
+
 namespace AuthSystem.Controllers
 {
     public class MCQController : Controller
@@ -139,7 +141,9 @@ namespace AuthSystem.Controllers
                 return View();
             }
 
-            var questions = new List<MCQ>();
+            var existingQuestions = _test.MCQs.ToList();
+            var newQuestions = new List<MCQ>();
+
             using (var stream = new MemoryStream())
             {
                 file.CopyTo(stream);
@@ -154,21 +158,48 @@ namespace AuthSystem.Controllers
 
                     for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                     {
+                        var content = worksheet.Cells[row, 1].Value?.ToString();
+                        var difficulty = worksheet.Cells[row, 7].Value?.ToString();
+                        var answer = worksheet.Cells[row, 2].Value?.ToString();
+                        var option1 = worksheet.Cells[row, 2].Value?.ToString();
+                        var option2 = worksheet.Cells[row, 3].Value?.ToString();
+                        var option3 = worksheet.Cells[row, 4].Value?.ToString();
+                        var option4 = worksheet.Cells[row, 5].Value?.ToString();
+                        var subjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
+                        if (difficulty == null) {
+
+                            difficulty = "Medium";
+                        }
+                        if (string.IsNullOrEmpty(content))
+                        {
+                            // Ignore empty rows
+                            continue;
+                        }
                         var question = new MCQ
                         {
-                            Content = worksheet.Cells[row, 1].Value?.ToString(),
-                            Answer = worksheet.Cells[row, 2].Value?.ToString(),
-
-                            Option1 = worksheet.Cells[row, 2].Value?.ToString(),
-                            Option2 = worksheet.Cells[row, 3].Value?.ToString(),
-                            Option3 = worksheet.Cells[row, 4].Value?.ToString(),
-                            Option4 = worksheet.Cells[row, 5].Value?.ToString(),
-
-                            Difficulty = worksheet.Cells[row, 6].Value?.ToString(),
-                            SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value
-
-
+                            Content = content,
+                            Answer = answer,
+                            Option1 = option1,
+                            Option2 = option2,
+                            Option3 = option3,
+                            Option4 = option4,
+                            Difficulty = difficulty,
+                            SubjectId = subjectId
                         };
+
+                        if (existingQuestions.Any(q =>
+                            string.Equals(q.Content.Trim(), content.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(q.Answer.Trim(), answer.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(q.Option1.Trim(), option1.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(q.Option2.Trim(), option2.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(q.Option3.Trim(), option3.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(q.Option4.Trim(), option4.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                            q.Difficulty == difficulty && q.SubjectId == subjectId) )
+                        {
+                            continue;
+                        }
+
+
 
                         if (string.IsNullOrEmpty(question.Answer))
                         {
@@ -176,27 +207,21 @@ namespace AuthSystem.Controllers
                             return View();
                         }
 
-                        questions.Add(question);
-                    }
-
-                    if (!ModelState.IsValid)
-                    {
-                        return Content("please provide a valid file");
+                        newQuestions.Add(question);
                     }
                 }
             }
 
-            // Save the questions to the database
-            if (ModelState.IsValid)
+            // Save the new questions to the database
+            if (newQuestions.Count > 0)
             {
-                _test.MCQs.AddRange(questions);
+                _test.MCQs.AddRange(newQuestions);
                 _test.SaveChanges();
-                return RedirectToAction("ViewQuestions", "Subject");
-
             }
-            return View();
 
+            return RedirectToAction("ViewQuestions", "Subject");
         }
+
 
 
 

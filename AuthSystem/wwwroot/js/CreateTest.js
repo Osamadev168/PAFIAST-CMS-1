@@ -171,5 +171,16 @@ document.getElementById('testName').addEventListener('blur', () => {
 
 
 }); 
+document.getElementById('showDiffForm').addEventListener('change', function () {
+    var checkBoxChecked = this.checked;
+    var diffFormDiv = document.getElementById('diff-forms');
+    if (checkBoxChecked) {
+        diffFormDiv.style.display = 'flex';
+    } else {
+        diffFormDiv.style.display = 'none';
+    }
+});
+
+
 
 

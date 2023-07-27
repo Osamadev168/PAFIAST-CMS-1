@@ -56,7 +56,7 @@ namespace AuthSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateTest(string TestName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan , int sessionId)
+        public IActionResult CreateTest(string TestName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan , int sessionId , int easy , int medium , int hard)
         {
             
             try
@@ -102,7 +102,10 @@ namespace AuthSystem.Controllers
                             {
                                 TestId = test.Id,
                                 SubjectId = subjectId,
-                                Percentage = percentages[subjectId]
+                                Percentage = percentages[subjectId],
+                                Easy = easy,
+                                Medium = medium,
+                                Hard = hard
                             };
 
                             _test.TestsDetail.Add(testDetail);
@@ -255,13 +258,21 @@ namespace AuthSystem.Controllers
                     var testQuestions = new List<MCQ>();
                     foreach (var testDetail in testDetails)
                     {
+                    var easy = testDetail.Easy;
+                    var medium = testDetail.Medium;
+                    var hard = testDetail.Hard;
                         var subjectQuestions = _test.MCQs.Include(q => q.Subject)
                             .Where(q => q.SubjectId == testDetail.SubjectId)
                             .OrderBy(x => Guid.NewGuid()) 
                             .Take(Math.Max((int)(testDetail.Percentage / 100.0 * 100), 1))
                             .ToList();
 
-                        testQuestions.AddRange(subjectQuestions);
+                    subjectQuestions.Where(q => q.Difficulty == "Easy").Take(easy).ToList();
+                    subjectQuestions.Where(q => q.Difficulty == "Medium").Take(medium).ToList();
+                    subjectQuestions.Where(q => q.Difficulty == "Hard").Take(hard).ToList();
+
+
+                    testQuestions.AddRange(subjectQuestions);
                     }
 
                     var rng = new Random();
