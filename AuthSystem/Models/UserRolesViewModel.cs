@@ -1,7 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace AuthSystem.Models
 {
@@ -9,6 +12,7 @@ namespace AuthSystem.Models
     {
         [Key]
         public string UserId { get; set; }
+
         public string UserName { get; set; }
         public List<IdentityRole> Roles { get; set; }
         [Key]

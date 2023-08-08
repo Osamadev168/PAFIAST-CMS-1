@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+
 namespace AuthSystem.Controllers
 {
     public class RoleManagementController : Controller
@@ -11,7 +12,8 @@ namespace AuthSystem.Controllers
         {
             _roleManager = roleManager;
         }
-        [Authorize(Roles ="Super Admin")]
+
+        [Authorize(Roles = "Super Admin")]
         public IActionResult Index()
         {
             var roles = _roleManager.Roles.ToList();
@@ -45,5 +47,4 @@ namespace AuthSystem.Controllers
             return View(role);
         }
     }
-
 }

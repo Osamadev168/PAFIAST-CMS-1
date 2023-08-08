@@ -20,7 +20,7 @@
     string country = user.Country;
     string province = user.Province;
     string city = user.City;
-    string PP = user.ProfilePhoto;
+    string PP = user != null && user.ProfilePhoto != null ? user.ProfilePhoto : "/user.png";
 }
 
 <h1>Profile Management</h1>
@@ -112,7 +112,6 @@
     function populateStates(country) {
         console.log(country)
         const statesSelect = document.getElementById("statesSelect");
-        // Clear existing options
         statesSelect.innerHTML = '<option selected>Select Province</option>';
 
         const options = {
@@ -125,7 +124,6 @@
             })
         };
 
-        // Fetch states based on selected country
         fetch("https://countriesnow.space/api/v0.1/countries/states", options)
             .then(response => response.json())
 
@@ -159,7 +157,6 @@
             })
         };
 
-        // Fetch cities based on selected country and state
         fetch("https://countriesnow.space/api/v0.1/countries/state/cities", options)
             .then(response => response.json())
             .then(data => {
@@ -180,11 +177,9 @@
         const stateSelect = document.getElementById("statesSelect");
         const citySelect = document.getElementById("citySelect");
 
-        // Clear existing options
         stateSelect.innerHTML = '<option selected>Select Province</option>';
         citySelect.innerHTML = '<option selected>Select City</option>';
 
-        // Fetch countries when the user opens the select field
         fetch("https://countriesnow.space/api/v0.1/countries")
             .then(response => response.json())
             .then(data => {
@@ -206,7 +201,6 @@
         const stateSelect = document.getElementById("statesSelect");
         const citySelect = document.getElementById("citySelect");
 
-        // Clear existing options
         stateSelect.innerHTML = '<option selected>Select Province</option>';
         citySelect.innerHTML = '<option selected>Select City</option>';
 

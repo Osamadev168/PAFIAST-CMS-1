@@ -9,38 +9,37 @@ namespace AuthSystem.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public UserController(UserManager<ApplicationUser> userManager , IWebHostEnvironment hostingEnvironment)
+        public UserController(UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment)
         {
-
             _userManager = userManager;
             _hostingEnvironment = hostingEnvironment;
         }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Profile() {
-
-
-            return View();
-        
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditProfile(string firstName , string lastName , string dob , string country , string province , string city ,  IFormFile PP , string fatherName , string address)
+        public IActionResult Profile()
         {
-            
-                var user = await _userManager.GetUserAsync(User);
-                user.FirstName = firstName;
-                user.LastName = lastName;
-                user.Dob = dob;
-                user.Country = country;
-                user.Province = province;
-                user.City = city;
-                user.FatherName = fatherName;
-                user.Address = address;
+            return View();
+        }
 
-            if (PP != null) {
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(string firstName, string lastName, string dob, string country, string province, string city, IFormFile PP, string fatherName, string address)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            user.Dob = dob;
+            user.Country = country;
+            user.Province = province;
+            user.City = city;
+            user.FatherName = fatherName;
+            user.Address = address;
+
+            if (PP != null)
+            {
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(PP.FileName);
 
                 string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "ProfilePhotos");
@@ -56,22 +55,21 @@ namespace AuthSystem.Controllers
             }
 
             var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Profile");
-                }
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Profile");
+            }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
 
             return RedirectToAction("Profile");
         }
 
-        public IActionResult ViewUserInfo(string userId) {
-
+        public IActionResult ViewUserInfo(string userId)
+        {
             var user = _userManager.FindByIdAsync(userId).Result;
             if (user == null)
             {
@@ -88,8 +86,6 @@ namespace AuthSystem.Controllers
             ViewBag.Province = user.Province;
             ViewBag.Photo = user.ProfilePhoto;
             return View();
-        
         }
-
     }
 }

@@ -1,8 +1,14 @@
-﻿@model AuthSystem.Models.Test
-@inject AuthSystem.Data.AuthDbContext _test;
+﻿@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@model AuthSystem.Models.Test
+@inject AuthSystem.Data.AuthDbContext _test
+@inject UserManager<ApplicationUser> UserManager
+
 @{
     ViewData["Title"] = "Apply";
     string UserId = ViewBag.UserId;
+    var user = UserManager.FindByIdAsync(UserId).Result;
+    string userName = user.FirstName + " " + user.LastName;
 }
     <div class="container-fluid border-4" style="margin:20px">
             <table class="table table-responsive table-striped table-light table-hover ">
@@ -22,8 +28,10 @@
                 var applyButtonId = $"applyButton_{test.Id}_{test.Id}";
                 var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
                 var testID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id).FirstOrDefault()?.TestId;
+                var centerSelcted = _test.TestApplications.Any(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId != null);
+
                 var isApplied = test.Id == testID;
-                var feeVerified = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsVerified;
+                var feeVerified = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id && w.CalendarId == null).FirstOrDefault()?.IsVerified;
                 var isPaid = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsPaid;
                 var isRejected  = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsRejected;
                 var branchCode = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.BranchCode;
@@ -57,29 +65,37 @@
                     </td>
                     <td>
                         <form method="post" asp-controller="Calendar" asp-action="SelectTest" asp-route-testId="@test.Id" asp-route-UserId="@UserId">
-                            <button id="@applyButtonId" class="btn btn-primary" type="submit" disabled="@isApplied">@((isApplied ? "Applied" : "Apply"))</button>
+                            <button id="@applyButtonId" class="btn btn-primary" type="submit" disabled="@(isApplied && @centerSelcted ==false)">@((isApplied && centerSelcted == false  ? "Applied" : "Apply"))</button>
                             @if (test.Id == testID)
                             {
-                                if (feeVerified == false || isPaid == true && feeVerified == false   )
+                                if (feeVerified == false || isPaid == true && feeVerified == false || centerSelcted == true  )
                                 
                                 {
-                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName = User.Identity?.Name, testName = test.TestName })')">Print Fee Voucher</a>
+                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName =userName , testName = test.TestName ,userId = UserId })')">Print Fee Voucher</a>
                                     <a class="btn btn-outline-info" data-form-container="feeFormContainer_@test.Id">Submit Paid Fee Details</a>
                                     <a class="btn btn-info">Pay Online</a>
 
                                 }
-                                @if (feeVerified == true && isPaid == true)
+                                @if (feeVerified == true && isPaid == true && centerSelcted == false)
                                 {
                                     <button class="btn btn-success" disabled>Fee Verified</button>
+                                    <button class="btn btn-outline-info" disabled>Please Select a test Center</button>
+
                                 }
-                                else if (isPaid == true && feeVerified == false && isRejected == false)
+                                else if (isPaid == true && feeVerified == false && isRejected == false  )
                                 {
                                     <button class="btn btn-warning" disabled>Fee Under Verification</button>
                                 }
                                 else if (isPaid == true && feeVerified == false && isRejected == true)
                                 {
                                     <button class="btn btn-danger" disabled>Rejected</button>
-                                }                            
+                                }
+                   @*             else if (feeVerified == true && isPaid == true && centerSelcted == true)
+                                {
+                                    <button id="@applyButtonId" class="btn btn-primary" type="submit">Apply</button>
+
+
+                                }*@
                             }
                         </form>
                         @if (test.Id == testID)
@@ -89,7 +105,7 @@
                                 <div id="feeFormContainer_@test.Id" style="display: none;">
                                     <form class="form-group" asp-action="SubmitFeeDetails" asp-controller="Calendar" method="post" asp-route-testId="@test.Id" enctype="multipart/form-data">
                                         <input type="text" placeholder="Voucher Number" class="form-control" required name="voucherNumber" value="@voucherNumber"  />
-                                        <input type="text" placeholder="Bank (e.g., HBL, MCB, Allied)" class="form-control" required name="bankName" value="@bankName"/>
+                                        <input type="text" placeholder="Bank (HBL, MCB, Allied)" class="form-control" required name="bankName" value="@bankName"/>
                                         <input type="text" placeholder="Branch Name" class="form-control" required name="branchName"  value="@branchName"/>
                                         <input type="text" placeholder="Branch Code" class="form-control" required name="branchCode" value="@branchCode"/>
                                         <label for="voucher">Upload your Paid Fee Voucher:</label>

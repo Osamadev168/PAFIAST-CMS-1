@@ -6,7 +6,9 @@ namespace AuthSystem.Models
     public class MCQ
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         public string Content { get; set; }
         public string Answer { get; set; }
         public string Option1 { get; set; }
@@ -14,9 +16,12 @@ namespace AuthSystem.Models
         public string Option3 { get; set; }
         public string Option4 { get; set; }
         public string Difficulty { get; set; }
+
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
+
         public virtual Subject Subject { get; set; }
+
         public string Section
         {
             get
@@ -24,7 +29,5 @@ namespace AuthSystem.Models
                 return Subject?.SubjectName;
             }
         }
-
-
     }
 }

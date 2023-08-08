@@ -17,7 +17,6 @@
     } else {
         submitButton.removeAttribute('disabled');
         document.getElementById('total-percentage').classList.remove('total-percentage-err')
-
     }
 
     return totalPercentage;
@@ -53,14 +52,13 @@ function handleCheckboxClick(e) {
             method: 'GET',
         })
             .then(response => response.json(),
-             )
+            )
             .then(data => {
                 questionCountElement.classList.add = ''
                 questionCountElement.textContent = data.count + ' Question(s) Available';
 
                 var percentageInputId = "percentage_" + subjectId;
                 var percentageInput = document.getElementById(percentageInputId);
-
 
                 percentageInput.addEventListener('keypress', function () {
                     if (data.count < parseInt(percentageInput.value)) {
@@ -95,8 +93,6 @@ checkboxes.forEach(function (checkbox) {
     checkbox.addEventListener('click', handleCheckboxClick);
 });
 
-
-
 document.getElementById('duration').addEventListener('input', () => {
     var durationInput = document.getElementById('duration').value;
     var durationHoursElement = document.getElementById('durationHours');
@@ -109,12 +105,10 @@ document.getElementById('duration').addEventListener('input', () => {
     durationHoursElement.innerHTML = timeString;
     if (timeSpanInput < durationInput) {
         durationError.innerHTML = 'Timespan cannot be less than duration';
-
     }
     else {
         durationError.innerHTML = "";
     }
-    
 })
 document.getElementById('timeSpan').addEventListener('input', () => {
     var timeSpanInput = document.getElementById('timeSpan').value;
@@ -127,12 +121,10 @@ document.getElementById('timeSpan').addEventListener('input', () => {
     var durationError = document.getElementById('durationError');
     if (timeSpanInput < durationInput) {
         durationError.innerHTML = 'Timespan cannot be less than duration';
-
     }
     else {
         durationError.innerHTML = "";
     }
-    
 });
 
 var testNameInput = document.getElementById('testName').value
@@ -153,23 +145,24 @@ document.getElementById('testName').addEventListener('blur', () => {
                 if (data === "true") {
                     document.getElementById('testNameError').textContent = 'Test name not avialable!';
                     document.getElementById('testNameError').style.color = 'red';
-
                 } else if (data === "false") {
                     submitButton.style.backgroundColor = 'red';
                     document.getElementById('testNameError').textContent = 'A great test name indeed!';
                     document.getElementById('testNameError').style.color = 'green';
                     submitButton.style.backgroundColor = '';
-
                 }
             })
             .catch(error => {
                 document.getElementById('testNameError').textContent = 'An error occurred: ' + error.message;
-            }); 
-
+            });
     }
-
-
-
-}); 
-
-
+});
+document.getElementById('showDiffForm').addEventListener('change', function () {
+    var checkBoxChecked = this.checked;
+    var diffFormDiv = document.getElementById('diff-forms');
+    if (checkBoxChecked) {
+        diffFormDiv.style.display = 'flex';
+    } else {
+        diffFormDiv.style.display = 'none';
+    }
+});

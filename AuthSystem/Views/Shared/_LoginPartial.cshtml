@@ -8,7 +8,8 @@
     var user = await UserManager.GetUserAsync(User);
     var userName = user != null ? await UserManager.GetUserNameAsync(user) : string.Empty;
     var firstName = user != null ? user.FirstName : string.Empty; 
-    var lastName = user != null ? user.LastName : string.Empty; 
+    var lastName = user != null ? user.LastName : string.Empty;
+    var profilePicture = user != null && user.ProfilePhoto != null ? user.ProfilePhoto : "/user.png";
 }
 
 <ul class="navbar-nav">
@@ -16,6 +17,9 @@
     {
         <li class="nav nav-item" >
             <a id="manage" class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @firstName @lastName</a>
+            <div style="align-items: center; justify-content : center">
+                <img src="@Url.Content(profilePicture)" style="width: 30px; height : 30px; border-radius: 40px"  class="nav-livk"/>
+            </div>
         </li>
         <li class="nav nav-item">
             <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
