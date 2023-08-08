@@ -643,9 +643,6 @@ namespace AuthSystem.Migrations
             modelBuilder.Entity("AuthSystem.Models.UserRolesViewModel", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SelectedRoles")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
@@ -653,10 +650,7 @@ namespace AuthSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserRoles")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
 
                     b.ToTable("UserRolesViewModels");
                 });
@@ -704,17 +698,12 @@ namespace AuthSystem.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("UserRolesViewModelUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.HasIndex("UserRolesViewModelUserId");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -978,13 +967,6 @@ namespace AuthSystem.Migrations
                     b.Navigation("Test");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.HasOne("AuthSystem.Models.UserRolesViewModel", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("UserRolesViewModelUserId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1062,11 +1044,6 @@ namespace AuthSystem.Migrations
             modelBuilder.Entity("AuthSystem.Models.TestSession", b =>
                 {
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("AuthSystem.Models.UserRolesViewModel", b =>
-                {
-                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

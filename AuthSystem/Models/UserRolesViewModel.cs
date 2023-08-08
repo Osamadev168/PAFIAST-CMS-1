@@ -13,6 +13,7 @@ namespace AuthSystem.Models
         public List<IdentityRole> Roles { get; set; }
         [Key]
         public List<string> UserRoles { get; set; }
+        [NotMapped]
         public string[]? SelectedRoles { get; set; }
     }
 }

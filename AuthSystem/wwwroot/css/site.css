@@ -306,8 +306,8 @@ font-weight : bold;
     }
 
 .navbar-color {
-    background-color: midnightblue;
-    border-radius: 0px 0px 15px 15px;
+    background-color: #00719c;
+    border-radius: 0px 0px 0px 0px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
