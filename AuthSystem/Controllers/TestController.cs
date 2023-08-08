@@ -8,19 +8,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+
 namespace AuthSystem.Controllers
 {
     public class TestController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AuthDbContext _test;
+
         [ActivatorUtilitiesConstructor]
         public TestController(AuthDbContext test, UserManager<ApplicationUser> userManager)
         {
-
             _test = test;
             _userManager = userManager;
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult Test()
@@ -53,12 +55,10 @@ namespace AuthSystem.Controllers
             return View(viewModel);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateTest(string TestName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan , int sessionId , int easy , int medium , int hard)
+        public IActionResult CreateTest(string TestName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan, int sessionId, int easy, int medium, int hard)
         {
-            
             try
             {
                 if (string.IsNullOrEmpty(TestName))
@@ -111,26 +111,20 @@ namespace AuthSystem.Controllers
                             _test.TestsDetail.Add(testDetail);
                         }
 
-
                         _test.SaveChanges();
 
                         return RedirectToAction("Test");
                     }
                 }
 
-
                 return RedirectToAction("Test");
-
-
             }
-
-            catch (Exception e) {
-
-
+            catch (Exception e)
+            {
                 return Json(new { Error = e });
-            
             }
         }
+
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult CreateCalendar(int testId, DateOnly date, TimeOnly startTime, int centerId)
@@ -153,7 +147,6 @@ namespace AuthSystem.Controllers
                 var existingCalendar = _test.TestCalenders.Where(c => c.StartTime == startTime && c.TestCenterId == centerId && c.Date == date).FirstOrDefault();
                 if (existingCalendar == null)
                 {
-
                     var calendar = new TestCalenders
                     {
                         TestId = testId,
@@ -163,16 +156,14 @@ namespace AuthSystem.Controllers
                         TestCenterId = centerId,
                         CalendarToken = token,
                         Code = calendarCode
-
                     };
 
                     _test.TestCalenders.Add(calendar);
 
                     _test.SaveChanges();
                 }
-                else {
-
-
+                else
+                {
                     ViewBag.CalendarError = "Same calendar for that time already exists for that center!";
                     return View("CalendarError");
                 }
@@ -184,6 +175,7 @@ namespace AuthSystem.Controllers
                 return Json("Error creating calendars: " + ex.Message);
             }
         }
+
         public IActionResult GetTestEndTime(int testId, TimeOnly startTime)
         {
             try
@@ -194,8 +186,6 @@ namespace AuthSystem.Controllers
                     return NotFound();
                 }
 
-              
-
                 var testEndTime = startTime.AddMinutes(test.TimeSpan);
                 return Content(testEndTime.ToString());
             }
@@ -204,6 +194,7 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e });
             }
         }
+
         public async Task<IActionResult> DemoTest(int Id, int C_Id, string C_token)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -211,7 +202,6 @@ namespace AuthSystem.Controllers
             if (user == null)
             {
                 return Content("User not found");
-
             }
             var userId = user.Id;
 
@@ -235,94 +225,89 @@ namespace AuthSystem.Controllers
                 return Content("Attendance due!");
             }
 
+            List<MCQ> questionsList;
 
-                List<MCQ> questionsList;
+            var assignedQuestions = _test.AssignedQuestions
+                .Include(aq => aq.Question)
+                .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
+                .ToList();
 
-                var assignedQuestions = _test.AssignedQuestions
-                    .Include(aq => aq.Question)
-                    .Where(aq => aq.UserId == userId && aq.TestDetailId == Id)
+            if (assignedQuestions.Count == 0)
+            {
+                var testDetails = _test.TestsDetail
+                    .Include(td => td.Test)
+                    .Where(td => td.TestId == Id)
                     .ToList();
-
-                if (assignedQuestions.Count == 0)
-                {
-                    var testDetails = _test.TestsDetail
-                        .Include(td => td.Test)
-                        .Where(td => td.TestId == Id)
-                        .ToList();
                 var testApplication = _test.TestApplications.Where(a => a.UserId == userId && a.TestId == Id && a.CalendarId == C_Id && a.CalenderToken == C_token).FirstOrDefault();
-                if (testApplication != null) {
-
+                if (testApplication != null)
+                {
                     testApplication.HasAttempted = true;
-
                 }
-                    var testQuestions = new List<MCQ>();
-                    foreach (var testDetail in testDetails)
-                    {
+                var testQuestions = new List<MCQ>();
+                foreach (var testDetail in testDetails)
+                {
                     var easy = testDetail.Easy;
                     var medium = testDetail.Medium;
                     var hard = testDetail.Hard;
-                        var subjectQuestions = _test.MCQs.Include(q => q.Subject)
-                            .Where(q => q.SubjectId == testDetail.SubjectId)
-                            .OrderBy(x => Guid.NewGuid()) 
-                            .Take(Math.Max((int)(testDetail.Percentage / 100.0 * 100), 1))
-                            .ToList();
+                    var subjectQuestions = _test.MCQs.Include(q => q.Subject)
+                        .Where(q => q.SubjectId == testDetail.SubjectId)
+                        .OrderBy(x => Guid.NewGuid())
+                        .Take(Math.Max((int)(testDetail.Percentage / 100.0 * 100), 1))
+                        .ToList();
 
                     subjectQuestions.Where(q => q.Difficulty == "Easy").Take(easy).ToList();
                     subjectQuestions.Where(q => q.Difficulty == "Medium").Take(medium).ToList();
                     subjectQuestions.Where(q => q.Difficulty == "Hard").Take(hard).ToList();
 
-
                     testQuestions.AddRange(subjectQuestions);
-                    }
-
-                    var rng = new Random();
-                    testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
-
-                    var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
-
-                
-                    foreach (var question in totalQuestions)
-                    {
-                        var assignedQuestion = new AssignedQuestions
-                        {
-                            UserId = userId,
-                            QuestionId = question.Id,
-                            TestDetailId = Id,
-                            Question = question
-                        };
-
-                        _test.AssignedQuestions.Add(assignedQuestion);
-                    }
-
-                    await _test.SaveChangesAsync();
-
-                    questionsList = totalQuestions;
                 }
-                else
+
+                var rng = new Random();
+                testQuestions = testQuestions.OrderBy(q => rng.Next()).ToList();
+
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
+
+                foreach (var question in totalQuestions)
                 {
-                    var assignedQuestionIds = assignedQuestions.Select(aq => aq.QuestionId).ToList();
-                    var testDetails = _test.TestsDetail
-                        .Include(td => td.Test)
-                        .Where(td => td.TestId == Id)
-                        .ToList();
-
-                    var testQuestions = new List<MCQ>();
-                    foreach (var testDetail in testDetails)
+                    var assignedQuestion = new AssignedQuestions
                     {
-                        var subjectQuestions = _test.MCQs.Include(q => q.Subject)
-                            .Where(q => q.SubjectId == testDetail.SubjectId && assignedQuestionIds.Contains(q.Id))
-                            .ToList();
-                        testQuestions.AddRange(subjectQuestions);
-                    }
+                        UserId = userId,
+                        QuestionId = question.Id,
+                        TestDetailId = Id,
+                        Question = question
+                    };
 
-                    var rng = new Random();
-                    testQuestions = testQuestions.ToList();
-                    var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
-                    questionsList = totalQuestions;
+                    _test.AssignedQuestions.Add(assignedQuestion);
                 }
+
+                await _test.SaveChangesAsync();
+
+                questionsList = totalQuestions;
+            }
+            else
+            {
+                var assignedQuestionIds = assignedQuestions.Select(aq => aq.QuestionId).ToList();
+                var testDetails = _test.TestsDetail
+                    .Include(td => td.Test)
+                    .Where(td => td.TestId == Id)
+                    .ToList();
+
+                var testQuestions = new List<MCQ>();
+                foreach (var testDetail in testDetails)
+                {
+                    var subjectQuestions = _test.MCQs.Include(q => q.Subject)
+                        .Where(q => q.SubjectId == testDetail.SubjectId && assignedQuestionIds.Contains(q.Id))
+                        .ToList();
+                    testQuestions.AddRange(subjectQuestions);
+                }
+
+                var rng = new Random();
+                testQuestions = testQuestions.ToList();
+                var totalQuestions = testQuestions.OrderBy(x => x.Subject.SubjectName).Take(100).ToList();
+                questionsList = totalQuestions;
+            }
             return View(questionsList);
         }
-
 
         public IActionResult SubmitResult(Dictionary<int, string> answers)
         {
@@ -344,11 +329,11 @@ namespace AuthSystem.Controllers
             _test.SaveChanges();
             return Content($"Your score is {score}");
         }
+
         [HttpPost]
         public async Task<IActionResult> SaveUserResponseAsync([FromBody] Dictionary<int, string> answers, int testId)
         {
             var user = await _userManager.GetUserAsync(User);
-
 
             var userId = user.Id;
 
@@ -359,20 +344,17 @@ namespace AuthSystem.Controllers
 
                 var question = _test.AssignedQuestions.Where(u => u.QuestionId == questionId && u.UserId == userId && u.TestDetailId == testId).FirstOrDefault();
                 {
-
-
-
                     question.UserResponse = selectedAnswer;
                 }
             }
             _test.SaveChanges();
             return Json(new { success = "Done!" });
         }
+
         [HttpGet]
         public async Task<IActionResult> FetchUserResponsesAsync(int testId)
         {
             var user = await _userManager.GetUserAsync(User);
-
 
             var userId = user.Id;
 
@@ -386,6 +368,7 @@ namespace AuthSystem.Controllers
                 .ToList();
             return Json(assignedQuestions);
         }
+
         public IActionResult GetNumberOfQuestions(int subjectId)
         {
             var questionsCount = _test.MCQs.Count(q => q.SubjectId == subjectId);
@@ -398,6 +381,7 @@ namespace AuthSystem.Controllers
             };
             return Json(data);
         }
+
         public IActionResult GetTestName(int testId)
         {
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
@@ -409,6 +393,7 @@ namespace AuthSystem.Controllers
             }
             return NotFound();
         }
+
         public IActionResult GetTestDuration(int testId, int C_Id)
         {
             var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
@@ -436,10 +421,10 @@ namespace AuthSystem.Controllers
 
             return NotFound();
         }
+
         public async Task<IActionResult> SaveStartTimeAsync(int testId)
         {
             var user = await _userManager.GetUserAsync(User);
-
 
             var userId = user.Id;
 
@@ -456,14 +441,11 @@ namespace AuthSystem.Controllers
             }
             _test.SaveChanges();
             return Content("Done");
-
-
         }
 
         public async Task<IActionResult> GetRemainingTimeAsync(int testId, int C_Id)
         {
             var user = await _userManager.GetUserAsync(User);
-
 
             var userId = user.Id;
             var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
@@ -504,32 +486,28 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e.Message });
             }
         }
+
         public IActionResult SystemStats()
         {
             try
             {
-
                 var sessions = _test.Sessions.OrderBy(w => w.StartDate).ToList();
-
 
                 return View(sessions);
             }
-            catch (Exception e) {
-
-
+            catch (Exception e)
+            {
                 return Json(new { Error = e.Message });
             }
         }
 
         public IActionResult SessionTests(int sessionId)
         {
-
-
             try
             {
                 var viewModel = new Test
                 {
-                    TestList = _test.Tests.OrderByDescending(q => q.Id).Where(w=> w.SessionId == sessionId).ToList(),
+                    TestList = _test.Tests.OrderByDescending(q => q.Id).Where(w => w.SessionId == sessionId).ToList(),
                     Subjects = _test.Subjects.Include(td => td.Subjects).ToList(),
                     TestDetails = _test.TestsDetail.Include(td => td.Test).ToList(),
                     TestCalenders = _test.TestCalenders.Include(td => td.Test).Include(td => td.TestCenter).ToList()
@@ -537,16 +515,12 @@ namespace AuthSystem.Controllers
 
                 return View(viewModel);
             }
-
-            catch (Exception e) {
-
+            catch (Exception e)
+            {
                 return Json(new { Erorr = e.Message });
-            
             }
-
-        
-        
         }
+
         public IActionResult ApplicantsDetails(int testId)
         {
             try
@@ -564,6 +538,7 @@ namespace AuthSystem.Controllers
                 throw;
             }
         }
+
         public IActionResult UnpaidApplicantsDetails(int testId)
         {
             try
@@ -581,6 +556,7 @@ namespace AuthSystem.Controllers
                 throw;
             }
         }
+
         public IActionResult VerifiedApplicantsDetails(int testId)
         {
             try
@@ -598,6 +574,7 @@ namespace AuthSystem.Controllers
                 throw;
             }
         }
+
         public IActionResult UnVerifiedApplicantsDetails(int testId)
         {
             try
@@ -620,7 +597,7 @@ namespace AuthSystem.Controllers
         {
             try
             {
-                var testApplications = _test.TestApplications.Where(w => w.TestId == testId && w.IsPaid == true && w.IsVerified == true  && w.CalendarId == null).ToList();
+                var testApplications = _test.TestApplications.Where(w => w.TestId == testId && w.IsPaid == true && w.IsVerified == true && w.CalendarId == null).ToList();
                 var userIds = testApplications.Select(ta => ta.UserId).ToList();
 
                 var applicants = _userManager.Users.Where(u => userIds.Contains(u.Id)).ToList();
@@ -633,6 +610,7 @@ namespace AuthSystem.Controllers
                 throw;
             }
         }
+
         public IActionResult SelectedTestCenters(int testId)
         {
             try
@@ -651,10 +629,10 @@ namespace AuthSystem.Controllers
             }
         }
 
-
-        public async Task<IActionResult> MyTests() { 
-         try
-         {
+        public async Task<IActionResult> MyTests()
+        {
+            try
+            {
                 var user = await _userManager.GetUserAsync(User);
                 var currentDate = DateOnly.FromDateTime(DateTime.UtcNow.Date);
                 var currentTime = TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay);
@@ -667,12 +645,10 @@ namespace AuthSystem.Controllers
                             .Include(t => t.Test)
                             .ToList(); return View(tests);
             }
-
             catch (Exception e)
             {
                 return Json(new { Error = e.Message });
             }
-        
         }
     }
 }

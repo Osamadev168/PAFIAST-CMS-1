@@ -6,6 +6,7 @@ namespace AuthSystem.Models
     {
         [Key]
         public int Id { get; set; }
+
         public string TestCenterName { get; set; }
         public string TestCenterLocation { get; set; }
         public int Capacity { get; set; }

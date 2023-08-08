@@ -10,10 +10,12 @@ namespace AuthSystem.Models
 
         [ForeignKey("Test")]
         public int TestId { get; set; }
+
         public Test Test { get; set; }
 
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
+
         public Subject Subject { get; set; }
 
         public int Percentage { get; set; }
@@ -22,6 +24,5 @@ namespace AuthSystem.Models
 
         public int Medium { get; set; }
         public int Hard { get; set; }
-
     }
 }

@@ -6,6 +6,7 @@ namespace AuthSystem.Models
     {
         [Key]
         public int Id { get; set; }
+
         public int QuestionId { get; set; }
         public string Response { get; set; }
     }

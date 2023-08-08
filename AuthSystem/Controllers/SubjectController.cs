@@ -9,11 +9,12 @@ namespace AuthSystem.Controllers
     public class SubjectController : Controller
     {
         private readonly AuthDbContext _test;
+
         public SubjectController(AuthDbContext test)
         {
-
             _test = test;
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult Index(int SubjectId)
@@ -26,6 +27,7 @@ namespace AuthSystem.Controllers
             };
             return View(viewModel);
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult Subjects()
@@ -37,10 +39,10 @@ namespace AuthSystem.Controllers
             };
             return View(viewModel);
         }
+
         [HttpPost]
         public IActionResult Create(Subject model)
         {
-
             // Create a new Subject object from the model data
             Subject newSubject = new Subject { SubjectName = model.SubjectName.Trim().Replace(" ", "-") };
 
@@ -51,20 +53,17 @@ namespace AuthSystem.Controllers
                 _test.SaveChanges();
             }
 
-
             // Redirect to the original view or another appropriate view
             return RedirectToAction("Index");
-
-
-
-
         }
+
         public IActionResult SelectSubject(int subjectId)
         {
             HttpContext.Session.SetInt32("SelectedSubjectId", subjectId);
 
             return RedirectToAction("Options");
         }
+
         public IActionResult DeleteSubject(int id)
         {
             var SubjectData = _test.Subjects.Find(id);
@@ -72,7 +71,6 @@ namespace AuthSystem.Controllers
             var FIB = _test.Blanks.Where(x => x.SubjectId == id);
             if (SubjectData == null)
             {
-
                 return NotFound();
             }
             _test.Subjects.Remove(SubjectData);
@@ -80,16 +78,13 @@ namespace AuthSystem.Controllers
             _test.Blanks.RemoveRange(FIB);
             _test.SaveChanges();
             return RedirectToAction("Index");
-
-
         }
+
         public IActionResult Options()
         {
-
-
             return View();
-
         }
+
         public IActionResult ViewQuestions()
         {
             var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
@@ -100,9 +95,9 @@ namespace AuthSystem.Controllers
 
         public IActionResult Type()
         {
-
             return View();
         }
+
         public IActionResult ViewQuestionsFIB()
         {
             var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
@@ -110,12 +105,12 @@ namespace AuthSystem.Controllers
             var Questions_Blanks = _test.Blanks.Where(x => x.SubjectId == SubjectId).Include(x => x.Subject);
             return View(Questions_Blanks);
         }
+
         public IActionResult GetQuestionsCount(int SubjectId)
         {
             var count = _test.MCQs.Count(q => q.SubjectId == SubjectId);
             var data = new { count = count };
             return Json(data);
         }
-
     }
 }

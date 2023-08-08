@@ -12,10 +12,12 @@ namespace AuthSystem.Models
 
         [ForeignKey("QuestionId")]
         public MCQ Question { get; set; }
+
         public int QuestionId { get; set; }
 
         [ForeignKey("TestDetailId")]
         public TestDetail TestDetail { get; set; }
+
         public int TestDetailId { get; set; }
 
         public string? UserResponse { get; set; }

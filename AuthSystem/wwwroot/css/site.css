@@ -1,20 +1,20 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
@@ -31,7 +31,7 @@ body {
     overflow-x: hidden;
     overflow-y: auto; /* Enable scrolling if the content overflows */
     background-color: #f8f9fa;
-    border : 1px solid lightblue;
+    border: 1px solid lightblue;
 }
 
     .sidebar .nav-link {
@@ -69,8 +69,8 @@ body {
 }
 
 /*tab navigation*/
-.login-logout-card .card-header{
-    padding:0px 0px 12px 0px;
+.login-logout-card .card-header {
+    padding: 0px 0px 12px 0px;
 }
 
 .login-logout-card .ul.nav-tabs {
@@ -82,17 +82,15 @@ body {
 }
 
 .login-logout-card .a.nav-link {
-    font-size:1rem;
+    font-size: 1rem;
     color: blue;
     text-align: center;
     padding: 1rem;
-
 }
 
 .login-logout-card .card-header0 {
     padding: 10px 20px;
 }
-
 
 .uploadFileContainer {
     display: flex;
@@ -101,42 +99,46 @@ body {
     border-image: linear-gradient(to right, #ff0000, #0000ff);
     border-image-slice: 10;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-    border-radius : 10px
+    border-radius: 10px
 }
+
 .options {
     padding: 10px;
-    margin : 5px;
+    margin: 5px;
 }
+
 .subject-name {
-    text-align : right;
-    margin-left : 20px
+    text-align: right;
+    margin-left: 20px
 }
+
 .subjects-container {
-    margin : 10px
+    margin: 10px
 }
+
 .fixed-tabs {
-    font-style : oblique;
-    font-size : large
-   
+    font-style: oblique;
+    font-size: large
 }
 
 .err-message-questions {
-  font-size  : larger;
-  color : darkred
+    font-size: larger;
+    color: darkred
 }
+
 .no-of-questions {
-
     color: darkslateblue;
-    font-family  : 'Times New Roman', Times, serif;
-    font-size : large
+    font-family: 'Times New Roman', Times, serif;
+    font-size: large
+}
 
+.total-percentage {
+    font-size: large;
+    color: deepskyblue;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    float: right
 }
-.total-percentage  {
-    font-size :large;
-    color : deepskyblue;
-    font-family : 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    float : right
-}
+
 .total-percentage-err {
     font-size: large;
     color: palevioletred
@@ -145,77 +147,71 @@ body {
 .nav-link:hover {
     background-color: lavender;
     cursor: pointer;
-    color : darkslateblue;
-    border-radius : 10px
+    color: darkslateblue;
+    border-radius: 10px
 }
 
-.question-type  {
-
-    display : flex;
-    flex-direction : row;
-    justify-content : center;
-    align-items : center;
-    background-color  :  mintcream;
-    border : 0.1px solid grey
-    
-
-
+.question-type {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: mintcream;
+    border: 0.1px solid grey
 }
+
     .question-type a {
         text-decoration: none;
     }
 
-
 .card-question-type {
-  margin : 20px;
-  border : 1px double grey;
-  height : 100%;
-  width : 100%;
-  font-family : 'Global Serif';
-  padding : 10px
+    margin: 20px;
+    border: 1px double grey;
+    height: 100%;
+    width: 100%;
+    font-family: 'Global Serif';
+    padding: 10px
+}
 
-}
-.card-question-type :hover {
-    color : cornflowerblue
-}
+    .card-question-type :hover {
+        color: cornflowerblue
+    }
 
 .session-details {
-
-
-    font-family : monospace
+    font-family: monospace
 }
+
 .test-details {
-    font-family:'Lucida Sans';
-    font-weight : bold;
-    color : darkslategrey;
-    background-color : ghostwhite;
-    border-radius : 20px;   
+    font-family: 'Lucida Sans';
+    font-weight: bold;
+    color: darkslategrey;
+    background-color: ghostwhite;
+    border-radius: 20px;
 }
-
 
 .create-test-button {
-  margin : 8px;
- font-family : monospace;
- font-weight: bold  ;
-
+    margin: 8px;
+    font-family: monospace;
+    font-weight: bold;
 }
+
 .create-test-page-title {
-
-font-family : 'Leelawadee UI';
-font-weight : bold;
+    font-family: 'Leelawadee UI';
+    font-weight: bold;
 }
+
 .calendars-container {
-   margin :20px;
-   border : 2px solid green;
-
+    margin: 20px;
+    border: 2px solid green;
 }
+
 .gradient-border {
     --borderWidth: 3px;
     background: #1D1F20;
     position: relative;
     border-radius: var(--borderWidth);
     color: white;
-    margin : 20px
+    margin: 20px
 }
 
     .gradient-border:after {
@@ -232,7 +228,6 @@ font-weight : bold;
         background-size: 300% 300%;
     }
 
-
 @keyframes animatedgradient {
     0% {
         background-position: 0% 50%;
@@ -246,6 +241,7 @@ font-weight : bold;
         background-position: 0% 50%;
     }
 }
+
 .loader {
     width: 2.2em;
     height: 2.2em;
@@ -293,6 +289,7 @@ font-weight : bold;
         transform: rotate(180deg);
     }
 }
+
 .logo-image {
     height: 40px;
     width: 40px;
@@ -310,5 +307,3 @@ font-weight : bold;
     border-radius: 0px 0px 15px 15px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
-
-

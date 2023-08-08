@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/AuthSystem.styles.css" asp-append-version="true" />
   
 </head>
-<body style="background-color: ghostwhite" class="navbar-custom">
+<body style="background-color: ghostwhite; font-family: 'Lucida Sans Unicode'" class="navbar-custom">
     <nav class="navbar navbar-expand-md navbar-color fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/Home/Index">  <img src="~/logo.png"  class="logo-image"/>
@@ -114,11 +114,13 @@
 
                             @if (!isAdmin && !isTest && !isAdminis && !isSuperAdmin)
                             {
+                              
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="Index" asp-controller="Calendar">Apply</a>
                                 </li>
+                          
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-action="SelectCalendar" asp-controller="Calendar">Book Seat</a>
+                                    <a class="nav-link" asp-action="SelectCenter" asp-controller="Calendar">Book Calendar</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="Applications" asp-controller="Applicant">My Applications</a>

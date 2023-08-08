@@ -238,6 +238,9 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
 
@@ -277,6 +280,9 @@ namespace AuthSystem.Migrations
                     b.Property<string>("TestName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VoucherNumber")
+                        .HasColumnType("int");
 
                     b.Property<bool>("isPaid")
                         .HasColumnType("bit");

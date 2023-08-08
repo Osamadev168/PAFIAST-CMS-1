@@ -1,9 +1,15 @@
 ﻿@model List<AuthSystem.Models.TestCalenders>
 @inject AuthSystem.Data.AuthDbContext _test
+@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Book Seat";
     string UserID = ViewBag.UserID;
     string currentTestName = "";
+    var user =  UserManager.FindByIdAsync(UserID).Result;
+    string userName = user != null ? user.FirstName + " " + user.LastName : "";
+
 }
 <h2>Book a calendar</h2>
 
@@ -28,24 +34,27 @@
                     {
                         currentTestName = userCalendar.Test.TestName;
                         <tr>
-                            <td colspan="30"><strong>@currentTestName</strong></td>
+                            <td colspan="40"><strong>@currentTestName</strong></td>
                         </tr>
                     }
                     var calendarId = _test.TestApplications
-                    .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
+                    .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId && t.CalendarId !=null)
                     .FirstOrDefault()?.CalendarId;
                     var calendarToken = _test.TestApplications
                     .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
                     .FirstOrDefault()?.CalenderToken;
                     var hasSelected = calendarId != null;
-                    <tr>
+                    var testApplicationCount = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.Test.Id).Count();
+                    var testApplicationID1 = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.Test.Id && t.CalendarId == null && t.IsVerified == true).FirstOrDefault()?.Id;
+                    var testApplicationID2 = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.Test.Id && t.CalendarId != null && t.IsVerified == true).FirstOrDefault()?.Id;
+                    var testApplicationIDs = _test.TestApplications.Where(t => t.UserId == UserID && t.TestId == userCalendar.Test.Id && t.CalendarId != null && t.IsVerified == true).ToList();                    <tr>
                         <td>@userCalendar.Date.ToString("D")</td>
                         <td>@userCalendar.StartTime</td>
                         <td>@userCalendar.StartTime.AddMinutes(userCalendar.Test.Duration)</td>
                         <td>@userCalendar.TestCenter.TestCenterName</td>
                         <td>@userCalendar.TestCenter.TestCenterLocation</td>
                         <td>
-                            @if (!hasSelected)
+                            @if (!hasSelected && testApplicationCount == 1)
                             {
                                 <form method="post" asp-controller="Calendar" asp-action="SelectCalendarUser" asp-route-testId="@userCalendar.Test.Id" asp-route-calendarId="@userCalendar.Id" asp-route-calendarToken="@userCalendar.CalendarToken">
                                     <button class="btn btn-success" type="submit">Select Calendar</button>
@@ -56,7 +65,7 @@
                                 var Approved = _test.CenterChangeRequests
                                 .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId )
                                 .FirstOrDefault()?.Approved;
-                              
+
                                 var desiredCalendarId = _test.CenterChangeRequests
                                 .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
                                 .FirstOrDefault()?.DesiredCalendarId;
@@ -67,28 +76,75 @@
                                 .Where(t => t.UserId == UserID && t.TestId == userCalendar.TestId)
                                 .FirstOrDefault()?.DesiredCalendarId != null;
 
-                                <form method="post" asp-controller="Calendar" asp-action="SendCenterChangeRequest" asp-route-testId="@userCalendar.Test.Id" asp-route-PreCalendarId="@calendarId" asp-route-PreCalendarToken="@calendarToken" asp-route-userId="@UserID" asp-route-newCalendarId="@userCalendar.Id" asp-route-newCalendarToken="@userCalendar.CalendarToken">
-                                    @if (userCalendar.Id == calendarId)
-                                    {
-                                        <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = userCalendar.Test.TestName, applicantName = User.Identity?.Name , date = userCalendar.Date , centerName = userCalendar.TestCenter.TestCenterName , centerLocation = userCalendar.TestCenter.TestCenterLocation , startTime = userCalendar.StartTime , endTime = userCalendar.EndTime})')">Print Admit Card</a>
-                                    }
-                                    else if (desiredCalendarId == userCalendar.Id)
-                                    {
-                                        <button class="btn btn-warning" disabled>Request Under Review</button>
-                                    }
-                                    else if (hasSelectedAgain && Approved == false)
-                                    {
-                                        <button class="btn btn-danger" disabled>N/A</button>
-                                    }
-                                    else 
-                                    {
-                                        <button class="btn btn-success" type="submit">Request for this calendar</button>
+                                @if (testApplicationCount > 1)
+                                {
+                                    <form method="post" asp-controller="Calendar" asp-action="SendCenterChangeRequest" asp-route-testId="@userCalendar.Test.Id" asp-route-PreCalendarId="@calendarId" asp-route-PreCalendarToken="@calendarToken" asp-route-userId="@UserID" asp-route-newCalendarId="@userCalendar.Id" asp-route-newCalendarToken="@userCalendar.CalendarToken">
+                                       @* @if (userCalendar.Id == calendarId)
+                                        {
+                                            <h4>Selected for applicationID: @testApplicationID2</h4>
+                                        }*@
+                                        @if (desiredCalendarId == userCalendar.Id)
+                                        {
+                                            <button class="btn btn-warning" disabled>Request Under Review</button>
+                                        }
+                                        else if (hasSelectedAgain && Approved == false)
+                                        {
+                                            <button class="btn btn-danger" disabled>N/A</button>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var selectedTestApplicationID in testApplicationIDs)
+                                            {
+                                                if (selectedTestApplicationID.CalendarId == userCalendar.Id)
+                                                {
+                                                    <h4>Selected for applicationID: @selectedTestApplicationID.Id</h4>
 
-                                    }
+                                                }
+                                                else if (selectedTestApplicationID.CalendarId != userCalendar.Id)
+                                                {
+
+                                                    <button class="btn btn-success" type="submit">Request this calendar for application ID: @selectedTestApplicationID.Id</button>
+
+
+                                                }
+                                                
+                                                
+                                                
+                                            }
+
+                                        }
+                                    </form>
+                                    if (testApplicationID1 != null  )
                                     
+                                    {
 
-                                </form>
-                            }
+                                        <form method="post" asp-controller="Calendar" asp-action="SelectCalendarUser" asp-route-testId="@userCalendar.Test.Id" asp-route-calendarId="@userCalendar.Id" asp-route-calendarToken="@userCalendar.CalendarToken">
+                                            <button class="btn btn-success" type="submit">Select Calendar for applicationID: @testApplicationID1</button>
+                                        </form>
+                                    }
+                                }
+                                else
+                                {
+                                    <form method="post" asp-controller="Calendar" asp-action="SendCenterChangeRequest" asp-route-testId="@userCalendar.Test.Id" asp-route-PreCalendarId="@calendarId" asp-route-PreCalendarToken="@calendarToken" asp-route-userId="@UserID" asp-route-newCalendarId="@userCalendar.Id" asp-route-newCalendarToken="@userCalendar.CalendarToken">
+                                        @if (userCalendar.Id == calendarId)
+                                        {
+                                            <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = userCalendar.Test.TestName, applicantName = @userName, date = userCalendar.Date , centerName = userCalendar.TestCenter.TestCenterName , centerLocation = userCalendar.TestCenter.TestCenterLocation , startTime = userCalendar.StartTime , endTime = userCalendar.EndTime})')">Print Admit Card</a>
+                                        }
+                                        else if (desiredCalendarId == userCalendar.Id)
+                                        {
+                                            <button class="btn btn-warning" disabled>Request Under Review</button>
+                                        }
+                                        else if (hasSelectedAgain && Approved == false)
+                                        {
+                                            <button class="btn btn-danger" disabled>N/A</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-success" type="submit">Request for this calendar</button>
+                                        }
+                                    </form>
+                                }
+}
 
                         </td>
                     </tr>
@@ -112,4 +168,5 @@ else
             };
         };
     }
+
 </script>

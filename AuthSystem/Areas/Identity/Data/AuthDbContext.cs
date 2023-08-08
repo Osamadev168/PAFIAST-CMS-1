@@ -7,13 +7,11 @@ namespace AuthSystem.Data;
 
 public class AuthDbContext : IdentityDbContext<ApplicationUser>
 {
-
-
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
         : base(options)
     {
-
     }
+
     public DbSet<MCQ> MCQs { get; set; }
     public DbSet<Blank> Blanks { get; set; }
     public DbSet<Subject> Subjects { get; set; }
@@ -31,6 +29,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Session> Sessions { get; set; }
     public DbSet<CenterChangeRequest> CenterChangeRequests { get; set; }
     public DbSet<UserRolesViewModel> UserRolesViewModels { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<AssignedQuestions>()
@@ -57,7 +56,5 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.NoAction);
 
         base.OnModelCreating(builder);
-
-        
     }
 }

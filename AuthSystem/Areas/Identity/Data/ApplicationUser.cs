@@ -8,9 +8,11 @@ public class ApplicationUser : IdentityUser
     [PersonalData]
     [Column(TypeName = "nvarchar(100)")]
     public string FirstName { get; set; }
+
     [PersonalData]
     [Column(TypeName = "nvarchar(100)")]
     public string LastName { get; set; }
+
     [PersonalData]
     public string? Dob { get; set; }
 
@@ -25,6 +27,4 @@ public class ApplicationUser : IdentityUser
     public string? Address { get; set; }
 
     public string CNIC { get; set; }
-
 }
-

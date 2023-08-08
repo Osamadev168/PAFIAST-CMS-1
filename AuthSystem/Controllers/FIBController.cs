@@ -10,12 +10,12 @@ namespace AuthSystem.Controllers
     public class FIBController : Controller
     {
         private readonly AuthDbContext _test;
+
         public FIBController(AuthDbContext test)
         {
-
             _test = test;
-
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult ViewBlanks()
@@ -23,21 +23,20 @@ namespace AuthSystem.Controllers
             IEnumerable<Blank> getBlanks = _test.Blanks.Include(q => q.Subject);
             return View(getBlanks);
         }
+
         public IActionResult Create()
         {
             return View();
-
-
         }
+
         public IActionResult UploadFileFIB()
         {
-
             return View();
         }
+
         [HttpPost]
         public IActionResult UploadFile(IFormFile file)
         {
-
             if (file == null || file.Length == 0)
             {
                 ModelState.AddModelError("file", "Please select a file to upload.");
@@ -74,8 +73,6 @@ namespace AuthSystem.Controllers
                             Synonym3 = worksheet.Cells[row, 5].Value?.ToString(),
                             Difficulty = worksheet.Cells[row, 6].Value?.ToString(),
                             SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value
-
-
                         };
 
                         if (string.IsNullOrEmpty(question.Answer))
@@ -99,6 +96,5 @@ namespace AuthSystem.Controllers
             _test.SaveChanges();
             return RedirectToAction("ViewBlanks");
         }
-
     }
 }

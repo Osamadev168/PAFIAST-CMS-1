@@ -1,5 +1,4 @@
-﻿
-function updateAttemptedCount() {
+﻿function updateAttemptedCount() {
     var sectionTabs = document.querySelectorAll('.nav-link[data-bs-toggle="tab"]');
     var totalAttemptedQuestions = 0;
 
@@ -13,15 +12,10 @@ function updateAttemptedCount() {
         var totalCount = totalQuestions.length / 4;
         document.getElementById('section-' + sectionId).setAttribute('data-attempted-count', attemptedCount);
         tab.innerHTML = sectionId + ' <span class="badge rounded-pill bg-success">' + attemptedCount + `/${totalCount}` + '</span>';
-
-
     });
-
 
     document.getElementById('total-questions').innerText = totalAttemptedQuestions + ' Question(s) attempted so far';
 }
-
-
 
 function saveUserResponse(element) {
     var url = window.location.href;
@@ -52,7 +46,6 @@ function saveUserResponse(element) {
 
     updateAttemptedCount();
 }
-
 
 function fetchUserResponses() {
     var url = window.location.href;
@@ -120,7 +113,6 @@ function getTestDuration() {
                     }
                     else if (minutes < 2) {
                         document.getElementById('test-duration').style.backgroundColor = 'red';
-                        
                     }
 else {
                         clearInterval(timer);
@@ -141,7 +133,6 @@ window.addEventListener('load', function () {
     getTestDuration();
     getTestName();
     fetchUserResponses();
-
 });
 // Function to request full screen
 function requestFullScreen(element) {

@@ -70,32 +70,26 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            /// 
+            ///
             [Required]
-
             [DataType(DataType.Text)]
             [Display(Name = "FirstName")]
             public string FirstName { get; set; }
 
-
             [Required]
-
             [DataType(DataType.Text)]
             [Display(Name = "LastName")]
             public string LastName { get; set; }
-
-
 
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-
             [Required]
-
             [Display(Name = "Mobile Number")]
             public string MobileNumber { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -118,7 +112,6 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
-
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -156,23 +149,21 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     // To send confirmation email to user aaccount
                     var client = new SmtpClient("mail.dastyaab.com", 587)
                     {
-
                         Credentials = new NetworkCredential("no-reply@dastyaab.com", "no-reply@dastyaab"),
                         EnableSsl = true
                     };
                     client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
                     //                    client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
-                    /////////////////   
+                    /////////////////
 
                     // To send confirmation email to user aaccount
                     //                  var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
                     //                {
-
                     //                        Credentials = new NetworkCredential("9aa8e727894e55", "41cb28f1b53f5e"),
                     //                  EnableSsl = true
                     //            };
                     //          client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
-                    /////////////////   
+                    /////////////////
                     //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                     // $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
-using System.Linq;
 
 namespace AuthSystem.Controllers
 {
@@ -12,11 +11,12 @@ namespace AuthSystem.Controllers
 
     {
         private readonly AuthDbContext _test;
+
         public MCQController(AuthDbContext test)
         {
-
             _test = test;
         }
+
         [Authorize]
         [HttpGet]
         public ActionResult Index()
@@ -24,11 +24,13 @@ namespace AuthSystem.Controllers
             IEnumerable<MCQ> getQuestions = _test.MCQs.Include(q => q.Subject);
             return View(getQuestions);
         }
+
         public ActionResult MCQs()
         {
             IEnumerable<MCQ> getQuestions = _test.MCQs.Include(q => q.Subject);
             return View(getQuestions);
         }
+
         [Authorize]
         public IActionResult Create()
         {
@@ -39,6 +41,7 @@ namespace AuthSystem.Controllers
             }
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(MCQ obj)
@@ -51,30 +54,24 @@ namespace AuthSystem.Controllers
             _test.SaveChanges();
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
-
-
-
-
         }
-        [Authorize]
 
+        [Authorize]
         public IActionResult Edit()
         {
-
             return View();
         }
+
         [HttpGet]
         public IActionResult Edit(int? Id)
         {
             if (Id == null)
             {
-
                 return NotFound();
             }
             var EditMCQData = _test.MCQs.Find(Id);
             if (EditMCQData == null)
             {
-
                 return NotFound();
             }
             return View(EditMCQData);
@@ -84,17 +81,15 @@ namespace AuthSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(MCQ obj)
         {
-
             if (ModelState.IsValid)
             {
-
                 _test.MCQs.Update(obj);
                 _test.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(obj);
-
         }
+
         public IActionResult Delete(int? Id)
         {
             var mcqData = _test.MCQs.Find(Id);
@@ -106,26 +101,23 @@ namespace AuthSystem.Controllers
             _test.SaveChanges();
             return RedirectToAction("Index");
         }
+
         public IActionResult View(int? Id)
         {
-
             if (Id == null)
             {
-
-
                 return NotFound();
-
             }
             var questionData = _test.MCQs.Find(Id);
 
             return View(questionData);
-
         }
+
         public IActionResult UploadFile()
         {
-
             return View();
         }
+
         [HttpPost]
         public IActionResult UploadFile(IFormFile file)
         {
@@ -166,8 +158,8 @@ namespace AuthSystem.Controllers
                         var option3 = worksheet.Cells[row, 4].Value?.ToString();
                         var option4 = worksheet.Cells[row, 5].Value?.ToString();
                         var subjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
-                        if (difficulty == null) {
-
+                        if (difficulty == null)
+                        {
                             difficulty = "Medium";
                         }
                         if (string.IsNullOrEmpty(content))
@@ -194,12 +186,10 @@ namespace AuthSystem.Controllers
                             string.Equals(q.Option2.Trim(), option2.Trim(), StringComparison.OrdinalIgnoreCase) &&
                             string.Equals(q.Option3.Trim(), option3.Trim(), StringComparison.OrdinalIgnoreCase) &&
                             string.Equals(q.Option4.Trim(), option4.Trim(), StringComparison.OrdinalIgnoreCase) &&
-                            q.Difficulty == difficulty && q.SubjectId == subjectId) )
+                            q.Difficulty == difficulty && q.SubjectId == subjectId))
                         {
                             continue;
                         }
-
-
 
                         if (string.IsNullOrEmpty(question.Answer))
                         {
@@ -221,10 +211,5 @@ namespace AuthSystem.Controllers
 
             return RedirectToAction("ViewQuestions", "Subject");
         }
-
-
-
-
     }
-
 }
