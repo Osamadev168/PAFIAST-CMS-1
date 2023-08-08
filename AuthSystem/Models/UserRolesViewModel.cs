@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,6 +15,7 @@ namespace AuthSystem.Models
 
         public string UserName { get; set; }
         public List<IdentityRole> Roles { get; set; }
+        [Key]
         public List<string> UserRoles { get; set; }
         public string[]? SelectedRoles { get; set; }
     }
