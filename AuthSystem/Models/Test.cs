@@ -1,15 +1,11 @@
 ﻿using DCMS.Lib.Data.Abstractions.Attributes;
-using Microsoft.Build.Framework;
 
 namespace AuthSystem.Models
 {
     public class Test
     {
         [Key]
-
         public int Id { get; set; }
-
-   
 
         public string TestName { get; set; }
         public string CreatedBy { get; set; }
@@ -22,10 +18,10 @@ namespace AuthSystem.Models
         public List<TestDetail> TestDetails { get; set; }
         public List<TestCalenders> TestCalenders { get; set; }
         public List<TestApplication> TestApplications { get; set; }
+
         public Test()
         {
             TestApplications = new List<TestApplication>();
         }
     }
-
 }

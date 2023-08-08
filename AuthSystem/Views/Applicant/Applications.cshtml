@@ -49,5 +49,25 @@
                 }
             }
            <hr />
-        </div>
+        @if (application.Calendar != null)
+        
+        {
+
+            <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = application.Test.TestName, applicantName = "User123", date = testDate , centerName = testCenterName , centerLocation = centerLocation , startTime = startTime , endTime = endTime})')">Print Admit Card</a>
+
+        }
+    </div>
 }
+
+
+<script>
+    function printFeeVoucher(url) {
+        var newWindow = window.open(url, "_blank");
+        newWindow.onload = function () {
+            newWindow.print();
+            newWindow.onafterprint = function () {
+                newWindow.close();
+            };
+        };
+    }
+</script>

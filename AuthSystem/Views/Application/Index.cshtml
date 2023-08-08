@@ -1,0 +1,23 @@
+﻿@model AuthSystem.Models.Test
+
+@{
+    ViewData["Title"] = "Test Application";
+}
+
+<h2>Test Application</h2>
+<hr />
+<form asp-action="Apply_Test" asp-controller="Application" >
+
+    <label>Select a Test</label>
+    <select name="testId" class="form-select">
+        @foreach (var test in Model.TestList)
+        {
+            <option value="@test.Id">
+                @test.TestName
+            </option>
+        }
+    </select>
+
+    <input type="submit" value="Create" class="btn btn-primary">
+
+</form>

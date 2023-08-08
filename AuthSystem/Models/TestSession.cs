@@ -7,6 +7,4 @@
         public Test Test { get; set; }
         public List<MCQ> Questions { get; set; }
     }
-
-
 }

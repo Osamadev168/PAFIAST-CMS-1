@@ -10,20 +10,19 @@ namespace AuthSystem.Controllers
     {
         private readonly AuthDbContext _test;
         private readonly UserManager<ApplicationUser> _userManager;
-        public ApplicantController(AuthDbContext test , UserManager<ApplicationUser> user) {
 
-
-             _test = test;
+        public ApplicantController(AuthDbContext test, UserManager<ApplicationUser> user)
+        {
+            _test = test;
             _userManager = user;
-        
         }
+
         public async Task<IActionResult> Applications()
         {
             var user = await _userManager.GetUserAsync(User);
 
-
             var userId = user.Id;
-            var applications = _test.TestApplications.Include(d => d.Test.TestDetails).Include(w => w.Calendar).Where(w => w.UserId == userId && w.IsVerified == true).ToList();
+            var applications = _test.TestApplications.Include(d => d.Test.TestDetails).Include(w => w.Calendar).Where(w => w.UserId == userId).ToList();
             return View(applications);
         }
     }

@@ -18,8 +18,8 @@ namespace AuthSystem.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
-        [Authorize(Roles = "Super Admin")]
 
+        [Authorize(Roles = "Super Admin")]
         public IActionResult Index()
         {
             var users = _userManager.Users.ToList();
@@ -48,20 +48,15 @@ namespace AuthSystem.Controllers
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
 
-            if (user != null) {
-
-
+            if (user != null)
+            {
                 var userRoles = await _userManager.GetRolesAsync(user);
                 await _userManager.RemoveFromRolesAsync(user, userRoles);
                 var selectedRoles = model.SelectedRoles ?? new string[] { };
                 await _userManager.AddToRolesAsync(user, selectedRoles);
-
             }
-
-          
 
             return RedirectToAction("Index");
         }
     }
-
 }

@@ -6,6 +6,7 @@ namespace AuthSystem.Models
     {
         [Key]
         public int Id { get; set; }
+
         public string TestName { get; set; }
         public string ApplicantName { get; set; }
         public DateOnly Date { get; set; }

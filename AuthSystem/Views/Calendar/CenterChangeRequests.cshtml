@@ -38,6 +38,8 @@
          <div style="border: 1px solid black; background-color : navajowhite">
              <div style="font-family : Georgia, 'Times New Roman', Times, serif; padding : 20px">
                 <h8>Request Id: @request.Id</h8>
+                <h9>Application Id: @request.ApplicationId</h9>
+
                 <h2>Test: @TestName</h2>
                 <div style="border: 2px solid; margin: 10px; background-color : darkkhaki; padding :5px ">
                     <h3>Previous Center: @PreCenterName</h3>
@@ -56,7 +58,7 @@
                     <p>Desired center applications: @NewCenterApplications</p>
                  </div>
                 <div style="display: flex; flex-direction : row; padding: 10px; align-items : center; ">
-                    <form method="post" asp-action="HandleCenterChange" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId" asp-route-calendarToken="@NewCalendarToken">
+                    <form method="post" asp-action="HandleCenterChange" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId" asp-route-calendarToken="@NewCalendarToken" asp-route-applicationId="@request.ApplicationId">
                         <button class="btn btn-success" type="submit">Approve</button>
                     </form>
                     <form method="post" asp-action="HandleCenterReject" asp-controller="Calendar" asp-route-testId="@request.TestId" asp-route-calendarId="@request.DesiredCalendarId" asp-route-userId="@request.UserId" >

@@ -10,6 +10,7 @@ namespace AuthSystem.Models
 
         [ForeignKey("Test")]
         public int TestId { get; set; }
+
         public Test Test { get; set; }
 
         public DateOnly Date { get; set; }
@@ -18,6 +19,7 @@ namespace AuthSystem.Models
 
         [ForeignKey("TestCenter")]
         public int TestCenterId { get; set; }
+
         public TestCenters TestCenter { get; set; }
 
         public string CalendarToken { get; set; }

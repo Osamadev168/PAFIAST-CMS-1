@@ -57,6 +57,16 @@
             </div>
             <span id="durationError" style="color:red"></span>
         </div>
+        <div class="form-control">
+             <label class="form-check-label">Add Difficulty Details (optional)</label>
+            <input type="checkbox" class="form control form-check" id="showDiffForm"/>
+        </div>
+        <div class="diff-forms" style="display : none;" id="diff-forms">
+            <input name="easy" placeholder="Easy Question %" class="form-control" type="number"/>
+            <input name="medium" placeholder="Medium Question %" class="form-control" type="number"/>
+            <input name="hard" placeholder="Hard Question %" class="form-control" type="number"/>
+
+        </div>
     </div>
     <div class="create-test-button">
         <button type="submit" id="submit-btn" class="btn btn-success">Create</button>
