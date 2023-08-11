@@ -1,41 +1,149 @@
 ﻿@model List<TestApplication>
-
+@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@inject AuthSystem.Data.AuthDbContext _test
 @{
     ViewData["Title"] = "My Tests";
 }
 
-<h1>My Tests for today (@DateTime.UtcNow.Date.ToShortDateString())</h1>
+<h1>My tests for today (@DateTime.UtcNow.Date.ToString("D"))</h1>
 <hr />
 
+<table id="example">
+    <thead>
+        <tr>
+            <th>
+                Test Name
+            </th>
+            <th>
+                Application Number
+            </th>
+            <th>
+                Test Composition
+            </th>
+            <th>
+                Test Center
+            </th>
+            <th>
+                Timing 
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var test in Model)
+        {
+            var testCenter = _test.TestCenters.FirstOrDefault(w => w.Id == test.Calendar.TestCenterId);
+            var startTime = test.Calendar.StartTime.ToString();
+            var endTime = test.Calendar.StartTime.AddMinutes(test.Test.Duration).ToString();
+            var testDate = test.Calendar.Date.ToString("D");
+            var currentTime = TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay);
 
-@foreach (var test in Model)
-{
-    <div class="mytest">
-        <div class="test-info">
-            <h3>@test.Test.TestName</h3>
-        </div>
-        <div class="test-action">
-            <a href="@Url.Action("DemoTest", "Test", new { id = @test.TestId , C_Id = test.CalendarId , C_token = test.CalenderToken})" class="btn btn-success">Start Test</a>
-        </div>
-    </div>
-}
+
+            <tr>
+                <td>
+                    @test.Test.TestName
+                </td>
+                <td>
+                    @test.Id
+                </td>
+                <td>
+                    @foreach (var testDetail in test.Test.TestDetails)
+                    {
+                        var subject = _test.Subjects.FirstOrDefault(w => w.SubjectId == testDetail.SubjectId);
+                        <p>@subject.SubjectName @testDetail.Percentage%</p>
+                    }
+                </td>
+                <td>
+                    @testCenter?.TestCenterName
+                </td>
+                <td>
+                    @test.Calendar.StartTime.ToString("hh:mm tt") -- @test.Calendar.StartTime.AddMinutes(test.Test.Duration).ToString("hh:mm tt")
+                </td>
+                <td>
+                    @if (test.Calendar.StartTime <= currentTime && test.Calendar.EndTime >= currentTime)
+                    
+                    {
+                        <a href="@Url.Action("DemoTest", "Test", new { id = test.TestId, C_Id = test.CalendarId, C_token = test.CalenderToken, testId = test.Id })" class="btn">Start Test</a>
+
+
+                    }
+                    else
+                    {
+                      <h4>Link Not Available</h4>    
+                    
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 <style>
-    .mytest {
-        border: 1px solid;
-        margin: 10px;
-        display: flex;
-        flex-direction: row;
-        justify-content : center;
-        align-items : center
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
     }
 
-    .test-info {
-        flex: 1;
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
     }
 
-    .test-action {
-        margin-left: auto;
-        margin-right : 5px;
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    
+
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+            display: inline-block;
+            padding: 8px 12px;
+            border: none;
+            background-color: #007bcf;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    h4 {
+        margin: 0;
+        padding: 8px 0;
+        color: #de3545;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        margin: 20px 0;
     }
 </style>
+
+
