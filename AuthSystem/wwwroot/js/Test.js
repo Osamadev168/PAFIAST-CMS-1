@@ -114,7 +114,7 @@ function getTestDuration() {
                     else if (minutes < 2) {
                         document.getElementById('test-duration').style.backgroundColor = 'red';
                     }
-else {
+                    else {
                         clearInterval(timer);
                         $('#test-duration').text('Test is finished');
                     }

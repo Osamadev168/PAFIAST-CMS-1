@@ -29,7 +29,7 @@
                 var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
                 var testID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId == null).FirstOrDefault()?.TestId;
                 var centerSelcted = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId != null);
-                var applicationID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId == null && t.IsPaid == false).FirstOrDefault()?.Id;
+                var applicationID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId == null).FirstOrDefault()?.Id;
                 var applicationIDPaid = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId == null && t.IsPaid == true).FirstOrDefault()?.Id; 
                 var isApplied = test.Id == testID;
                 var feeVerified = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id && w.CalendarId == null).FirstOrDefault()?.IsVerified;
@@ -66,7 +66,19 @@
                     </td>
                     <td>
                         <form method="post" asp-controller="Calendar" asp-action="SelectTest" asp-route-testId="@test.Id" asp-route-UserId="@UserId">
-                            <a id="@applyButtonId" class="btn btn-primary" data-bs-toggle="modal" data-bs-toggle="tooltip" title="Apply for @test.TestName!" data-bs-target="#@test.Id" disabled="@(isApplied == true )">@((isApplied && centerSelcted != null ? "Applied" : "Apply"))</a>
+                            @if (!isApplied)
+                            {
+
+
+                                <a id="@applyButtonId" class="btn btn-primary" data-bs-toggle="modal" title="Apply for @test.TestName!" data-bs-target="#@test.Id" disabled>@((isApplied ? "Applied" : "Apply"))</a>
+
+                            }
+                            else
+                            
+                            {
+                              <h1>Applied (Application Number: @applicationID)</h1>    
+                            
+                            }
                             <div class="modal fade" id="@test.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -91,11 +103,7 @@
                                 if (feeVerified == false && isPaid == false || isRejected == true    )
                                 
                                 {
-                                    <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName =userName , testName = test.TestName ,userId = UserId })')">Print Fee Voucher</a>
-                                    <a class="btn btn-outline-info" data-form-container="feeFormContainer_@test.Id">Submit Paid Fee Details</a>
-                                    <a class="btn btn-info">Pay Online</a>
-                                    <p>Fee details not submitted yet for application id: @applicationID</p>
-                                    <p>You can create a new application once your fee is verified for application id: @applicationID and have selected a calendar</p>
+                                    
                                     <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#_@test.Id">Cancel Request</a>
                                     <div class="modal fade" id="_@test.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                         <div class="modal-dialog">
@@ -118,45 +126,11 @@
                                    
 
                                 }
-                                @if (feeVerified == true  && centerSelcted != null)
-                                {
-                                    <button class="btn btn-success" disabled>Fee Verified</button>
-                                    <button class="btn btn-outline-info" disabled>Please Select a test Center for application id: @applicationIDPaid</button>
-
-                                }
-                                else if (isPaid == true && feeVerified == false && isRejected == false  )
-                                {
-                                    <button class="btn btn-warning" disabled>Fee Under Verification</button>
-                                }
-                                else if (isPaid == true && feeVerified == false && isRejected == true)
-                                {
-                                    <button class="btn btn-danger" disabled>Rejected</button>
-                                }
-                   @*             else if (feeVerified == true && isPaid == true && centerSelcted == true)
-                                {
-                                    <button id="@applyButtonId" class="btn btn-primary" type="submit">Apply</button>
-
-
-                                }*@
+                                
+                   
                             }
                         </form>
-                        @if (test.Id == testID)
-                        {
-                            @if (test.Id == testID)
-                            {
-                                <div id="feeFormContainer_@test.Id" style="display: none;">
-                                    <form class="form-group" asp-action="SubmitFeeDetails" asp-controller="Calendar" method="post" asp-route-testId="@test.Id" enctype="multipart/form-data">
-                                        <input type="text" placeholder="Voucher Number" class="form-control" required name="voucherNumber" value="@voucherNumber"  />
-                                        <input type="text" placeholder="Bank (HBL, MCB, Allied)" class="form-control" required name="bankName" value="@bankName"/>
-                                        <input type="text" placeholder="Branch Name" class="form-control" required name="branchName"  value="@branchName"/>
-                                        <input type="text" placeholder="Branch Code" class="form-control" required name="branchCode" value="@branchCode"/>
-                                        <label for="voucher">Upload your Paid Fee Voucher:</label>
-                                        <input type="file" class="form-control" id="voucher" name="voucherPhoto" required />
-                                        <input type="submit" class="btn btn-info" />
-                                    </form>
-                                </div>
-                            }
-                        }
+                        
                     </td>
                     <td>
                         <button id="showCalendarButton" class="btn btn-primary" data-calendars-container="@calendarsContainerId">Show Available Calendars</button>
