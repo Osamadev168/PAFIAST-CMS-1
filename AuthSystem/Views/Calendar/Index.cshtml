@@ -11,7 +11,7 @@
     string userName = user.FirstName + " " + user.LastName;
 }
     <div class="container-fluid border-4" style="margin:20px">
-            <table class="table table-responsive table-striped table-light table-hover ">
+    <table class="table table-responsive table-hover" id="example">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -27,12 +27,13 @@
             {
                 var applyButtonId = $"applyButton_{test.Id}_{test.Id}";
                 var appliedMessageId = $"appliedMessage_{test.Id}_{test.Id}";
-                var testID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id).FirstOrDefault()?.TestId;
-                var centerSelcted = _test.TestApplications.Any(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId != null);
-
+                var testID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId == null).FirstOrDefault()?.TestId;
+                var centerSelcted = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId != null);
+                var applicationID = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId == null && t.IsPaid == false).FirstOrDefault()?.Id;
+                var applicationIDPaid = _test.TestApplications.Where(t => t.UserId == UserId && t.TestId == test.Id && t.CalendarId == null && t.IsPaid == true).FirstOrDefault()?.Id; 
                 var isApplied = test.Id == testID;
                 var feeVerified = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id && w.CalendarId == null).FirstOrDefault()?.IsVerified;
-                var isPaid = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsPaid;
+                var isPaid = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id && w.CalendarId == null).FirstOrDefault()?.IsPaid;
                 var isRejected  = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.IsRejected;
                 var branchCode = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.BranchCode;
                 var bankName = _test.TestApplications.Where(w => w.UserId == UserId && w.TestId == test.Id).FirstOrDefault()?.BankName;
@@ -65,21 +66,62 @@
                     </td>
                     <td>
                         <form method="post" asp-controller="Calendar" asp-action="SelectTest" asp-route-testId="@test.Id" asp-route-UserId="@UserId">
-                            <button id="@applyButtonId" class="btn btn-primary" type="submit" disabled="@(isApplied && @centerSelcted ==false)">@((isApplied && centerSelcted == false  ? "Applied" : "Apply"))</button>
+                            <a id="@applyButtonId" class="btn btn-primary" data-bs-toggle="modal" data-bs-toggle="tooltip" title="Apply for @test.TestName!" data-bs-target="#@test.Id" disabled="@(isApplied == true )">@((isApplied && centerSelcted != null ? "Applied" : "Apply"))</a>
+                            <div class="modal fade" id="@test.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Applying for test</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h4>Are you sure you want to apply for <strong>@test.TestName</strong>?</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button class="btn btn-danger" type="submit"> Yes</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                           
                             @if (test.Id == testID)
                             {
-                                if (feeVerified == false || isPaid == true && feeVerified == false || centerSelcted == true  )
+                                if (feeVerified == false && isPaid == false || isRejected == true    )
                                 
                                 {
                                     <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = test.Id, applicantName =userName , testName = test.TestName ,userId = UserId })')">Print Fee Voucher</a>
                                     <a class="btn btn-outline-info" data-form-container="feeFormContainer_@test.Id">Submit Paid Fee Details</a>
                                     <a class="btn btn-info">Pay Online</a>
+                                    <p>Fee details not submitted yet for application id: @applicationID</p>
+                                    <p>You can create a new application once your fee is verified for application id: @applicationID and have selected a calendar</p>
+                                    <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#_@test.Id">Cancel Request</a>
+                                    <div class="modal fade" id="_@test.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">Cancel Request</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <h4>Are you sure you want to cancel your request for <strong>@test.TestName</strong></h4>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <a class="btn btn-danger" href="@Url.Action("CancelRequest" , "Calendar" , new {testId = test.Id , userId = UserId})"> Yes</a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
 
                                 }
-                                @if (feeVerified == true && isPaid == true && centerSelcted == false)
+                                @if (feeVerified == true  && centerSelcted != null)
                                 {
                                     <button class="btn btn-success" disabled>Fee Verified</button>
-                                    <button class="btn btn-outline-info" disabled>Please Select a test Center</button>
+                                    <button class="btn btn-outline-info" disabled>Please Select a test Center for application id: @applicationIDPaid</button>
 
                                 }
                                 else if (isPaid == true && feeVerified == false && isRejected == false  )
@@ -200,4 +242,5 @@
             calendarsContainer.style.display = "block";
         }
     }
+    
 </script>

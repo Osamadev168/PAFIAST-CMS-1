@@ -344,7 +344,7 @@ namespace AuthSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult HandleCenterChange(string userId, int testId, int calendarId, string calendarToken ,int applicationId)
+        public IActionResult HandleCenterChange(string userId, int testId, int calendarId, string calendarToken, int applicationId)
         {
             try
             {
@@ -581,9 +581,9 @@ namespace AuthSystem.Controllers
                     return Content("User not found");
                 }
                 var userId = user.Id;
-                var today = DateOnly.FromDateTime(DateTime.UtcNow.Date); 
+                var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
                 var testCalendars = _test.TestCalenders
-                    .Where(c => c.Date >= today)
+                    /*                    .Where(c => c.Date >= today)*/
                     .Include(t => t.TestCenter)
                     .ToList();
 
@@ -596,6 +596,25 @@ namespace AuthSystem.Controllers
             catch (Exception e)
             {
                 return Json(new { Error = e });
+            }
+        }
+
+        public IActionResult CancelRequest(string userId, int testId)
+        {
+            try
+            {
+                var application = _test.TestApplications.Where(t => t.UserId == userId && t.TestId == testId && t.CalendarId == null && t.IsPaid == false).FirstOrDefault();
+                if (application == null)
+                {
+                    return Content("Application Not Found!");
+                }
+                _test.TestApplications.Remove(application);
+                _test.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
             }
         }
     }

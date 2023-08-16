@@ -1,0 +1,44 @@
+﻿@model List<TestApplication>;
+
+@{
+    ViewData["Title"] = "My Results";
+}
+
+
+<h3>My Results</h3>
+<hr />
+
+<table id="example" class="table table-hover">
+    <thead>
+        <tr>
+            <th>Application ID</th>
+
+            <th>Test Name</th>
+            <th>Attempted On</th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach(var application in Model){
+
+        <tr>
+            <td>
+                @application.Id
+            </td>
+            <td>
+                @application.Test.TestName
+
+            </td>
+            <td>
+                @application.Calendar.Date (@application.Calendar.StartTime)
+            </td>
+            <td>
+                <a href="@Url.Action("ViewResult" , "Applicant" , new {testId = application.TestId  , calendarId = application.CalendarId})" class="btn btn-success">View Result</a>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>

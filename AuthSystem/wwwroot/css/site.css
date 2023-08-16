@@ -32,6 +32,7 @@ body {
     overflow-y: auto; /* Enable scrolling if the content overflows */
     background-color: #f8f9fa;
     border: 1px solid lightblue;
+    color: cornflowerblue
 }
 
     .sidebar .nav-link {
@@ -39,7 +40,7 @@ body {
     }
 
 .main-content {
-    margin-left: 300px; /* Same as the width of the sidebar */
+    margin-left: 300px;
     padding: 25px;
 }
 

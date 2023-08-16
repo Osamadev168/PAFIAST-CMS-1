@@ -6,18 +6,16 @@
         ViewData["Title"] = "Calendar Selection";
         var calendars = ViewBag.Calendars as List<TestCalenders>;
         string userId = ViewBag.UserId;
-    }
-    <head>
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+        var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
 
-    </head>
+    }
+  
     <h4>
         Please select a calendar for your application(s). 
     </h4>
     <hr />
-    <div class="table-responsive">
-        <table class="table table-hover" id="example" style="font-family:  sans-serif">
+    <div >
+    <table class="table table-responsive table-hover" id="example" style="font-family:  sans-serif">
             <thead>
                 <tr>
                     <th>Application Name</th>
@@ -47,6 +45,7 @@
                             {
                                 @if (application.CalendarId != null)
                                 {
+
                                     var calendarData = calendars.Where(c => c.Id == application.CalendarId).FirstOrDefault();
                                     var calendarChangeRequest = _test.CenterChangeRequests
                                     .Any(t => t.UserId == userId && t.TestId == application.TestId  && t.Approved == false && t.ApplicationId == application.Id);
@@ -60,40 +59,56 @@
                                   
                                     <p>Request Submitted for: <strong>@(calendarChangeRequestData?.Date.ToString("D") + " " + calendarChangeRequestData?.StartTime + " - " + calendarChangeRequestData?.StartTime.AddMinutes(application.Test.Duration) + " " + calendarChangeRequestData?.TestCenter.TestCenterName)</strong></p>
                                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#@application.Id" >Cancel Request</button>
-                                    <div class="modal fade" id="@application.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="staticBackdropLabel">Are you sure?</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <form asp-controller="Calendar" asp-action="CancleChangeRequest" asp-route-testId="@application.TestId" asp-route-calendarId="@calendarChangeRequestCalendarId" asp-route-userId="@userId" asp-route-applicationId="@application.Id">
-                                                        <button class="btn btn-danger" >Yes</button>
-                                                    </form>
-                                                </div>
-
+                                <div class="modal fade" id="@application.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Are you sure?</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
+                                            <div class="modal-body">
+                                                <h4>You are going to cancel the calendar change request!</h4>
+                                                </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <form asp-controller="Calendar" asp-action="CancleChangeRequest" asp-route-testId="@application.TestId" asp-route-calendarId="@calendarChangeRequestCalendarId" asp-route-userId="@userId" asp-route-applicationId="@application.Id">
+                                                    <button class="btn btn-danger" >Yes</button>
+                                                </form>
+                                            </div>
+
                                         </div>
                                     </div>
+                                </div>
                                 }
                                 if (calendarData != null)
 
                                 {
+                                    if (calendarData.Date < today)
+                                    
+                                    {
 
-                                    <h5><strong>Selected Calendar: @calendarData?.Date.ToString("D") @calendarData?.StartTime @calendarData?.StartTime.AddMinutes(application.Test.Duration) (@calendarData?.TestCenter.TestCenterName) </strong></h5>
+                                        <h5><strong>(Expired)Selected Calendar: @calendarData?.Date.ToString("D") @calendarData?.StartTime @calendarData?.StartTime.AddMinutes(application.Test.Duration) (@calendarData?.TestCenter.TestCenterName) </strong></h5>
+
+                                    }
+                                    else {
+
+                                        <h5><strong>Selected Calendar: @calendarData?.Date.ToString("D") @calendarData?.StartTime @calendarData?.StartTime.AddMinutes(application.Test.Duration) (@calendarData?.TestCenter.TestCenterName) </strong></h5>
+
+                                    }
+
 
                                 }
                                 else
                                 
                                 {
-                                 <h5>Calendar Expired</h5>   
-                                
+                                    <h5>Calendar Expired</h5>
+
                                 }
 
                                 if (!calendarChangeRequest && calendarData != null)
                                 {
+                                  
+
                                     <button class="btn btn-warning" id="showCalendarButton" data-calendars-container="@calendarsContainerId">Change Calendar</button>
                                     <form method="post" asp-controller="Calendar" asp-action="SendCenterChangeRequest" style="display: none;" id="@calendarsContainerId">
 
@@ -102,13 +117,9 @@
                                         <input type="hidden" name="userId" value="@userId" />
                                         <select class="form-select" name="newCalendarId" required>
                                             @{
-                                                //var cal = (from c in _test.TestCalenders
-                                                //join appCal in _test.TestApplications on c.Id equals appCal.CalendarId
-                                                //where c.Id == appCal.CalendarId //appCal.UserId == userId //&& appCal.UserId == userId && appCal.TestId != application.TestId
-                                                //select c).ToList();
-                                                // Tahir Bhai's Logic
+
                                                 var allCalendarsForTest = calendars
-                                                .Where(c => c.TestId == application.TestId)
+                                                .Where(c => c.TestId == application.TestId && c.Date >= today)
                                                 .ToList();
 
                                                 var availableCalendars = allCalendarsForTest
@@ -119,21 +130,12 @@
                                                 .ToList();
                                             }
 
-                                            <option value="">-- Select a calendar --</option>
+                                            <option value="" disabled selected>-- Select a calendar --</option>
                                             @foreach (var calendar in availableCalendars)
                                             {
-                                                if (availableCalendars.Count == 0)
-
-                                                {
-                                                    <option disabled>No Calendars Avialable</option>
-                                                }
-                                                else
-                                                {
-                                                    var centerName = calendar.TestCenter.TestCenterName;
-                                                    <option value="@calendar.Id">
-                                                        @calendar.Date.ToString("D") - @calendar.StartTime-@calendar.StartTime.AddMinutes(application.Test.Duration) (@calendar.TestCenter.TestCenterName)
-                                                    </option>
-                                                }
+                                                <option value="@calendar.Id">
+                                                    @calendar.Date.ToString("D") - @calendar.StartTime-@calendar.StartTime.AddMinutes(application.Test.Duration) (@calendar.TestCenter.TestCenterName)
+                                                </option>
                                             }
                                         </select>
                                         <div class="modal fade" id="@application.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -144,16 +146,16 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <h6>You are going to submit a calendar change request!</h6>
+                                                        <h6>You are going to submit a calendar change request! </h6>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button class="btn btn-danger" type="submit">Yes</button>
+                                                        <button class="btn btn-danger" type="submit">Yes</button>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#@application.Id">Submit Calendar Change Request</a>
                                     </form>
 
@@ -166,13 +168,9 @@
                                     <select class="form-select" name="calendarId" required>
 
                                         @{
-                                            //var cal = (from c in _test.TestCalenders
-                                            //join appCal in _test.TestApplications on c.Id equals appCal.CalendarId
-                                            //where c.Id == appCal.CalendarId //appCal.UserId == userId //&& appCal.UserId == userId && appCal.TestId != application.TestId
-                                            //select c).ToList();
-                                            // Tahir Bhai's Logic
+
                                             var allCalendarsForTest = calendars
-                                            .Where(c => c.TestId == application.TestId)
+                                            .Where(c => c.TestId == application.TestId && c.Date >= today)
                                             .ToList();
 
                                             var availableCalendars = allCalendarsForTest
@@ -183,20 +181,15 @@
                                             .ToList();
                                         }
 
-                                        <option value="">-- Select a calendar --</option>
+                                        <option value="" disabled selected>-- Select a calendar --</option>
                                         @foreach (var calendar in availableCalendars)
                                         {
-                                            if (availableCalendars.Count == 0)
 
-                                            {
-                                                <option disabled>No Calendars Avialable</option>
-                                            }
-                                            else                                      
-                                            {
-                                                <option value="@calendar.Id">
-                                                    @calendar.Date.ToString("D") - @calendar.StartTime (@calendar.TestCenter.TestCenterName)
-                                                </option>
-                                            }
+
+                                            <option value="@calendar.Id">
+                                                @calendar.Date.ToString("D") - @calendar.StartTime-@calendar.StartTime.AddMinutes(application.Test.Duration) (@calendar.TestCenter.TestCenterName)
+                                            </option>
+                                            
                                         }
                                     </select>
                                     <div class="modal fade" id="@application.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -233,12 +226,9 @@
         </table>
     
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 
     <script>
-        $('#example').DataTable();
         var showCalendarsButtons = document.querySelectorAll("#showCalendarButton");
         showCalendarsButtons.forEach(function (button) {
             button.addEventListener("click", showCalendars);
@@ -255,13 +245,7 @@
                 calendarsContainer.style.display = "block";
             }
         }
-    $(document).ready(function () {
-        $('#application.Id').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var centerName = button.data('center-name'); // Extract centerName from data attribute
-            $('#centerNameSpan').text(centerName); // Set the centerName in the modal
-        });
-    });
+
     </script>
 
 
