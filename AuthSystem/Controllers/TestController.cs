@@ -207,6 +207,7 @@ namespace AuthSystem.Controllers
             var attempted = _test.TestApplications.Where(t => t.UserId == userId && t.TestId == Id && t.CalendarId == C_Id && t.CalenderToken == C_token && t.HasFinished == true).Any();
             ViewBag.TestId = Id;
             ViewBag.CalendarId = C_Id;
+            ViewBag.ApplicationId = applicationId;
             if (!attempted)
             {
                 var test = _test.Tests.FirstOrDefault(x => x.Id == Id);
@@ -242,10 +243,11 @@ namespace AuthSystem.Controllers
                         .Include(td => td.Test)
                         .Where(td => td.TestId == Id)
                         .ToList();
-                    var testApplication = _test.TestApplications.Where(a => a.UserId == userId && a.TestId == Id && a.CalendarId == C_Id && a.CalenderToken == C_token && a.HasFinished == false).FirstOrDefault();
+                    var testApplication = _test.TestApplications.Where(a => a.UserId == userId && a.TestId == Id && a.CalendarId == C_Id && a.CalenderToken == C_token && a.HasFinished == null).FirstOrDefault();
                     if (testApplication != null)
                     {
                         testApplication.HasAttempted = true;
+                        _test.SaveChanges();
                     }
                     var testQuestions = new List<MCQ>();
                     foreach (var testDetail in testDetails)
@@ -296,7 +298,12 @@ namespace AuthSystem.Controllers
                         .Include(td => td.Test)
                         .Where(td => td.TestId == Id)
                         .ToList();
-
+                    var testApplication = _test.TestApplications.Where(a => a.UserId == userId && a.TestId == Id && a.CalendarId == C_Id && a.CalenderToken == C_token && a.HasFinished == null).FirstOrDefault();
+                    if (testApplication != null)
+                    {
+                        testApplication.HasAttempted = true;
+                        _test.SaveChanges();
+                    }
                     var testQuestions = new List<MCQ>();
                     foreach (var testDetail in testDetails)
                     {
@@ -383,14 +390,14 @@ namespace AuthSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FetchUserResponsesAsync(int testId)
+        public async Task<IActionResult> FetchUserResponsesAsync(int testId, int applicationId)
         {
             var user = await _userManager.GetUserAsync(User);
 
             var userId = user.Id;
 
             var assignedQuestions = _test.AssignedQuestions
-                .Where(aq => aq.UserId == userId && aq.TestDetailId == testId)
+                .Where(aq => aq.UserId == userId && aq.TestDetailId == testId && aq.ApplicationId == applicationId)
                 .Select(aq => new
                 {
                     QuestionId = aq.QuestionId,

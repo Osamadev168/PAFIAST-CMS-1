@@ -121,7 +121,9 @@
                                     <a class="nav-link" asp-action="Index" asp-controller="Calendar">Apply</a>
 
                                 </li>
-                          
+                                <li>
+                                    <a class="nav-link" asp-action="PayFee" asp-controller="Applicant">Pay Fee</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="SelectCenter" asp-controller="Calendar">Book Calendar</a>
                                 </li>
@@ -139,9 +141,6 @@
                                 </li>
                             }
                         </ul>
-
-
-
                     </div>
                 </nav>
 
@@ -169,7 +168,12 @@
                 $("#sidebarMenu").toggleClass("show");
             });
         });
-        $('#example').DataTable();
+        $('#example').DataTable({
+            "pageLength": 50,
+             order: false
+
+            
+        });
 
     </script>
 </body>

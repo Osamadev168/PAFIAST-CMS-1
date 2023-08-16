@@ -91,33 +91,27 @@ namespace AuthSystem.Controllers
             return Content("<h1>No Calendars Available</h1>");
         }
 
-        public IActionResult PrintVoucher(int testId, string testName, string applicantName, string userId)
+        public IActionResult PrintVoucher(int testId, string testName, string applicantName, string userId, int applicationId)
         {
             try
             {
-                var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
-                if (test != null)
+                var existingVoucher = _test.FeeVoucher.Where(w => w.TestId == testId && w.ApplicantName == applicantName).FirstOrDefault();
+                if (existingVoucher != null)
                 {
-                    var existingVoucher = _test.FeeVoucher.Where(w => w.ApplicantName == applicantName && w.TestName == testName && w.TestId == testId && w.isPaid == true).FirstOrDefault();
-                    var voucherNumber = _test.TestApplications.Where(a => a.UserId == userId && a.TestId == testId && a.IsPaid == false).FirstOrDefault().Id + testId;
-                    /*  if (existingVoucher != null)
-                      {
-                          return View("PrintVoucher", existingVoucher);
-                      }*/
-                    var feeVoucher = new Models.FeeVoucher
-                    {
-                        VoucherNumber = voucherNumber,
-                        TestName = test.TestName,
-                        Amount = 5000,
-                        ApplicantName = applicantName,
-                        isPaid = true,
-                        TestId = testId
-                    };
-                    _test.FeeVoucher.Add(feeVoucher);
-                    _test.SaveChanges();
-                    return View("PrintVoucher", feeVoucher);
+                    return View("PrintVoucher", existingVoucher);
                 }
-                return NotFound();
+                var feeVoucher = new Models.FeeVoucher
+                {
+                    VoucherNumber = applicationId,
+                    TestName = testName,
+                    Amount = 5000,
+                    ApplicantName = applicantName,
+                    isPaid = true,
+                    TestId = testId
+                };
+                _test.FeeVoucher.Add(feeVoucher);
+                _test.SaveChanges();
+                return View("PrintVoucher", feeVoucher);
             }
             catch (Exception e)
             {
@@ -208,6 +202,7 @@ namespace AuthSystem.Controllers
                 }
                 var userId = user.Id;
                 var appliedTest = _test.TestApplications.FirstOrDefault(q => q.UserId == userId && q.TestId == testId && q.CalendarId == null);
+                var totalApplications = _test.TestApplications.Include(d => d.Test.TestDetails).Include(w => w.Calendar).Where(w => w.UserId == userId).ToList();
 
                 if (appliedTest != null)
                 {
@@ -233,7 +228,7 @@ namespace AuthSystem.Controllers
                     _test.SaveChanges();
                 }
 
-                return RedirectToAction("Index");
+                return RedirectToAction("PayFee", "Applicant", totalApplications);
             }
             catch (Exception e)
             {

@@ -31,6 +31,9 @@
                 <th>
                     Test Status
                 </th>
+                <th>
+                    Application Created At
+                </th>
                  <th>
                      Actions
                  </th>
@@ -132,7 +135,7 @@
                         <p><i class="fas fa-times-circle text-danger"></i> Application Incomplete</p>
                     }
                 </td>
-
+                
                 <td>
                     @if (application.Calendar != null)
                     {
@@ -153,6 +156,9 @@
                     {
                         <p><i class="fas fa-question-circle"></i> N/A</p>
                     }
+                </td>
+                <td style="font-size : 13px">
+                    @application.SelectionTime.ToString("dddd, dd MMMM yyyy  HH:mm tt")
                 </td>
                 <td>
                     @if (application.Calendar != null)
