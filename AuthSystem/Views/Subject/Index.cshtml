@@ -11,11 +11,11 @@
     /* Create three equal columns that floats next to each other */
     .column {
         float: left;
-        
+       width=25 rem;
         margin:5px;
-        padding: 10px;
+        padding:20px;
         height: 120px; /* Should be removed. Only for demonstration */
-        background-color: lightblue;
+        background-color:lightblue;
         display: flex;
         flex-direction: row;
         border-radius: 15px;
@@ -34,15 +34,23 @@
 </style>
 
     <h1>All subjects</h1>
+    <div>
+
     @foreach (var subject in Model.Subjects)
     {
+
     <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })">
-            <div class="column" style="width: 25rem; background-color:lightblue ; display:flex; flex-direction:row;" data-subject-id="@subject.SubjectId">                              
-                    <h3>@subject.SubjectName</h3>            
+            <div class="column" style="width: 25rem; display:flex; flex-direction:row;" data-subject-id="@subject.SubjectId">
+               <div class="mydiv">
+
+                    <h3>@subject.SubjectName</h3>
+               </div>
+                
+              
             </div>
     </a>
     }
-
+    </div>
     <form method="post" asp-controller="Subject" asp-action="Create" class="form-control-lg" style="width:300px; height:300px;">
         <input asp-for="SubjectName" placeholder="Enter new subject name" class="form-control" />
         <button type="submit" class="btn btn-secondary">Create</button>
@@ -68,6 +76,7 @@
                         var count = data.count;
                         var countHtml = '<span class="questions-count">' + count + ' MCQs so far</span>';
                         container.append(countHtml);
+                            document.getElementById('message').innerHTML = countHtml;
                     },
                     error: function () {
                         console.error('Failed to fetch questions count for subject with ID ' + subjectId);
@@ -78,3 +87,10 @@
     </script>
 
 }
+<style>
+
+    .mydiv{
+       display : flex;
+       flex-direction : row;
+    }
+</style>
