@@ -1,9 +1,11 @@
 ﻿using AuthSystem.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -25,7 +27,6 @@ namespace AuthSystem.Controllers
             return View();
         }
 
-        [HttpPost]
         public async Task<IActionResult> EditProfile(string firstName, string lastName, string dob, string country, string province, string city, IFormFile PP, string fatherName, string address)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -68,6 +69,7 @@ namespace AuthSystem.Controllers
             return RedirectToAction("Profile");
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult ViewUserInfo(string userId)
         {
             var user = _userManager.FindByIdAsync(userId).Result;

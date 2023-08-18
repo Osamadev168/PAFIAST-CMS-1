@@ -15,7 +15,7 @@
 
 <h3>User: @firstName @lastName</h3>
 
-<form method="post">
+<form method="post" asp-action="AssignRole" asp-controller="Roles">
     @Html.AntiForgeryToken()
 
     <h4>Select Roles:</h4>

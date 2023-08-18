@@ -666,7 +666,7 @@ namespace AuthSystem.Migrations
 
             modelBuilder.Entity("AuthSystem.Models.UserRolesViewModel", b =>
                 {
-                    b.Property<string>("SelectedRoles")
+                    b.Property<string>("SelectedRoles");
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 

@@ -70,13 +70,14 @@
                             {
 
 
-                                <a id="@applyButtonId" class="btn btn-primary" data-bs-toggle="modal" title="Apply for @test.TestName!" data-bs-target="#@test.Id" disabled>@((isApplied ? "Applied" : "Apply"))</a>
+                                <a id="@applyButtonId" class="btn btn-primary" data-bs-toggle="modal" title="Apply for @test.TestName!" data-bs-target="#@test.Id">Apply </a>
 
                             }
                             else
                             
                             {
-                              <h1>Applied (Application Number: @applicationID)</h1>    
+                              <h3>Applied (Application Number: @applicationID)</h3>
+                              <a href="/Applicant/Payfee" class="btn btn-primary">Pay Fee</a>
                             
                             }
                             <div class="modal fade" id="@test.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -133,37 +134,63 @@
                         
                     </td>
                     <td>
-                        <button id="showCalendarButton" class="btn btn-primary" data-calendars-container="@calendarsContainerId">Show Available Calendars</button>
-                        <div style="display: none; font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif" id="@calendarsContainerId">
-                            @if (Model.TestCalenders.Any(calendar => calendar.TestId == test.Id) )
-                            {
+                        <button  class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#calendars@(test.Id)">Show Available Calendars</button>
+                        
+
+                        <div class="modal fade" id="calendars@(test.Id)"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Available Calendars</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                @if (Model.TestCalenders.Any(calendar => calendar.TestId == test.Id) )
+                                {
                                 var calendarIndex = 1;
                                 foreach (var calendar in Model.TestCalenders.Where(calendar => calendar.TestId == test.Id))
                                 {
-                                    if (DateTime.UtcNow.Day <= calendar.Date.Day)
+                                if (DateTime.UtcNow.Day <= calendar.Date.Day)
 
-                                    {
-                                        <h4>@calendarIndex:</h4>
-                                        <p>Date: <strong>@calendar.Date.ToString("D")</strong></p>
-                                        <p>Test Center: <strong>@calendar.TestCenter.TestCenterName</strong></p>
-                                        <p>Location: <strong>@calendar.TestCenter.TestCenterLocation</strong> </p>
-                                        <p>Start Time: <strong>@calendar.StartTime</strong></p>
-                                        <p>End Time: <strong>@calendar.StartTime.AddMinutes(calendar.Test.Duration)</strong></p>
-                                        calendarIndex++;
-                                    }
-                                    else
-                                    {
-                                     <h2>@calendarIndex:</h2>
-                                     <p>Expired</p>
-                                        calendarIndex++;
-                                    }
+                                {
+                                                <div class="modal-body">
+
+
+                                                    <div class="mb-4">
+                                                        <h4>Calendar @calendarIndex:</h4>
+                                                        <p>Date: <strong>@calendar.Date.ToString("D")</strong></p>
+                                                        <p>Test Center: <strong>@calendar.TestCenter.TestCenterName</strong></p>
+                                                        <p>Location: <strong>@calendar.TestCenter.TestCenterLocation</strong></p>
+                                                        <p>Start Time: <strong>@calendar.StartTime</strong></p>
+                                                        <p>End Time: <strong>@calendar.StartTime.AddMinutes(calendar.Test.Duration)</strong></p>
+                                                    </div>
+                                                </div>
+
+                                                   
+                                calendarIndex++;
                                 }
-                            }
-                            else
-                            {
-                                <h4>No Calendars Available</h4>
-                            }
+                                else
+                                {
+                                <h2>@calendarIndex:</h2>
+                                <p>Expired</p>
+                                calendarIndex++;
+                                }
+                                }
+                                }
+                                else
+                                {
+                                        <div class="modal-header">
+                                            <h3>No Calendars Available</h3>
+
+                                        </div>
+                                }
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                </div>
+                                </div>
                         </div>
+                     
                     </td>
                 </tr>
             }
@@ -183,38 +210,10 @@
         };
     }
 
-    var submitButtons = document.querySelectorAll(".btn-outline-info");
-    submitButtons.forEach(function (button) {
-        button.addEventListener("click", showForm);
-    });
+   
 
-    function showForm(event) {
-        var formContainerId = event.target.getAttribute("data-form-container");
-        var formContainer = document.getElementById(formContainerId);
-        var isFormVisible = formContainer.style.display === "block";
+    
 
-        if (isFormVisible) {
-            formContainer.style.display = "none";
-        } else {
-            formContainer.style.display = "block";
-        }
-    }
-
-    var showCalendarsButtons = document.querySelectorAll("#showCalendarButton");
-    showCalendarsButtons.forEach(function (button) {
-        button.addEventListener("click", showCalendars);
-    });
-
-    function showCalendars(event) {
-        var calendarsContainerId = event.target.getAttribute("data-calendars-container");
-        var calendarsContainer = document.getElementById(calendarsContainerId);
-        var isContainerVisible = calendarsContainer.style.display === "block";
-
-        if (isContainerVisible) {
-            calendarsContainer.style.display = "none";
-        } else {
-            calendarsContainer.style.display = "block";
-        }
-    }
+    
     
 </script>

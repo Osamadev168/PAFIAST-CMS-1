@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AuthSystem.Controllers
 {
-    public class UserManagementController : Controller
+    [Authorize(Roles = "Super Admin")]
+    public class RolesController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserManagementController(
+        public RolesController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
@@ -19,14 +20,13 @@ namespace AuthSystem.Controllers
             _roleManager = roleManager;
         }
 
-        [Authorize(Roles = "Super Admin")]
         public IActionResult Index()
         {
             var users = _userManager.Users.ToList();
             return View(users);
         }
 
-        public IActionResult AssignRole(string userId)
+        public IActionResult Users(string userId)
         {
             var user = _userManager.FindByIdAsync(userId).Result;
             var roles = _roleManager.Roles.ToList();
@@ -43,7 +43,6 @@ namespace AuthSystem.Controllers
             return View(model);
         }
 
-        [HttpPost]
         public async Task<IActionResult> AssignRole(UserRolesViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
@@ -56,7 +55,7 @@ namespace AuthSystem.Controllers
                 await _userManager.AddToRolesAsync(user, selectedRoles);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Users", new { userId = user.Id });
         }
     }
 }

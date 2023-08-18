@@ -1,12 +1,16 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
 using AuthSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Net.Mail;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class CalendarController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -144,21 +148,58 @@ namespace AuthSystem.Controllers
         public async Task<IActionResult> SelectCalendarUser(int testId, int calendarId)
         {
             var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
+            string applicantEmail = "";
+            string userId = "";
+            string applicantName = "";
+            if (user != null)
             {
-                return Content("User not found");
+                userId = user.Id;
+                applicantEmail = _userManager.FindByIdAsync(user.Id)?.Result?.UserName;
+                applicantName = _userManager.FindByIdAsync(userId)?.Result?.FirstName + " " + _userManager.FindByIdAsync(userId)?.Result?.LastName;
             }
-            var userId = user.Id;
-            var calendarToken = _test.TestCalenders.Where(t => t.Id == calendarId).FirstOrDefault()?.CalendarToken;
-            var appliedTest = _test.TestApplications.FirstOrDefault(q => q.UserId == userId && q.TestId == testId && q.CalendarId == null && q.IsVerified == true);
-            var calendarCode = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault()?.Code;
+            var test = _test.Tests.Where(t => t.Id == testId).FirstOrDefault();
+            var appliedTest = _test.TestApplications.Include(a => a.Test).Include(a => a.Calendar).FirstOrDefault(q => q.UserId == userId && q.TestId == testId && q.CalendarId == null && q.IsVerified == true);
+            var calendar = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault();
+            string calendarToken = "";
+            int calendarCode = 0;
+            string calendarStartTime = "";
+            string calendarDate = "";
+            string calendarEndTime = "";
+            string centerName = "";
+            string centerLocation = "";
+            if (calendar != null && test != null)
+            {
+                calendarDate = calendar.Date.ToString("D");
+                calendarStartTime = calendar.StartTime.ToString("hh:mm tt");
+                calendarEndTime = calendar.StartTime.AddMinutes(test.Duration).ToString("hh:mm tt");
+                calendarCode = calendar.Code;
+                calendarToken = calendar.CalendarToken;
+                centerName = _test.TestCenters.Where(c => c.Id == calendar.TestCenterId)?.FirstOrDefault().TestCenterName;
+                centerLocation = _test.TestCenters.Where(c => c.Id == calendar.TestCenterId)?.FirstOrDefault().TestCenterLocation;
+            }
             if (appliedTest != null)
             {
                 appliedTest.CalenderToken = calendarToken;
                 appliedTest.CalendarId = calendarId;
                 appliedTest.CalendarCode = calendarCode;
                 _test.SaveChanges();
+                if (user == null)
+                {
+                    return Content("User not found");
+                }
+
+                var emailSender = new SmtpClient("smtp.office365.com", 587)
+                {
+                    Credentials = new NetworkCredential("donotreply@paf-iast.edu.pk", "PAF@2024"),
+                    EnableSsl = true
+                };
+
+                string confirmationMessage = "Hello " + applicantName + "! ." + "Thank you for selecting a test calendar for " + test?.TestName +
+                                             " against Application number: " + appliedTest.Id +
+                                             " your test will be at " + centerName + " at " + calendarDate + " from " + calendarStartTime + " to " + calendarEndTime
+                                             + " Good Luck!";
+
+                emailSender.Send("donotreply@paf-iast.edu.pk", applicantEmail, "Center Selected Successfully", confirmationMessage);
             }
             else
             {
@@ -236,6 +277,8 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
+
         [HttpGet]
         public IActionResult ViewSubmittedApplications()
         {
@@ -250,17 +293,35 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         [HttpPost]
         public IActionResult VerifyFee(int testId, string userId)
         {
             try
             {
-                var testApplication = _test.TestApplications.Where(w => w.TestId == testId && w.UserId == userId && w.IsPaid == true && w.CalendarId == null).FirstOrDefault();
+                var testApplication = _test.TestApplications.Where(w => w.TestId == testId && w.UserId == userId && w.IsPaid == true && w.CalendarId == null).Include(t => t.Test).FirstOrDefault();
+
+                var applicantEmail = _userManager.FindByIdAsync(userId)?.Result?.UserName;
+                var applicantName = _userManager.FindByIdAsync(userId)?.Result?.FirstName + " " + _userManager.FindByIdAsync(userId)?.Result?.LastName;
+
+                var emailSender = new SmtpClient("smtp.office365.com", 587)
+                {
+                    Credentials = new NetworkCredential("donotreply@paf-iast.edu.pk", "PAF@2024"),
+                    EnableSsl = true
+                };
+
                 if (testApplication != null)
                 {
                     testApplication.IsVerified = true;
                     _test.SaveChanges();
+
+                    string confirmationMessage = "Hello " + applicantName + "! ." + "Thank you for paying your test fee for " + testApplication.Test.TestName +
+                                                 ". Your fee against ApplicationId: " + testApplication.Id +
+                                                 " is verified. You can now select a test calendar according to your convenience";
+
+                    emailSender.Send("donotreply@paf-iast.edu.pk", applicantEmail, "Fee Confirmation", confirmationMessage);
                 }
+
                 return RedirectToAction("ViewSubmittedApplications");
             }
             catch (Exception e)
@@ -269,6 +330,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult DumpFee(int testId, string userId)
         {
             try
@@ -325,6 +387,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult CenterChangeRequests()
         {
             try
@@ -338,14 +401,48 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         [HttpPost]
-        public IActionResult HandleCenterChange(string userId, int testId, int calendarId, string calendarToken, int applicationId)
+        public async Task<IActionResult> HandleCenterChange(string userId, int testId, int calendarId, string calendarToken, int applicationId)
         {
             try
             {
+                var user = await _userManager.GetUserAsync(User);
+                string applicantEmail = "";
+                string applicantName = "";
+                if (user != null)
+                {
+                    applicantEmail = _userManager.FindByIdAsync(userId)?.Result?.UserName;
+                    applicantName = _userManager.FindByIdAsync(userId)?.Result?.FirstName + " " + _userManager.FindByIdAsync(userId)?.Result?.LastName;
+                }
                 var testApplication = _test.TestApplications.FirstOrDefault(w => w.TestId == testId && w.UserId == userId && w.Id == applicationId);
                 var request = _test.CenterChangeRequests.FirstOrDefault(w => w.TestId == testId && w.UserId == userId && w.DesiredCalendarId == calendarId && w.Approved == false);
                 var calendarCode = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault()?.Code;
+                TestCalenders calendar = _test.TestCalenders.Where(c => c.Id == calendarId).FirstOrDefault();
+                Test test = _test.Tests.Where(t => t.Id == testId).FirstOrDefault();
+                string calendarDate = "";
+                string calendarStartTime = "";
+                string calendarEndTime = "";
+                string centerName = "";
+                string confirmationMessage = "";
+                var emailSender = new SmtpClient("smtp.office365.com", 587)
+                {
+                    Credentials = new NetworkCredential("donotreply@paf-iast.edu.pk", "PAF@2024"),
+                    EnableSsl = true
+                };
+
+                if (calendar != null && test != null)
+                {
+                    calendarDate = calendar.Date.ToString("D");
+                    calendarStartTime = calendar.StartTime.ToString("hh:mm tt");
+                    calendarEndTime = calendar.StartTime.AddMinutes(test.Duration).ToString("hh:mm tt");
+                    centerName = _test.TestCenters.Where(c => c.Id == calendar.TestCenterId).FirstOrDefault().TestCenterName;
+
+                    confirmationMessage = "Hello " + applicantName + "! ." + "Your request for changing the test calendar for " + test?.TestName +
+                                                 " against Application number: " + testApplication?.Id + " is accepted " +
+                                                 " your new test center is " + centerName + " . New test date is:  " + calendarDate + " and new timing is " + calendarStartTime + " to " + calendarEndTime + "." +
+                                                  " Good Luck!";
+                }
                 if (testApplication != null && request != null)
                 {
                     testApplication.CalendarId = calendarId;
@@ -355,6 +452,7 @@ namespace AuthSystem.Controllers
                     request.Approved = true;
                     _test.CenterChangeRequests.Remove(request);
                     _test.SaveChanges();
+                    emailSender.Send("donotreply@paf-iast.edu.pk", applicantEmail, "Calendar Change Request Accepted", confirmationMessage);
                 }
                 return RedirectToAction("CenterChangeRequests");
             }
@@ -364,6 +462,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult HandleCenterReject(int testId, string userId, int calendarId)
         {
             try
@@ -401,6 +500,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult Attendance()
         {
             try
@@ -441,6 +541,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult CalendarApplicants(int testId, int id)
         {
             try
@@ -467,6 +568,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult MarkAttendance(string[] userIds, int testId, int code)
         {
             try
@@ -492,6 +594,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult MarkAttendanceAdmin(string[] userIds, int testId, int id)
         {
             try
@@ -578,7 +681,6 @@ namespace AuthSystem.Controllers
                 var userId = user.Id;
                 var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
                 var testCalendars = _test.TestCalenders
-                    /*                    .Where(c => c.Date >= today)*/
                     .Include(t => t.TestCenter)
                     .ToList();
 

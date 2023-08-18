@@ -1,37 +1,58 @@
 ﻿@model List<MCQ>;
 @{
-    ViewData["Title"] = "Demo|Test";
+    ViewData["Title"] = "Test";
     int applicationId = @ViewBag.ApplicationId;
 }
 @if (Model != null && Model.ToList().Count > 0)
 {
 
-    <button onclick="openFullscreen();">Open Fullscreen</button>
-    <button onclick="closeFullscreen();">Close Fullscreen</button>
+    <button onclick="openFullscreen();" class="btn btn-warning">Open Fullscreen</button>
+    <button onclick="closeFullscreen();" class="btn btn-danger">Close Fullscreen</button>
 
     <form action="@Url.Action("SubmitResult")" method="post" class="form-control form-group" >
-        <div style="margin-left: 810px; margin-top: 100px; position: fixed;background-color: aliceblue; text-align: justify; width : 500px;font-family : monospace; font-size : 4px" class="container">
-            <h1 id="test-name">Loading.....</h1>
-            <h2 id="test-duration">Loading....</h2>
-            <input type="hidden" name="calendarId" value="@ViewBag.CalendarId" />
-            <input type="hidden" name="testId" value="@ViewBag.TestId" />
-            <input type="submit" value="SUBMIT" class="btn btn-success" />
-        </div>
+      
 
-        <div class="fixed-tabs">
-            <div class="d-flex justify-content-end">
-            </div>
+        <div class="fixed-tabs position-sticky">
+            
            <span id="total-questions"></span> 
             <nav>
                 <div class="nav nav-tabs nav-pills" id="nav-tab" role="tablist">
+                    <div style="margin-left: 810px; margin-top: 100px; position: fixed;background-color: aliceblue; text-align: justify; width : 500px;font-family : monospace; font-size : 4px" class="container">
+                        <h1 id="test-name">Loading.....</h1>
+                        <h2 id="test-duration">Loading....</h2>
+                        <input type="hidden" name="calendarId" value="@ViewBag.CalendarId" />
+                        <input type="hidden" name="testId" value="@ViewBag.TestId" />
+                        <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#submit" >Finish</a>
+                        
+                    </div>
+
                     @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
                     {
                         <button class="nav-link @(sectionGroup.Key == Model.First().Section ? "active" : "")" id="nav-@sectionGroup.Key-tab" data-bs-toggle="tab" data-bs-target="#nav-@sectionGroup.Key" type="button" role="tab" aria-controls="nav-@sectionGroup.Key" aria-selected="@(sectionGroup.Key == Model.First().Section ? "true" : "false")" style="font-family : 'Segoe UI'">@sectionGroup.Key/@sectionGroup.Count()</button>
                     }
                 </div>
             </nav>
-        </div>
 
+        </div>
+        <div class="modal fade" id="submit" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Cancel Request</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Are you sure you want to submit your test</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <input type="submit" value="YES!" class="btn btn-success" />
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
         <div class="tab-content" id="nav-tabContent">
             @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
             {
@@ -41,14 +62,14 @@
                     <div id="section-@sectionGroup.Key" data-attempted-count="0">
                         @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
                         {
-                            <div class="container  @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "4" : "2")">
-                                <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
-                                <div class="options form-control bg-light">
-                                    <ol type="a">
-                                        @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                            .Aggregate("", (acc, option) => $"{acc}<li><label class='user-select-none'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
-                                    </ol>
-                                </div>
+                            <div  class="container  @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "8" : "2")">
+                                    <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
+                                <div class="options form-control" id="question-container@(question.Id)">
+                                        <ol type="a">
+                                            @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
+                                .Aggregate("", (acc, option) => $"{acc}<li><label class='user-select-none'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
+                                        </ol>
+                                    </div>
                                 <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
                             </div>
                         }
@@ -129,7 +150,17 @@
         })
             .then(response => {
                 if (response.ok) {
-                    console.log('User response saved successfully!');
+                    var radioId = questionId + selectedAnswer;
+
+                    var radioElement = document.getElementById(radioId);
+                    if (radioElement) {
+
+                        document.getElementById('question-container' + questionId).style.backgroundColor = '#E0E0E0'
+
+                    } else {
+                        console.error('Radio element not found:', radioId);
+                    }
+
                 } else {
                     console.error('Error saving user response:', response.statusText);
                 }
@@ -137,7 +168,7 @@
             .catch(error => {
                 console.error('Error saving user response:', error);
             });
-
+        
         updateAttemptedCount();
     }
 
@@ -156,6 +187,10 @@
                     var radioElement = document.getElementById(radioId);
                     if (radioElement) {
                         radioElement.checked = true;
+                        if (radioElement.checked) { 
+                        
+                            document.getElementById('question-container' + questionId).style.backgroundColor = '#E0E0E0'
+                        }
 
                         document.getElementById("answer_" + questionId).value = userResponse;
                     } else {
@@ -244,6 +279,25 @@
         requestFullScreen(document.documentElement);
     });
 </script>
+
+<style>
+    /* Style the options container */
+    .question-container {
+        /* Default background color for unselected options */
+        background-color: white !important
+        transition: background-color 1s; /* Add smooth transition */
+    }
+
+    /* Change the background color of the options container when the radio button is checked */
+    .options input[type="radio"]:checked + .question-container {
+        background-color: forestgreen !important; /* Change this to your desired green color */
+    }
+
+    /* Style the selected option */
+    .options input[type="radio"]:checked {
+        background-color: blue;
+    }
+</style>
 
 
 

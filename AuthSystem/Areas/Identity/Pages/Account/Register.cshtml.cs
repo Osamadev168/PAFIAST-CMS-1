@@ -147,25 +147,12 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                     protocol: Request.Scheme);
                     // To send confirmation email to user aaccount
-                    var client = new SmtpClient("mail.dastyaab.com", 587)
+                    var client = new SmtpClient("smtp.office365.com", 587)
                     {
-                        Credentials = new NetworkCredential("no-reply@dastyaab.com", "no-reply@dastyaab"),
+                        Credentials = new NetworkCredential("donotreply@paf-iast.edu.pk", "PAF@2024"),
                         EnableSsl = true
                     };
-                    client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
-                    //                    client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
-                    /////////////////
-
-                    // To send confirmation email to user aaccount
-                    //                  var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
-                    //                {
-                    //                        Credentials = new NetworkCredential("9aa8e727894e55", "41cb28f1b53f5e"),
-                    //                  EnableSsl = true
-                    //            };
-                    //          client.Send("no-reply@dastyaab.com", Input.Email, "Hello world", "Please click on following link to Confirm: " + callbackUrl);
-                    /////////////////
-                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                    // $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    client.Send("donotreply@paf-iast.edu.pk", Input.Email, "Confirm Your Email", "Hello " + Input.FirstName + "!." + "Please click on following link to confirm your email: " + callbackUrl);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                       $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

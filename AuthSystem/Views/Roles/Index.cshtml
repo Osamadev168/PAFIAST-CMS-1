@@ -28,7 +28,7 @@
                     <td>@firstName @lastName</td>
                     <td>@user.Email</td>
                     <td>
-                        <a asp-action="AssignRole" asp-route-userId="@user.Id" class="btn btn-warning">Assign Role</a>
+                        <a asp-action="Users" asp-controller="Roles" asp-route-userId="@user.Id" class="btn btn-warning">Assign Role</a>
                     </td>
                 </tr>
             }

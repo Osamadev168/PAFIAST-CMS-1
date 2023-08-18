@@ -1,10 +1,10 @@
 html {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 @media (min-width: 768px) {
     html {
-        font-size: 16px;
+        font-size: 15px;
     }
 }
 
@@ -18,7 +18,7 @@ html {
 }
 
 body {
-    padding-top: 30px; /* Height of the fixed navbar */
+    padding-top: 30px;
 }
 
 .sidebar {
@@ -26,13 +26,12 @@ body {
     top: 0;
     bottom: 0;
     left: 0;
-    z-index: 100; /* Ensure the sidebar stays on top of the content */
-    padding: 20px;
+    z-index: 80;
+    padding: 50px;
     overflow-x: hidden;
-    overflow-y: auto; /* Enable scrolling if the content overflows */
-    background-color: #f8f9fa;
-    border: 1px solid lightblue;
-    color: cornflowerblue
+    overflow-y: auto;
+    background-color: #dbfdff;
+    border: 1px solid #738687;
 }
 
     .sidebar .nav-link {
@@ -40,23 +39,23 @@ body {
     }
 
 .main-content {
-    margin-left: 300px;
-    padding: 25px;
+    margin-left: 200px;
+    padding: 15px;
 }
 
 @media (max-width: 767.98px) {
     .sidebar {
         position: fixed;
-        top: 100px;
+        top: 200px;
         bottom: 0;
-        left: -250px;
+        left: -150px;
         z-index: 100;
-        width: 250px;
+        width: 150px;
         padding: 20px;
         overflow-x: hidden;
         overflow-y: auto;
-        transition: left 0.3s ease-in-out;
-        background-color: #f8f9fa;
+        transition: left 0.2s ease-in-out;
+        background-color: #dbfdff;
     }
 
         .sidebar.show {
@@ -65,7 +64,7 @@ body {
 
     .main-content {
         margin-left: 0;
-        padding: 25px;
+        padding: 30px;
     }
 }
 
@@ -84,7 +83,6 @@ body {
 
 .login-logout-card .a.nav-link {
     font-size: 1rem;
-    color: blue;
     text-align: center;
     padding: 1rem;
 }
@@ -148,8 +146,8 @@ body {
 .nav-link:hover {
     background-color: lavender;
     cursor: pointer;
-    color: darkslateblue;
-    border-radius: 10px
+    color: #343536;
+    border-radius: 8px
 }
 
 .question-type {
