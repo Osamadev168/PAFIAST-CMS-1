@@ -76,9 +76,12 @@
                             else
                             
                             {
-                              <h3>Applied (Application Number: @applicationID)</h3>
-                              <a href="/Applicant/Payfee" class="btn btn-primary">Pay Fee</a>
-                            
+                                <h3>Applied (Application Number: @applicationID)</h3>
+                                if (feeVerified == false)
+                                {
+                                    <a href="/Applicant/Payfee" class="btn btn-primary">Pay Fee</a>
+                                }
+
                             }
                             <div class="modal fade" id="@test.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                 <div class="modal-dialog">

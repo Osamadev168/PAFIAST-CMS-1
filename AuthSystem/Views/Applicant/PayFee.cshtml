@@ -7,7 +7,6 @@
    ViewData["Title"] = "Pay Fee";
     
 }
-<script src="https://kit.fontawesome.com/92cfe52abb.js" crossorigin="anonymous"></script>
 <h4>
     Pay Fee
 </h4>
@@ -49,19 +48,25 @@
                         @application.Test.TestName <i class="fas fa-clipboard" style="color: #70a5ff;"></i>
                 </td>
                 <td>
-                        @if (application.IsPaid == true && application.IsVerified == false)
+                        @if (application.IsPaid == true && application.IsVerified == false && application.IsRejected == false || application.IsRejected == null)
 
                         {
 
                             <p>Fee Under Verification <i class="fa-solid fa-hourglass-start" style="color: #3f83f8;"></i></p>
                         }
-                        else if (application.IsPaid == true && application.IsVerified == true)
+                        @if (application.IsVerified == true)
                         {
 
                             <p>Fee Verified <i class="fas fa-check-double" style="color: #0dd377;"></i></p>
 
                         }
-                        else if (application.IsPaid == false && application.IsVerified == false)
+                        @if (application.IsRejected == true)
+                        {
+
+                            <p>Fee Rejected <i class="fas fa-trash text-danger" ></i></p>
+
+                        }
+                        @if (application.IsPaid == false && application.IsVerified == false)
                         
                         {
                             <p>

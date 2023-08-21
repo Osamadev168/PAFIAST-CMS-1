@@ -2,86 +2,432 @@
 @using AuthSystem.Areas.Identity.Data
 @model List<AuthSystem.Models.TestApplication>
 @inject UserManager<ApplicationUser> UserManager
+@inject AuthSystem.Data.AuthDbContext _test;
 
 @{
-    ViewData["Title"] = "View | Test Applications";
-}
-@{
-    var groupedApplications = Model.OrderBy(u => u.UserId).GroupBy(u => u.UserId);
+    ViewData["Title"] = "Fee Verification";
 }
 
-@foreach (var group in groupedApplications)
-{
-    var user = await UserManager.FindByIdAsync(group.Key);
-    var userName = user != null ? await UserManager.GetUserNameAsync(user) : "";
-    var firstName = user != null ? user.FirstName : "";
-    var lastName = user != null ? user.LastName : "";
-    var userMail = user != null ? user.Email : "";
-    var userPhoneNumber = user.PhoneNumber == null ? "NOT PROVIDED" : user.PhoneNumber;
+<style>
+    .modal-content {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-    <table class="table">
+    .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
 
-        <thead>
-            <h5>Applicant Name: @firstName @lastName</h5>
-            <h6>Applicant Email : @userMail</h6>
-             <h7>Applicant Phone Number: @userPhoneNumber</h7>
-            <tr>
-                 <th>Test Name</th>
-                 <th>Bank Name</th>
-                 <th>Branch Name</th>
-                 <th>Branch Code</th>
-                 <th>Voucher Number</th>
-                <th>Voucher Photo</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var application in group)
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .modal-body {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .profile-picture {
+        max-width: 150px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+    }
+
+    h5 {
+        margin: 5px 0;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .modal-footer {
+        border-top: none;
+        background-color: #f8f9fa;
+        justify-content: space-between;
+        padding: 15px 20px;
+    }
+
+    .btn-secondary {
+        background-color: #ccc;
+        border-color: #ccc;
+        color: #fff;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #999;
+            border-color: #999;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-container {
+        text-align: left;
+    }
+
+    .info-row {
+        margin-bottom: 10px;
+    }
+
+    .info-label {
+        font-weight: bold;
+        color: #333;
+        display: inline-block;
+        width: 120px;
+    }
+
+    .info-value {
+        color: #666;
+    }
+
+    .actions-div {
+    
+     display : flex;
+     flex-direction  : row  
+    }
+
+</style>
+<h2>
+    Fee Verification
+</h2>
+<hr />
+
+<table class="table" id="example">
+    <thead>
+        <tr>
+            <th>
+                Applicant Name
+            </th>
+            <th>
+                Applied For
+            </th>
+            <th>
+                Applied On
+            </th>
+            <th>
+                Applicant Data
+            </th>
+            <th>
+                Application Data
+            </th>
+            <th>
+                All Applications
+            </th>
+            <th>
+                Voucher
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var application in Model)
+        
+        {
+            ApplicationUser user = await UserManager.FindByIdAsync(application.UserId);
+            string applicantName = "";
+            string fatherName = "";
+            string phoneNumber = "";
+            string cnic = "";
+            string city = "";
+            string country = "";
+            string province = "";
+            string fullAddress = "";
+            string applicantPhoto = "";
+            if (user != null)
             {
-                <tr>
-                    <td>@application.Test.TestName </td>
-                   <td>@application.BankName</td>
-                   <td>@application.BranchName</td>
-                    <td>@application.BranchCode</td>
-                    <td>@application.VoucherNumber</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(application.VoucherPhotoPath))
-                        {
-                            <a href="@application.VoucherPhotoPath"  class="btn btn-primary">
-                                View Voucher
-                            </a>
-                        }
-                    </td>
-                    <td>
-                        @if (application.IsVerified == true)
-
-                        {
-
-                            <h4>Fee Verified</h4>
-
-                        }
-                        else if (application.IsVerified == false && application.IsRejected == true && application.IsPaid == true)
-                        
-                        {
-                            
-                          <h5>Dumped</h5>
-                        
-                        }
-                        else
-                        {
-
-                            <form asp-action="VerifyFee" asp-controller="Calendar" asp-route-testId="@application.Test.Id" asp-route-userId="@application.UserId" method="post">
-                                <input class="btn btn-success" type="submit" value="Verify" />
-                            </form>
-                            <form asp-action="DumpFee" asp-controller="Calendar" asp-route-testId="@application.Test.Id" asp-route-userId="@application.UserId" method="post">
-                                <input class="btn btn-danger" type="submit" value="Dump" />
-                            </form>
-                        }
-
-                    </td>
-                </tr>
-                    
+                applicantName = $"{user.FirstName} {user.LastName}";
+                fatherName = user.FatherName;
+                cnic = user.CNIC;
+                phoneNumber = user.PhoneNumber;
+                country = user.Country;
+                city = user.City;
+                province = user.Province;
+                fullAddress = user.Address;
+                applicantPhoto = user.ProfilePhoto;
             }
-        </tbody>
-    </table>
+
+         <tr>
+             <td>
+                 @applicantName
+             </td>
+             <td>
+                 @application.Test.TestName
+             </td>
+             <td>
+                    @application.SelectionTime.ToString("dddd, dd MMMM yyyy  HH:mm tt")
+             </td>
+             <td>
+                    <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#@application.Id">View Applicant Information</a>
+                    <div class="modal fade" id="@application.Id" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Applicant Information</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="profile-container">
+                                        <img class="profile-picture" src="@applicantPhoto" alt="Profile Picture">
+                                    </div>
+                                    <div class="info-container">
+                                        <div class="info-row">
+                                            <span class="info-label">Name:</span>
+                                            <strong class="info-value">@applicantName</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Father Name:</span>
+                                            <strong class="info-value">@fatherName</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Phone Number:</span>
+                                            <strong class="info-value">@phoneNumber</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">CNIC:</span>
+                                            <strong class="info-value">@cnic</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Country:</span>
+                                            <strong class="info-value">@country</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">City:</span>
+                                            <strong class="info-value">@city</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Province:</span>
+                                            <strong class="info-value">@province</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Full Address:</span>
+                                            <strong class="info-value">@fullAddress</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+
+                            </div>
+                        </div>
+                    </div>
+             </td>
+             <td>
+                    <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#applicationModal-@application.Id">View Application Data</a>
+                    <div class="modal fade" id="applicationModal-@application.Id" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Application Information</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="info-container">
+                                        <div class="info-row">
+                                            <span class="info-label">Application Number:</span>
+                                            <strong class="info-value">@application.Id</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Voucher Number:</span>
+                                            <strong class="info-value">@application.VoucherNumber</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Bank Name:</span>
+                                            <strong class="info-value">@application.BankName</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Bank Branch:</span>
+                                            <strong class="info-value">@application.BranchName</strong>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Branch Code:</span>
+                                            <strong class="info-value">@application.BranchCode</strong>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+             </td>
+             <td>
+                    @{
+
+                        var allapplications = _test.TestApplications.Where(a => a.UserId == application.UserId && a.IsPaid == true).ToList();
+
+                 }
+                    <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#allApplications-@application.UserId">View All Applications</a>
+                    <div class="modal" id="allApplications-@application.UserId" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">All Applications of @applicantName</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="info-container">
+                                        @foreach( var everyapplication in allapplications)
+                                        
+                                        {
+
+
+                                            <div class="info-row">
+                                                <span class="info-label">Application Number:</span>
+                                                <strong class="info-value">@everyapplication.Id</strong>
+                                            </div>
+                                            <div class="info-row">
+                                                <span class="info-label">Voucher Number:</span>
+                                                <strong class="info-value">@everyapplication.VoucherNumber</strong>
+                                            </div>
+                                            <div class="info-row">
+                                                <span class="info-label">Bank Name:</span>
+                                                <strong class="info-value">@everyapplication.BankName</strong>
+                                            </div>
+                                            <div class="info-row">
+                                                <span class="info-label">Bank Branch:</span>
+                                                <strong class="info-value">@everyapplication.BranchName</strong>
+                                            </div>
+                                            <div class="info-row">
+                                                <span class="info-label">Branch Code:</span>
+                                                <strong class="info-value">@everyapplication.BranchCode</strong>
+                                            </div>
+                                            <h5>Status: @(application.IsVerified == true ? "Verified" : "Dumped")</h5>
+                                            @if (!string.IsNullOrEmpty(everyapplication.VoucherPhotoPath))
+                                            {
+                                                @if (IsImageFile(everyapplication.VoucherPhotoPath))
+                                                {
+                                                    <img class="img-fluid" src="@everyapplication.VoucherPhotoPath" alt="Voucher Image">
+                                                }
+                                                else if (IsPdfFile(everyapplication.VoucherPhotoPath))
+                                                {
+                                                    <iframe src="@everyapplication.VoucherPhotoPath" width="100%" height="600" frameborder="1"></iframe>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <p>No voucher file available.</p>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+             </td>
+             <td>
+
+                    <a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#voucherModal-@application.VoucherNumber">View Voucher</a>
+                    <div class="modal fade" id="voucherModal-@application.VoucherNumber" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Fee Voucher</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    @if (!string.IsNullOrEmpty(application.VoucherPhotoPath))
+                                    {
+                                        @if (IsImageFile(application.VoucherPhotoPath))
+                                        {
+                                            <img class="img-fluid" src="@application.VoucherPhotoPath" alt="Voucher Image">
+                                        }
+                                        else if (IsPdfFile(application.VoucherPhotoPath))
+                                        {
+                                            <iframe src="@application.VoucherPhotoPath" width="100%" height="600" frameborder="0"></iframe>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>No voucher file available.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+             </td>
+             <td>
+                    @if (application.IsVerified == true)
+
+                    {
+
+                        <h6> Fee Verified</h6>
+
+                    }
+                    else if (application.IsVerified == false && application.IsRejected == true && application.IsPaid == true)
+
+                    {
+
+                        <h6> Dumped</h6>
+
+
+                    }
+                    else {
+                   <div class="actions-div">
+                        <form asp-action="VerifyFee" asp-controller="Calendar" asp-route-applicationId="@application.Id" asp-route-userId="@application.UserId" method="post">
+                            <button type="submit" class="btn btn-success">
+                              Verify
+                            </button>
+                        </form>
+
+                        <form asp-action="DumpFee" asp-controller="Calendar" asp-route-applicationId="@application.Id" asp-route-userId="@application.UserId" method="post">
+                            <button type="submit" class="btn btn-danger">
+                               Dump
+                            </button>
+                        </form>
+                   </div>
+                   }
+
+             </td>
+         </tr>
+        
+        }
+    </tbody>
+    <tfoot>
+
+    </tfoot>
+</table>
+@functions {
+    bool IsImageFile(string filePath)
+    {
+        string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+        string extension = System.IO.Path.GetExtension(filePath).ToLower();
+        return imageExtensions.Contains(extension);
+    }
+
+    bool IsPdfFile(string filePath)
+    {
+        string[] pdfExtensions = { ".pdf" };
+        string extension = System.IO.Path.GetExtension(filePath).ToLower();
+        return pdfExtensions.Contains(extension);
+    }
 }

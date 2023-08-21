@@ -1,6 +1,7 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
 using AuthSystem.Models;
+using AuthSystem.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -188,11 +189,8 @@ namespace AuthSystem.Controllers
                     return Content("User not found");
                 }
 
-                var emailSender = new SmtpClient("smtp.office365.com", 587)
-                {
-                    Credentials = new NetworkCredential("donotreply@paf-iast.edu.pk", "PAF@2024"),
-                    EnableSsl = true
-                };
+                EmailSender emailSender = new();
+
 
                 string confirmationMessage = "Hello " + applicantName + "! ." + "Thank you for selecting a test calendar for " + test?.TestName +
                                              " against Application number: " + appliedTest.Id +
@@ -284,7 +282,7 @@ namespace AuthSystem.Controllers
         {
             try
             {
-                var testApplications = _test.TestApplications.Where(w => w.IsPaid == true).Include(tc => tc.Test).ToList();
+                var testApplications = _test.TestApplications.Where(w => w.IsPaid == true).Include(tc => tc.Test).OrderByDescending(a => a.SelectionTime).ToList();
                 return View(testApplications);
             }
             catch (Exception e)
@@ -295,20 +293,17 @@ namespace AuthSystem.Controllers
 
         [Authorize(Roles = "Admin,Super Admin")]
         [HttpPost]
-        public IActionResult VerifyFee(int testId, string userId)
+        public IActionResult VerifyFee(int applicationId , string  userId)
         {
             try
             {
-                var testApplication = _test.TestApplications.Where(w => w.TestId == testId && w.UserId == userId && w.IsPaid == true && w.CalendarId == null).Include(t => t.Test).FirstOrDefault();
+                var testApplication = _test.TestApplications.Where(a => a.Id == applicationId).Include(t => t.Test).FirstOrDefault();
 
                 var applicantEmail = _userManager.FindByIdAsync(userId)?.Result?.UserName;
                 var applicantName = _userManager.FindByIdAsync(userId)?.Result?.FirstName + " " + _userManager.FindByIdAsync(userId)?.Result?.LastName;
 
-                var emailSender = new SmtpClient("smtp.office365.com", 587)
-                {
-                    Credentials = new NetworkCredential("donotreply@paf-iast.edu.pk", "PAF@2024"),
-                    EnableSsl = true
-                };
+               
+                EmailSender emailSender = new();
 
                 if (testApplication != null)
                 {
@@ -425,11 +420,8 @@ namespace AuthSystem.Controllers
                 string calendarEndTime = "";
                 string centerName = "";
                 string confirmationMessage = "";
-                var emailSender = new SmtpClient("smtp.office365.com", 587)
-                {
-                    Credentials = new NetworkCredential("donotreply@paf-iast.edu.pk", "PAF@2024"),
-                    EnableSsl = true
-                };
+                EmailSender emailSender = new();
+
 
                 if (calendar != null && test != null)
                 {

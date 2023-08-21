@@ -18,7 +18,7 @@
     {
         var TestDuration = _test.Tests.Where(t => t.Id == request.TestId).FirstOrDefault().Duration;
         var TestName = _test.Tests.FirstOrDefault(w => w.Id == request.TestId)?.TestName;
-        var PreCalendarId = _test.TestApplications.Where(w => w.TestId == request.TestId && w.UserId == request.UserId).FirstOrDefault()?.CalendarId;
+        var PreCalendarId = _test.TestApplications.Where(w => w.Id == request.ApplicationId).FirstOrDefault()?.CalendarId;
         var PreCenterId = _test.TestCalenders.Where(t => t.Id == PreCalendarId).FirstOrDefault()?.TestCenterId;
         var PreCenterDate = _test.TestCalenders.Where(t => t.Id == PreCalendarId).FirstOrDefault()?.Date;
         var PreCenterStartTime = _test.TestCalenders.Where(t => t.Id == PreCalendarId).FirstOrDefault()?.StartTime;
