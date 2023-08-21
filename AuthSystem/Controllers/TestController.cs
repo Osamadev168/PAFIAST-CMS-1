@@ -11,19 +11,19 @@ using System.Security.Cryptography;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class TestController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AuthDbContext _test;
 
-        [ActivatorUtilitiesConstructor]
         public TestController(AuthDbContext test, UserManager<ApplicationUser> userManager)
         {
             _test = test;
             _userManager = userManager;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin,Super Admin")]
         [HttpGet]
         public IActionResult Test()
         {
@@ -40,6 +40,7 @@ namespace AuthSystem.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult Create()
         {
             ViewBag.TestCenters = new SelectList(_test.TestCenters, "Id", "TestCenterName");
@@ -55,6 +56,7 @@ namespace AuthSystem.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateTest(string TestName, int[] selectedSubjectIds, Dictionary<int, int> percentages, int duration, int timeSpan, int sessionId, int easy, int medium, int hard)
@@ -125,7 +127,7 @@ namespace AuthSystem.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Super Admin")]
         [HttpPost]
         public IActionResult CreateCalendar(int testId, DateOnly date, TimeOnly startTime, int centerId)
         {
@@ -176,6 +178,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult GetTestEndTime(int testId, TimeOnly startTime)
         {
             try
@@ -407,6 +410,7 @@ namespace AuthSystem.Controllers
             return Json(assignedQuestions);
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult GetNumberOfQuestions(int subjectId)
         {
             var questionsCount = _test.MCQs.Count(q => q.SubjectId == subjectId);
@@ -504,6 +508,7 @@ namespace AuthSystem.Controllers
             return (Json(test.Duration));
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult CheckTestName(string testName)
         {
             try
@@ -525,6 +530,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult SystemStats()
         {
             try
@@ -539,6 +545,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult SessionTests(int sessionId)
         {
             try
@@ -559,6 +566,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult ApplicantsDetails(int testId)
         {
             try
@@ -577,6 +585,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult UnpaidApplicantsDetails(int testId)
         {
             try
@@ -595,6 +604,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult VerifiedApplicantsDetails(int testId)
         {
             try
@@ -613,6 +623,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult UnVerifiedApplicantsDetails(int testId)
         {
             try
@@ -631,6 +642,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult NonSelectedTestCenters(int testId)
         {
             try
@@ -649,6 +661,7 @@ namespace AuthSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult SelectedTestCenters(int testId)
         {
             try

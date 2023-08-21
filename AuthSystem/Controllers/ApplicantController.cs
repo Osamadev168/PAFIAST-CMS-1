@@ -1,11 +1,13 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class ApplicantController : Controller
     {
         private readonly AuthDbContext _test;
@@ -33,7 +35,7 @@ namespace AuthSystem.Controllers
                 var user = await _userManager.GetUserAsync(User);
 
                 var userId = user?.Id;
-                var applications = _test.TestApplications.Include(d => d.Test.TestDetails).Include(w => w.Calendar).Where(w => w.UserId == userId && w.HasFinished == true).ToList();
+                var applications = _test.TestApplications.Include(d => d.Test.TestDetails).Include(a => a.User).Include(w => w.Calendar).Where(w => w.UserId == userId && w.HasFinished == true).ToList();
 
                 return View(applications);
             }
@@ -74,6 +76,24 @@ namespace AuthSystem.Controllers
                 .OrderByDescending(t => t.Id)
                 .ToList();
             return View(applications);
+        }
+
+        [HttpGet]
+        public IActionResult TestResult(int resultId)
+        {
+            try
+            {
+                var result = _test.Results.Where(r => r.ResultId == resultId).FirstOrDefaultAsync();
+                if (result.Result == null)
+                {
+                    return Json(new { Error = "Result Not Found!" });
+                }
+                return Json(result.Result);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using OfficeOpenXml;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Super Admin")]
     public class FIBController : Controller
     {
         private readonly AuthDbContext _test;
@@ -16,7 +17,7 @@ namespace AuthSystem.Controllers
             _test = test;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin,Super Admin")]
         [HttpGet]
         public IActionResult ViewBlanks()
         {
@@ -24,17 +25,19 @@ namespace AuthSystem.Controllers
             return View(getBlanks);
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult UploadFileFIB()
         {
             return View();
         }
 
-        [HttpPost]
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult UploadFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -91,7 +94,6 @@ namespace AuthSystem.Controllers
                 }
             }
 
-            // Save the questions to the database
             _test.Blanks.AddRange(questions);
             _test.SaveChanges();
             return RedirectToAction("ViewBlanks");

@@ -1,9 +1,11 @@
 ﻿using AuthSystem.Data;
 using AuthSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class TestCentersController : Controller
     {
         private readonly AuthDbContext _test;
