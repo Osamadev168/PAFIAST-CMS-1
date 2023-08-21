@@ -2,11 +2,12 @@
     @inject AuthSystem.Data.AuthDbContext _test
     @using Microsoft.AspNetCore.Identity
     @using AuthSystem.Areas.Identity.Data
-    @{
-        ViewData["Title"] = "Calendar Selection";
-        var calendars = ViewBag.Calendars as List<TestCalenders>;
-        string userId = ViewBag.UserId;
-        var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+@{
+    ViewData["Title"] = "Calendar Selection";
+    var calendars = ViewBag.Calendars as List<TestCalenders>;
+    string userId = ViewBag.UserId;
+    var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+    TimeOnly currentTime = TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay);
 
     }
   
@@ -105,7 +106,7 @@
 
                                 }
 
-                                if (!calendarChangeRequest && calendarData != null && calendarData.Date >= today)
+                                if (!calendarChangeRequest && calendarData != null && calendarData.Date > today )
                                 {
                                   
 
