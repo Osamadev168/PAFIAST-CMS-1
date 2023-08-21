@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class SubjectController : Controller
     {
         private readonly AuthDbContext _test;
@@ -17,6 +18,7 @@ namespace AuthSystem.Controllers
 
         [Authorize]
         [HttpGet]
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult Index(int SubjectId)
         {
             var subjects = _test.Subjects.ToList();
@@ -30,6 +32,7 @@ namespace AuthSystem.Controllers
 
         [Authorize]
         [HttpGet]
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult Subjects()
         {
             var subjects = _test.Subjects.ToList();
@@ -40,23 +43,22 @@ namespace AuthSystem.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         [HttpPost]
         public IActionResult Create(Subject model)
         {
-            // Create a new Subject object from the model data
             Subject newSubject = new Subject { SubjectName = model.SubjectName.Trim().Replace(" ", "-") };
 
-            // Add the new subject to the database
             _test.Subjects.Add(newSubject);
 
             {
                 _test.SaveChanges();
             }
 
-            // Redirect to the original view or another appropriate view
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult SelectSubject(int subjectId)
         {
             HttpContext.Session.SetInt32("SelectedSubjectId", subjectId);
@@ -64,6 +66,7 @@ namespace AuthSystem.Controllers
             return RedirectToAction("Options");
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult DeleteSubject(int id)
         {
             var SubjectData = _test.Subjects.Find(id);
@@ -80,11 +83,13 @@ namespace AuthSystem.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult Options()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult ViewQuestions()
         {
             var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
@@ -93,11 +98,13 @@ namespace AuthSystem.Controllers
             return View(Questions_MCQ);
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult Type()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult ViewQuestionsFIB()
         {
             var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
@@ -106,6 +113,7 @@ namespace AuthSystem.Controllers
             return View(Questions_Blanks);
         }
 
+        [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult GetQuestionsCount(int SubjectId)
         {
             var count = _test.MCQs.Count(q => q.SubjectId == SubjectId);

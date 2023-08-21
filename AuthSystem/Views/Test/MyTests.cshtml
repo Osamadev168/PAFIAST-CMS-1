@@ -28,17 +28,7 @@
 
 
 
-    .btn {
-        display: inline-block;
-        padding: 8px 12px;
-        border: none;
-        background-color: #007bff;
-        color: #fff;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+    
 
         .btn:hover {
             display: inline-block;
@@ -51,10 +41,6 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
-    .btn-success {
-        background-color: #28a745;
-    }
 
     h4 {
         margin: 0;
@@ -72,6 +58,13 @@
         border-top: 1px solid #ddd;
         margin: 20px 0;
     }
+
+    .result-id {
+        cursor: pointer;
+        color: #007bcf;
+        text-decoration: underline;
+    }
+
 </style>
 
 
@@ -96,6 +89,7 @@
             <th>
                 Timing 
             </th>
+            
             <th>
                 Actions
             </th>
@@ -109,7 +103,8 @@
             var endTime = test.Calendar.StartTime.AddMinutes(test.Test.Duration).ToString();
             var testDate = test.Calendar.Date.ToString("D");
             var currentTime = TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay);
-             
+            var resultId = _test.Results.Where(a => a.CalendarId == test.CalendarId && a.AttemptedBy == test.User.FirstName + test.User.LastName);
+
             <tr>
                 <td>
                     @test.Test.TestName
@@ -130,6 +125,7 @@
                 <td>
                     @test.Calendar.StartTime.ToString("hh:mm tt") -- @test.Calendar.StartTime.AddMinutes(test.Test.Duration).ToString("hh:mm tt")
                 </td>
+                
                 <td>
                     @if (test.Calendar.StartTime <= currentTime && test.Calendar.EndTime >= currentTime)
                     
@@ -148,28 +144,27 @@
         }
     </tbody>
 </table>
-
-
 <script>
-    function calculateTimeDifferenceMillis(startTime) {
-        var now = new Date();
-        var start = new Date(now.toDateString() + " " + startTime); // Combine current date with the specified time
-        return start - now;
-    }
+    // JavaScript code to handle copy on click
+    document.addEventListener('DOMContentLoaded', function () {
+        var resultIdElements = document.querySelectorAll('.result-id');
 
-    var tests = @Html.Raw(Json.Serialize(Model.Where(t => t.Calendar.StartTime == TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay))));
-    var now = new Date();
+        resultIdElements.forEach(function (element) {
+            element.addEventListener('click', function () {
+                var resultId = element.getAttribute('data-result-id');
+                copyToClipboard(resultId);
+            });
+        });
 
-    tests.forEach(function (test) {
-        var timeOnlyString = test.Calendar.StartTime.toString();
-        var timeDifferenceMillis = calculateTimeDifferenceMillis(timeOnlyString);
-
-        if (timeDifferenceMillis >= 0) {
-            setTimeout(function () {
-                location.reload();
-            }, timeDifferenceMillis);
+        function copyToClipboard(text) {
+            var textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Result ID copied to clipboard: ' + text);
         }
     });
 </script>
-
 

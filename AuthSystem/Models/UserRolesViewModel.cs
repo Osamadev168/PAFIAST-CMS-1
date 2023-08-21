@@ -15,7 +15,6 @@ namespace AuthSystem.Models
         [Key]
         public List<string> UserRoles { get; set; }
 
-        
         public string[]? SelectedRoles { get; set; }
     }
 }
