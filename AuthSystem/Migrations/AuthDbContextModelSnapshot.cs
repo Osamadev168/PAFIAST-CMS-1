@@ -187,8 +187,6 @@ namespace AuthSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
-
                     b.HasIndex("TestDetailId");
 
                     b.ToTable("AssignedQuestions");
@@ -666,8 +664,7 @@ namespace AuthSystem.Migrations
 
             modelBuilder.Entity("AuthSystem.Models.UserRolesViewModel", b =>
                 {
-                    b.Property<string>("SelectedRoles");
-                    b.Property<string>("UserId")
+                    b.Property<string>("SelectedRoles")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
@@ -848,19 +845,11 @@ namespace AuthSystem.Migrations
 
             modelBuilder.Entity("AuthSystem.Models.AssignedQuestions", b =>
                 {
-                    b.HasOne("AuthSystem.Models.MCQ", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("AuthSystem.Models.TestDetail", "TestDetail")
                         .WithMany()
                         .HasForeignKey("TestDetailId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Question");
 
                     b.Navigation("TestDetail");
                 });

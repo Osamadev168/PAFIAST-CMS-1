@@ -236,7 +236,6 @@ namespace AuthSystem.Controllers
                 List<MCQ> questionsList;
 
                 var assignedQuestions = _test.AssignedQuestions
-                    .Include(aq => aq.Question)
                     .Where(aq => aq.UserId == userId && aq.TestDetailId == Id && aq.ApplicationId == applicationId)
                     .ToList();
 
@@ -283,7 +282,6 @@ namespace AuthSystem.Controllers
                             UserId = userId,
                             QuestionId = question.Id,
                             TestDetailId = Id,
-                            Question = question,
                             ApplicationId = applicationId
                         };
 

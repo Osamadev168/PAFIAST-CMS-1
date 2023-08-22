@@ -2,22 +2,265 @@
 
 @{
     ViewData["Title"] = "View|Questions|MCQ";
+    int subjectId = ViewBag.SubjectId;
+    string subjectName = ViewBag.SubjectName;
 }
+<h1>Questions in @subjectName</h1>
+<button class="btn btn-primary btn-sm float-right" data-bs-toggle="modal" href="#exampleModalToggle">Create</button>
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Create Question</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual" type="button" role="tab" aria-controls="manual" aria-selected="true">Manual</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="false">Upload File</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="manual" role="tabpanel" aria-labelledby="manual-tab">
+                      
+                        <form method="post" asp-action="CreateQuestion" asp-controller="MCQ" asp-route-subjectId="@subjectId">
 
- @foreach (var questions in Model) {
+                            <div>
+                                <label>Statement</label>
+                                <textarea class="form-control" id="statement"
+                                          name="statement"
+                                          placeholder="Provide a Question statement" ></textarea>
+                                <label>Answer</label>
 
-    <div class="bg-light rounded m-5">
-        <h3>@Html.Raw(@questions.Content)</h3>
-        <ol type="a">
-            <li> @Html.Raw(@questions.Option1)</li>
-            <li>@Html.Raw(@questions.Option2)</li>
-            <li>@Html.Raw(@questions.Option3)</li>
-            <li>@Html.Raw(@questions.Option4)</li>
-        </ol>
+                                <input class="form-control"
+                                       placeholder="Provide an Answer" id="answer"  name="answer"  />
+                                <label>Options</label>
+                                <textarea class="form-control"
+                                           placeholder="Option 1" id="option1" name="option1" >
+                                       </textarea>
 
-        <h6>@questions.Subject.SubjectName</h6>
-        <hr />
- </div>
+                                <textarea class="form-control"
+                                           placeholder="Option 2" id="option2" name="option2">
+                                       </textarea> 
+                                <textarea class="form-control"
+                                                                                                                      
+                                           placeholder="Option 3" id="option3" name="option3">
+                                       </textarea>
+                                <textarea class="form-control"
+                                           placeholder="Option 4" id="option4" name="option4">
+                                       </textarea>
 
-}
+                                <div class="center-block" style="display : flex; flex-direction : column">
+                                    <h3>Please select an option as an answer</h3>
+                                    <label for="radioOption1">Option 1</label>
+                                    <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption1" />
+                                    <label for="radioOption2">Option 2</label>
+                                    <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption2" />
+                                    <label for="radioOption3">Option 3</label>
+                                    <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption3" />
+                                    <label for="radioOption4">Option 4</label>
+                                    <input type="radio" class="form-check-input" value="" name="Answer" id="radioOption4" />
+
+                                </div>
+
+                                <div class="center-block" style="display : flex; flex-direction : column">
+                                    <h3>Please select a difficulty level for this question</h3>
+                                    <label for="Easy">Easy</label>
+                                    <input type="radio" value="Easy" class="form-check-input" name="diffLevel" id="Easy" />
+                                    <label for="Medium">Medium</label>
+                                    <input type="radio" value="Medium" class="form-check-input" name="diffLevel" id="Medium" />
+                                    <label for="Hard">Hard</label>
+                                    <input type="radio" value="Hard" class="form-check-input" name="diffLevel" id="Hard" />
+                                </div>
+
+                                <button class=" btn btn-primary" style="margin-top:10px" type="submit">Create</button>
+
+                            </div>
+                        
+                        </form>
+
+                    </div>
+                    <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+                       <h1>Upload a file</h1>
+                        <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-controller="MCQ" asp-route-subjectId ="@subjectId"> 
+                            <div class="form-group">
+                                <label for="file">Select Excel file:</label>
+                                <input type="file" name="file" id="file" class="form-control-file" accept=".xlsx, .xls">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<table class="table" id="example">
+    <thead>
+        <tr>
+            <th>
+                Question Number
+            </th>
+            <th>
+                Statement
+            </th>
+             <th>
+                Option 1
+            </th> 
+            <th>
+                Option 2
+            </th> <th>
+                Option 3
+            </th>
+            <th>
+                Option 4
+            </th>
+            <th>
+                Answer
+            </th>
+            <th>
+                Difficuty Level
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var questions in Model)
+        {
+            <tr>
+                <td>
+                    @questions.Id
+                </td>
+                <td>
+                    @Html.Raw(@questions.Content)
+                </td>
+                <td>
+                    @Html.Raw(@questions.Option1)
+                </td><td>
+                    @Html.Raw(@questions.Option2)
+                </td><td>
+                    @Html.Raw(@questions.Option3)
+                </td>
+                <td>
+                    @Html.Raw(@questions.Option4)
+                </td>
+                <td>
+                    @Html.Raw(@questions.Answer)
+                </td>
+                <td>
+                    @Html.Raw(@questions.Difficulty)
+                </td>
+                <td>
+                    <a class="btn btn-primary" href="@Url.Action("Edit" , "MCQ" , new {Id = questions.Id})" target="_blank" title="edit this question!">
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <a class="btn btn-danger"  title="delete this question!" data-bs-toggle="modal" data-bs-target="#deleteQuestion-@questions.Id">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                    <div class="modal fade" id="deleteQuestion-@questions.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Are you sure?</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                              
+                                <div class="modal-footer">
+                                    <a type="button" class="btn btn-danger" href="@Url.Action("Delete" , "MCQ" , new {Id = questions.Id , subjectId = subjectId})">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script src="https://cdn.tiny.cloud/1/ity2yj9qnyexhb9d3n2so42uklxs5mo5n84povwn2rrfueya/tinymce/6/tinymce.min.js" referrerpolicy="origin" rel="preload"></script>
+
+
+<script>
+    var answerField = document.getElementById("answer");
+    var radioOption1 = document.getElementById("radioOption1");
+    var radioOption2 = document.getElementById("radioOption2");
+    var radioOption3 = document.getElementById("radioOption3");
+    var radioOption4 = document.getElementById("radioOption4");
+
+
+    radioOption1.addEventListener("click", function () {
+        answerField.value = tinymce.get('option1').getContent({ format: 'html' });
+    });
+
+    radioOption2.addEventListener("click", function () {
+        answerField.value = tinymce.get('option2').getContent({ format: 'html' });
+    });
+
+    radioOption3.addEventListener("click", function () {
+        answerField.value = tinymce.get('option3').getContent({ format: 'html' });
+    });
+    radioOption4.addEventListener("click", function () {
+        answerField.value = tinymce.get('option4').getContent({ format: 'html' });
+    });
+
+
+
+    tinymce.init({
+        selector: '#statement',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                                 ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+    });
+
+    tinymce.init({
+        selector: '#option1',
+        width: 500,
+        height: 200,
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                                 ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+    });
+    tinymce.init({
+        selector: '#option2',
+        width: 500,
+        height: 200,
+
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                              ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+    }); tinymce.init({
+        selector: '#option3',
+        width: 500,
+        height: 200,
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+
+    });
+    tinymce.init({
+        selector: '#option4',
+        width: 500,
+        height: 200,
+        plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+
+    });
+    document.getElementById('file').addEventListener('change', handleFileSelect);
+
+    function handleFileSelect(event) {
+        var selectedFile = event.target.files[0];
+        var fileNameContainer = document.getElementById('file-name');
+
+        if (selectedFile) {
+            fileNameContainer.textContent = selectedFile.name;
+        } else {
+            fileNameContainer.textContent = 'No file selected';
+        }
+    }
+
+</script>
 
