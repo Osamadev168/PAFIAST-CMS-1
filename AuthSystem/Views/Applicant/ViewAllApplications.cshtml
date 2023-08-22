@@ -1,0 +1,107 @@
+﻿@model List<TestApplication>;
+
+@{
+    ViewData["Title"] = "All Applications";
+    string applicantName = ViewBag.ApplicantName;
+}
+
+<h2>All Applications for Applicant: @applicantName</h2>
+<hr />
+
+<table class="table" id="example">
+    <thead>
+        <tr>
+            <th>
+                Application Number
+            </th>
+            <th>
+                Test Name
+            </th>
+            <th>
+                Application Created At
+            </th>
+            <th>
+                Voucher Number
+            </th>
+            <th>
+                Fee Status
+            </th>
+            <th>
+                View Voucher
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var application in Model) {
+        
+          <tr>
+              <td>
+                  @application.Id
+              </td>
+                <td>
+                    @application.Test.TestName
+                </td>
+                <td>
+                    @application.SelectionTime.ToString("dddd, dd MMMM yyyy  HH:mm tt")
+                </td>
+                <td>
+                    @application.VoucherNumber
+                </td>
+                <th>
+                    @(
+                    application.IsVerified == true ? "Fee Verified"
+                    : "Fee Not Verified"
+                    )
+                </th>
+                <th>
+                    <a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#voucherModal-@application.VoucherNumber">View Voucher</a>
+                    <div class="modal fade" id="voucherModal-@application.VoucherNumber" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Fee Voucher</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    @if (!string.IsNullOrEmpty(application.VoucherPhotoPath))
+                                    {
+                                        @if (IsImageFile(application.VoucherPhotoPath))
+                                        {
+                                            <img class="img-fluid" src="@application.VoucherPhotoPath" alt="Voucher Image">
+                                        }
+                                        else if (IsPdfFile(application.VoucherPhotoPath))
+                                        {
+                                            <iframe src="@application.VoucherPhotoPath" width="100%" height="600" frameborder="0"></iframe>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>No voucher file available.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </th>
+
+          </tr>
+        
+        }
+    </tbody>
+</table>
+
+@functions {
+    bool IsImageFile(string filePath)
+    {
+        string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+        string extension = System.IO.Path.GetExtension(filePath).ToLower();
+        return imageExtensions.Contains(extension);
+    }
+
+    bool IsPdfFile(string filePath)
+    {
+        string[] pdfExtensions = { ".pdf" };
+        string extension = System.IO.Path.GetExtension(filePath).ToLower();
+        return pdfExtensions.Contains(extension);
+    }
+}

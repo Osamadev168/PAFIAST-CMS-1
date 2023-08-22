@@ -119,9 +119,12 @@
 </h2>
 <hr />
 
-<table class="table" id="example">
+<table class="table" id="example" style="font-size : 12px">
     <thead>
         <tr>
+            <th>
+                Application Number
+            </th>
             <th>
                 Applicant Name
             </th>
@@ -176,6 +179,9 @@
             }
 
          <tr>
+             <td>
+                 @application.Id
+             </td>
              <td>
                  @applicantName
              </td>
@@ -279,69 +285,11 @@
                     </div>
              </td>
              <td>
-                    @{
 
-                        var allapplications = _test.TestApplications.Where(a => a.UserId == application.UserId && a.IsPaid == true).ToList();
+                    <form asp-action="ViewAllApplications" asp-controller="Applicant" asp-route-userId="@application.UserId">
+                        <button class="btn btn-outline-primary" type="submit">View All Applications <i class="fa-sharp fa-solid fa-square-up-right"></i></button>
 
-                 }
-                    <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#allApplications-@application.UserId">View All Applications</a>
-                    <div class="modal" id="allApplications-@application.UserId" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="staticBackdropLabel">All Applications of @applicantName</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="info-container">
-                                        @foreach( var everyapplication in allapplications)
-                                        
-                                        {
-
-
-                                            <div class="info-row">
-                                                <span class="info-label">Application Number:</span>
-                                                <strong class="info-value">@everyapplication.Id</strong>
-                                            </div>
-                                            <div class="info-row">
-                                                <span class="info-label">Voucher Number:</span>
-                                                <strong class="info-value">@everyapplication.VoucherNumber</strong>
-                                            </div>
-                                            <div class="info-row">
-                                                <span class="info-label">Bank Name:</span>
-                                                <strong class="info-value">@everyapplication.BankName</strong>
-                                            </div>
-                                            <div class="info-row">
-                                                <span class="info-label">Bank Branch:</span>
-                                                <strong class="info-value">@everyapplication.BranchName</strong>
-                                            </div>
-                                            <div class="info-row">
-                                                <span class="info-label">Branch Code:</span>
-                                                <strong class="info-value">@everyapplication.BranchCode</strong>
-                                            </div>
-                                            <h5>Status: @(application.IsVerified == true ? "Verified" : "Dumped")</h5>
-                                            @if (!string.IsNullOrEmpty(everyapplication.VoucherPhotoPath))
-                                            {
-                                                @if (IsImageFile(everyapplication.VoucherPhotoPath))
-                                                {
-                                                    <img class="img-fluid" src="@everyapplication.VoucherPhotoPath" alt="Voucher Image">
-                                                }
-                                                else if (IsPdfFile(everyapplication.VoucherPhotoPath))
-                                                {
-                                                    <iframe src="@everyapplication.VoucherPhotoPath" width="100%" height="600" frameborder="1"></iframe>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <p>No voucher file available.</p>
-                                            }
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    </form>
              </td>
              <td>
 
@@ -380,7 +328,7 @@
 
                     {
 
-                        <h6> Fee Verified</h6>
+                        <h6>Fee Verified <i class="fa-sharp fa-solid fa-check" style="color: #0045bd;"></i></h6>
 
                     }
                     else if (application.IsVerified == false && application.IsRejected == true && application.IsPaid == true)
