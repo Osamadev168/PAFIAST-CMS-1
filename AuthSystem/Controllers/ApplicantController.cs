@@ -1,5 +1,6 @@
 ﻿using AuthSystem.Areas.Identity.Data;
 using AuthSystem.Data;
+using AuthSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -89,6 +90,26 @@ namespace AuthSystem.Controllers
                     return Json(new { Error = "Result Not Found!" });
                 }
                 return Json(result.Result);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+
+        [Authorize(Roles = "Super Admin , Admin")]
+        public async Task<IActionResult> ViewAllApplications(string userId)
+        {
+            try
+            {
+                List<TestApplication> allApplications = _test.TestApplications.Where(a => a.UserId == userId && a.IsPaid == true).Include(a => a.Test).ToList();
+                ApplicationUser user = await _userManager.FindByIdAsync(userId);
+                if (user != null)
+                {
+                    string applicantName = $"{user.FirstName + " " + user.LastName}";
+                    ViewBag.ApplicantName = applicantName;
+                }
+                return View(allApplications);
             }
             catch (Exception e)
             {
