@@ -10,6 +10,15 @@ namespace AuthSystem.Controllers
         {
             return View();
         }
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+        public IActionResult Applicant_Dashboard()
+        {
+            return View();
+        }
+
 
         public IActionResult Privacy()
         {

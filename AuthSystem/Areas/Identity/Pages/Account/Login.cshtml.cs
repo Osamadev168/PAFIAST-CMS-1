@@ -113,11 +113,11 @@ namespace AuthSystem.Areas.Identity.Pages.Account
 
                     if (roles.Contains("Super Admin") || roles.Contains("Admin"))
                     {
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Dashboard", "Home");
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Calendar");
+                        return RedirectToAction("Applicant_Dashboard", "Home");
                     }
                 }
                 if (result.RequiresTwoFactor)
