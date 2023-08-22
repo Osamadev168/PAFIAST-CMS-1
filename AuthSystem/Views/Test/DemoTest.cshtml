@@ -1,34 +1,58 @@
 ﻿@model List<MCQ>;
 @{
-    ViewData["Title"] = "Demo|Test";
+    ViewData["Title"] = "Test";
+    int applicationId = @ViewBag.ApplicationId;
 }
 @if (Model != null && Model.ToList().Count > 0)
 {
 
-    <button onclick="openFullscreen();">Open Fullscreen</button>
-    <button onclick="closeFullscreen();">Close Fullscreen</button>
+    <button onclick="openFullscreen();" class="btn btn-warning">Open Fullscreen</button>
+    <button onclick="closeFullscreen();" class="btn btn-danger">Close Fullscreen</button>
 
-    <form action="@Url.Action("SubmitResult")" method="post" class="form-control form-group">
-        <div style="margin-left: 810px; margin-top: 100px; position: fixed;background-color: aliceblue; text-align: justify; width : 500px;font-family : monospace; font-size : 4px" class="container">
-            <h1 id="test-name">Loading.....</h1>
-            <h2 id="test-duration">Loading....</h2>
-            <input type="submit" value="SUBMIT" class="btn btn-success" />
-        </div>
+    <form action="@Url.Action("SubmitResult")" method="post" class="form-control form-group" >
+      
 
-        <div class="fixed-tabs">
-            <div class="d-flex justify-content-end">
-            </div>
+        <div class="fixed-tabs position-sticky">
+            
            <span id="total-questions"></span> 
             <nav>
                 <div class="nav nav-tabs nav-pills" id="nav-tab" role="tablist">
+                    <div style="margin-left: 810px; margin-top: 100px; position: fixed;background-color: aliceblue; text-align: justify; width : 500px;font-family : monospace; font-size : 4px" class="container">
+                        <h1 id="test-name">Loading.....</h1>
+                        <h2 id="test-duration">Loading....</h2>
+                        <input type="hidden" name="calendarId" value="@ViewBag.CalendarId" />
+                        <input type="hidden" name="testId" value="@ViewBag.TestId" />
+                        <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#submit" >Finish</a>
+                        
+                    </div>
+
                     @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
                     {
                         <button class="nav-link @(sectionGroup.Key == Model.First().Section ? "active" : "")" id="nav-@sectionGroup.Key-tab" data-bs-toggle="tab" data-bs-target="#nav-@sectionGroup.Key" type="button" role="tab" aria-controls="nav-@sectionGroup.Key" aria-selected="@(sectionGroup.Key == Model.First().Section ? "true" : "false")" style="font-family : 'Segoe UI'">@sectionGroup.Key/@sectionGroup.Count()</button>
                     }
                 </div>
             </nav>
-        </div>
 
+        </div>
+        <div class="modal fade" id="submit" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Cancel Request</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Are you sure you want to submit your test</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <input type="submit" value="YES!" class="btn btn-success" />
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
         <div class="tab-content" id="nav-tabContent">
             @foreach (var sectionGroup in Model.GroupBy(q => q.Section))
             {
@@ -38,14 +62,14 @@
                     <div id="section-@sectionGroup.Key" data-attempted-count="0">
                         @foreach (var (question, index) in sectionGroup.Select((question, index) => (question, index + 1)))
                         {
-                            <div class="container  @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "4" : "2")">
-                                <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
-                                <div class="options form-control bg-light">
-                                    <ol type="a">
-                                        @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
-                            .Aggregate("", (acc, option) => $"{acc}<li><label class='user-select-none'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
-                                    </ol>
-                                </div>
+                            <div  class="container  @(sectionGroup.Key == Model.First().Section ? "fluid" : "") border-@(sectionGroup.Key == Model.First().Section ? "8" : "2")">
+                                    <ol class="text-justify text-uppercase user-select-none">@index) @Html.Raw(@question.Content)</ol>
+                                <div class="options form-control" id="question-container@(question.Id)">
+                                        <ol type="a">
+                                            @Html.Raw(shuffleOptions(question.Option1, question.Option2, question.Option3, question.Option4)
+                                .Aggregate("", (acc, option) => $"{acc}<li><label class='user-select-none'>{option}</label><input class='form-check-input options' type='radio' id='{question.Id}{option}' value='{option}' name='answers[{question.Id}]' onclick='saveUserResponse(this)' /></li>"))
+                                        </ol>
+                                    </div>
                                 <input type="hidden" name="answers[@question.Id]" id="answer_@question.Id" value="" />
                             </div>
                         }
@@ -68,9 +92,9 @@
     function openFullscreen() {
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { /* Safari */
+        } else if (elem.webkitRequestFullscreen) { 
             elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE11 */
+        } else if (elem.msRequestFullscreen) { 
             elem.msRequestFullscreen();
         }
     }
@@ -78,21 +102,203 @@
     function closeFullscreen() {
         if (document.exitFullscreen) {
             document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) { /* Safari */
+        } else if (document.webkitExitFullscreen) { 
             document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE11 */
+        } else if (document.msExitFullscreen) {
             document.msExitFullscreen();
         }
     }
 
-    // Function to automatically enter full screen when the page loads
     window.onload = function () {
         openFullscreen();
     };
+
+    function updateAttemptedCount() {
+        var sectionTabs = document.querySelectorAll('.nav-link[data-bs-toggle="tab"]');
+        var totalAttemptedQuestions = 0;
+
+        sectionTabs.forEach(tab => {
+            var sectionId = tab.getAttribute('data-bs-target').replace('#nav-', '');
+
+            var attemptedQuestions = document.querySelectorAll('#section-' + sectionId + ' .options input:checked');
+            var attemptedCount = attemptedQuestions.length;
+            totalAttemptedQuestions += attemptedCount;
+            var totalQuestions = document.querySelectorAll('#section-' + sectionId + ' .options input');
+            var totalCount = totalQuestions.length / 4;
+            document.getElementById('section-' + sectionId).setAttribute('data-attempted-count', attemptedCount);
+            tab.innerHTML = sectionId + ' <span class="badge rounded-pill bg-success">' + attemptedCount + `/${totalCount}` + '</span>';
+        });
+
+        document.getElementById('total-questions').innerText = totalAttemptedQuestions + ' Question(s) attempted so far';
+    }
+
+    function saveUserResponse(element) {
+        var url = window.location.href;
+        var testId = url.split("/").pop().split("?")[0];
+        var questionId = element.name.replace("answers[", "").replace("]", "");
+        var selectedAnswer = element.value;
+        document.getElementById("answer_" + questionId).value = selectedAnswer;
+
+        var data = {};
+        data[questionId] = selectedAnswer;
+        fetch('/Test/SaveUserResponse?testId=' + testId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (response.ok) {
+                    var radioId = questionId + selectedAnswer;
+
+                    var radioElement = document.getElementById(radioId);
+                    if (radioElement) {
+
+                        document.getElementById('question-container' + questionId).style.backgroundColor = '#E0E0E0'
+
+                    } else {
+                        console.error('Radio element not found:', radioId);
+                    }
+
+                } else {
+                    console.error('Error saving user response:', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving user response:', error);
+            });
+        
+        updateAttemptedCount();
+    }
+
+    function fetchUserResponses() {
+        var url = window.location.href;
+        var testId = url.split("/").pop().split("?")[0];
+        console.log(testId)
+        fetch('/Test/FetchUserResponses?testId=' + testId + '&applicationId=' + @applicationId)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item => {
+                    var questionId = item.questionId;
+                    var userResponse = item.userResponse;
+                    var radioId = questionId + userResponse;
+
+                    var radioElement = document.getElementById(radioId);
+                    if (radioElement) {
+                        radioElement.checked = true;
+                        if (radioElement.checked) { 
+                        
+                            document.getElementById('question-container' + questionId).style.backgroundColor = '#E0E0E0'
+                        }
+
+                        document.getElementById("answer_" + questionId).value = userResponse;
+                    } else {
+                        console.error('Radio element not found:', radioId);
+                    }
+                });
+                updateAttemptedCount();
+            })
+            .then(() => {
+                var radioButtons = document.getElementsByClassName('options');
+                for (var i = 0; i < radioButtons.length; i++) {
+                    radioButtons[i].dispatchEvent(new Event('change'));
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user responses:', error);
+            });
+    }
+    function getTestName() {
+        var url = window.location.href;
+        var testId = url.split("/").pop().split("?")[0];
+        fetch('/Test/GetTestName?testId=' + testId).then(response => response.json()).then(name => {
+            document.getElementById('test-name').innerText = name
+        });
+    }
+    function getTestDuration() {
+        var url = window.location.href;
+        var testId = url.split("/").pop().split("?")[0];
+        const urlParams = new URLSearchParams(url.substring(url.indexOf('?')));
+        const cId = urlParams.get("C_Id");
+        fetch(`/Test/GetTestDuration?testId=${testId}&C_Id=${cId}`)
+            .then(response => response.json())
+            .then(remainingMinutes => {
+                var hours = Math.floor(remainingMinutes / 60);
+                var minutes = Math.floor(remainingMinutes % 60);
+                var seconds = 0;
+                console.log(remainingMinutes)
+                var timer = setInterval(function () {
+                    $('#test-duration').text(hours + " H " + minutes + " M " + seconds + " S");
+                    seconds--;
+                    if (seconds < 0) {
+                        if (minutes > 0) {
+                            minutes--;
+                            seconds = 59;
+                        } else if (hours > 0) {
+                            hours--;
+                            minutes = 59;
+                            seconds = 59;
+                        }
+                        else if (minutes < 2) {
+                            document.getElementById('test-duration').style.backgroundColor = 'red';
+                        }
+                        else {
+                            clearInterval(timer);
+                            $('#test-duration').text('Test is finished');
+                        }
+                    }
+                }, 1000);
+            });
+    }
+    function SaveStartTime() {
+        var url = window.location.href;
+        var testId = url.split("/").pop().split("?")[0];
+        fetch('/Test/SaveStartTime?testId=' + testId).then(() => {
+        })
+    }
+    window.addEventListener('load', function () {
+        SaveStartTime();
+        getTestDuration();
+        getTestName();
+        fetchUserResponses();
+    });
+    function requestFullScreen(element) {
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+
+    document.getElementById('fullScreenButton').addEventListener('click', function () {
+        requestFullScreen(document.documentElement);
+    });
 </script>
 
+<style>
+    /* Style the options container */
+    .question-container {
+        /* Default background color for unselected options */
+        background-color: white !important
+        transition: background-color 1s; /* Add smooth transition */
+    }
 
-<script src="/js/Test.js"></script>
+    /* Change the background color of the options container when the radio button is checked */
+    .options input[type="radio"]:checked + .question-container {
+        background-color: forestgreen !important; /* Change this to your desired green color */
+    }
+
+    /* Style the selected option */
+    .options input[type="radio"]:checked {
+        background-color: blue;
+    }
+</style>
+
 
 
 

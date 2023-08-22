@@ -1,63 +1,182 @@
 ﻿@model List<AuthSystem.Models.TestApplication>
 @inject AuthSystem.Data.AuthDbContext _test;
+@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@inject UserManager<ApplicationUser> UserManager
+
 @{
     ViewData["Title"] = "My Applications";
-
+    
 }
+
 <h4>My Applications</h4>
 <p>Total Applications so far: @Model.Count</p>
-@foreach (var application in Model)
-      {
-        string testCenterName;
-        string startTime;
-        string centerLocation;
-        string endTime;
-        string testDate;
-    if (application.Calendar != null)
-    {
-              testCenterName = _test.TestCenters.Where(w => w.Id == application.Calendar.TestCenterId).FirstOrDefault()?.TestCenterName;
-              centerLocation = _test.TestCenters.Where(w => w.Id == application.Calendar.TestCenterId).FirstOrDefault()?.TestCenterLocation;
-              startTime = application.Calendar.StartTime.ToString();
-              endTime = application.Calendar.StartTime.AddMinutes(application.Test.Duration).ToString();
-              testDate = application.Calendar.Date.ToString("D");
 
+     <table id="example" class="table">
+         <thead>
+             <tr>
+                <th>Application No.</th>
+                <th>Test Name</th>
+                <th>Test Composition</th>
+                <th>Test Duration</th>
+                <th>Test Timing</th>
+                <th>Test Center</th>
+                <th>
+                    Fee Status
+                </th>
+                <th>
+                    Application Status
+                </th>
+                <th>
+                    Test Status
+                </th>
+                <th>
+                    Application Created At
+                </th>
+                 <th>
+                     Actions
+                 </th>
 
-    }
-        else
-        {
-                testCenterName = "Not Selected!";
-                startTime = "N/A";
-                endTime = "N/A";
-                centerLocation = "N/A";
-         testDate = "N/A";
-    }
-        <div style="border: 2px solid #000;border-radius: 10px;padding: 20px;background-color: #f2f2f2;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); font-family : Georgia, 'Times New Roman', Times, serif">
-            <p>Application Id: @application.Id</p>
-            <p>Test: <strong>@application.Test.TestName</strong></p>
-            <p>Test Duration: @(application.Test.Duration >= 60 ? (application.Test.Duration / 60) + " hour(s)" : application.Test.Duration + " minutes")</p>
-            <p>Test Center: @testCenterName</p>
-            <p>Test Center Location: @centerLocation</p>
-             <p>Test Date: @testDate</p>
-            <p>Start Time: @startTime</p>
-            <p>End Time: @endTime</p>
-            <h5 style="text-decoration: underline;">Test Composition</h5>
-            @foreach (var testDetail in application.Test.TestDetails)
+              </tr>
+         </thead>
+         <tbody>
+            @foreach (var application in Model.OrderBy(t => t.SelectionTime))
             {
-                foreach (var subject in _test.Subjects.Where(w => w.SubjectId == testDetail.SubjectId).ToList())
+                string testCenterName;
+                string startTime;
+                string centerLocation;
+                string endTime;
+                string testDate;
+              var user = UserManager.FindByIdAsync(application.UserId).Result;
+            string userName = user.FirstName + " " + user.LastName;
+                if (application.Calendar != null)
                 {
-                    <p>@subject.SubjectName @testDetail.Percentage%</p>
+                    testCenterName = _test.TestCenters.Where(w => w.Id == application.Calendar.TestCenterId).FirstOrDefault()?.TestCenterName;
+                    centerLocation = _test.TestCenters.Where(w => w.Id == application.Calendar.TestCenterId).FirstOrDefault()?.TestCenterLocation;
+                    startTime = application.Calendar.StartTime.ToString();
+                    endTime = application.Calendar.StartTime.AddMinutes(application.Test.Duration).ToString();
+                    testDate = application.Calendar.Date.ToString("D");
+
+
                 }
-            }
-           <hr />
-        @if (application.Calendar != null)
-        
-        {
+                else
+                {
+                    testCenterName = "Not Selected!";
+                    startTime = "N/A";
+                    endTime = "N/A";
+                    centerLocation = "N/A";
+                    testDate = "N/A";
+                }
+             <tr>
+                <td>
+                    <p><i class="fas fa-hashtag"></i> @application.Id</p>
+                </td>
+                <td>
+                    <p><i class="fas fa-file-alt"></i> @application.Test.TestName</p>
+                </td>
+                <td>
+                    @foreach (var testDetail in application.Test.TestDetails)
+                    {
+                        foreach (var subject in _test.Subjects.Where(w => w.SubjectId == testDetail.SubjectId).ToList())
+                        {
+                            <p><i class="fas fa-angle-right"></i> @subject.SubjectName @testDetail.Percentage%</p>
+                        }
+                    }
+                </td>
+                <td>
+                    <p><i class="far fa-clock"></i> @application.Test.Duration Minutes</p>
+                </td>
+                <td>
+                    @if (application.Calendar != null)
+                    {
+                        <p><i class="far fa-calendar"></i> @application.Calendar.Date.ToString("D") -- @application.Calendar.StartTime.ToString("hh:mm tt") - @application.Calendar.StartTime.AddMinutes(application.Test.Duration).ToString("hh:mm tt")</p>
+                    }
+                    else
+                    {
+                        <p><i class="fas fa-times-circle text-danger"></i> Not Available</p>
+                    }
+                </td>
+                <td>
+                    @if (application.Calendar != null)
+                    {
+                        <p><i class="fas fa-map-marker-alt"></i> @application.Calendar.TestCenter.TestCenterName</p>
+                    }
+                    else if (application.CalendarId == null && application.IsVerified == true)
+                    {
+                        <p><i class="fas fa-map-marker-alt"></i> Center not selected</p>
+                    }
+                    else
+                    {
+                        <p><i class="fas fa-times-circle text-danger"></i> Not Available</p>
+                    }
+                </td>
+                <td>
+                    @if (application.IsPaid == true && application.IsVerified == true)
+                    {
+                        <p><i class="fas fa-check-circle text-success"></i> Fee Verified</p>
+                    }
+                    @if (application.IsPaid == true && application.IsVerified == false)
+                    {
+                        <p><i class="fas fa-info-circle text-warning"></i> Fee Under Verification</p>
+                    }
+                    @if (application.IsPaid == false || application.IsPaid == null)
+                    {
+                        <p><i class="fas fa-times-circle text-danger"></i> Fee Not Paid</p>
+                    }
+                </td>
+                <td>
+                    @if (application.Calendar != null)
+                    {
+                        <p><i class="fas fa-check-circle"></i> Application Completed</p>
+                    }
+                    else
+                    {
+                        <p><i class="fas fa-times-circle text-danger"></i> Application Incomplete</p>
+                    }
+                </td>
+                
+                <td>
+                    @if (application.Calendar != null)
+                    {
+                        @if (application.HasFinished == true && application.HasAttempted == true)
+                        {
+                            <p><i class="fas fa-check-circle text-success"></i> Test Attempted and Submitted</p>
+                        }
+                        else if (application.HasAttempted == true && application.HasFinished == null)
+                        {
+                            <p><i class="fas fa-info-circle text-info"></i> Test Attempted Not Finished</p>
+                        }
+                        else if (application.HasAttempted == null || application.HasAttempted == false)
+                        {
+                            <p><i class="fas fa-times-circle text-danger"></i> Test Not Attempted</p>
+                        }
+                    }
+                    else
+                    {
+                        <p><i class="fas fa-question-circle"></i> N/A</p>
+                    }
+                </td>
+                <td style="font-size : 13px">
+                    @application.SelectionTime.ToString("dddd, dd MMMM yyyy  HH:mm tt")
+                </td>
+                <td>
+                    @if (application.Calendar != null)
+                    {
+                        <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = application.Test.TestName, applicantName = userName, date = testDate , centerName = testCenterName , centerLocation = centerLocation , startTime = startTime , endTime = endTime})')">
+                            <i class="fas fa-print"></i> Print Admit Card
+                        </a>
+                    }
+                    else
+                    {
+                        <p><i class="fas fa-times-circle text-danger"></i> Not Available</p>
+                    }
+                </td>
+             </tr>
+             }
+         </tbody>
+     </table>
+       
 
-            <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = application.Test.TestName, applicantName = "User123", date = testDate , centerName = testCenterName , centerLocation = centerLocation , startTime = startTime , endTime = endTime})')">Print Admit Card</a>
-
-        }
-    </div>
-}
 
 
 <script>
@@ -71,3 +190,45 @@
         };
     }
 </script>
+<style>
+    /* Style the table */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        /* Style table header */
+        .table th {
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Style table cells */
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+    /* Style button */
+    .btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: 1px solid #337ab7;
+        color: #337ab7;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    .btn-outline-success {
+        background-color: transparent;
+        color: #5cb85c;
+    }
+
+    body {
+        font-family: 'Open Sans', sans-serif;
+    }
+</style>

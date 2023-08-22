@@ -1,0 +1,150 @@
+﻿@model List<AuthSystem.Models.TestApplication>
+@inject AuthSystem.Data.AuthDbContext _test;
+@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@inject UserManager<ApplicationUser> UserManager
+@{
+   ViewData["Title"] = "Pay Fee";
+    
+}
+<h4>
+    Pay Fee
+</h4>
+<hr />
+<div>
+    <table id="example" class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Application No
+                </th>
+                <th>
+                    Test Name
+                </th>
+                <th>
+                    Fee Status
+                </th>
+                <th>
+                    Applied at
+                </th>
+                <th>
+                    Voucher
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var application in Model) {
+               
+                var user = UserManager.FindByIdAsync(application.UserId).Result;
+                string userName = user.FirstName + " " + user.LastName;
+            <tr>
+                <td>
+                    @application.Id
+                </td>
+                <td>
+                        @application.Test.TestName <i class="fas fa-clipboard" style="color: #70a5ff;"></i>
+                </td>
+                <td>
+                        @if (application.IsPaid == true && application.IsVerified == false && application.IsRejected == false || application.IsRejected == null)
+
+                        {
+
+                            <p>Fee Under Verification <i class="fa-solid fa-hourglass-start" style="color: #3f83f8;"></i></p>
+                        }
+                        @if (application.IsVerified == true)
+                        {
+
+                            <p>Fee Verified <i class="fas fa-check-double" style="color: #0dd377;"></i></p>
+
+                        }
+                        @if (application.IsRejected == true)
+                        {
+
+                            <p>Fee Rejected <i class="fas fa-trash text-danger" ></i></p>
+
+                        }
+                        @if (application.IsPaid == false && application.IsVerified == false)
+                        
+                        {
+                            <p>
+                                Fee Not Paid
+                           <i class="fa-solid fa-circle-exclamation text-danger"></i></p >
+
+
+                        }
+                    </td>
+                <td>
+                        @application.SelectionTime.ToString("dddd, dd MMMM yyyy  HH:mm tt") <i class="fas fa-calendar" style="color: #17489b;"></i>
+
+                </td>
+                <td>
+                        <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintVoucher", "Calendar", new { testId = application.TestId, applicantName =userName , testName = application.Test.TestName ,userId = application.UserId , applicationId = application.Id })')"> <i class="fa-solid fa-file-lines" style="color: #9fa0a3;"></i> Print Fee Voucher</a>
+
+                </td>
+                <td>
+                        @if (application.IsPaid == true && application.IsVerified == true)
+                        {
+
+                            <i class="fa-solid fa-check" style="color: #00ad14;"></i>
+
+                        }
+                        else
+                        {
+
+                            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#@application.Id">Submit Fee Details <i class="fa-solid fa-paper-plane" style="color: #90b1ea;"></i></a>
+                            <div class="modal fade" id="@application.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Please Submit Your Paid Fee Details For Application Number @application.Id</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form class="form-group" asp-action="SubmitFeeDetails" asp-controller="Calendar" method="post" asp-route-testId="@application.TestId" enctype="multipart/form-data">
+
+                                            <div class="modal-body">
+                                                <h6>You are going to submit a calendar change request! </h6>
+                                                <input type="text" placeholder="Voucher Number" class="form-control" required name="voucherNumber" />
+                                                <input type="text" placeholder="Bank (HBL, MCB, Allied)" class="form-control" required name="bankName" />
+                                                <input type="text" placeholder="Branch Name" class="form-control" required name="branchName" />
+                                                <input type="text" placeholder="Branch Code" class="form-control" required name="branchCode" />
+                                                <label for="voucher">Upload your Paid Fee Voucher:</label>
+                                                <input type="file" class="form-control" id="voucher" name="voucherPhoto" required />
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button class="btn btn-success" type="submit">Submit</button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        }
+                        
+                </td>
+            </tr>
+            
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+
+    function printFeeVoucher(url) {
+        var newWindow = window.open(url, "_blank");
+        newWindow.onload = function () {
+            newWindow.print();
+            newWindow.onafterprint = function () {
+                newWindow.close();
+            };
+        };
+    }
+    new DataTable('#example', {
+        order: false
+    });
+
+</script>

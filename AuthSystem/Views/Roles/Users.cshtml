@@ -1,0 +1,35 @@
+﻿@model UserRolesViewModel
+@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "User Roles | Assign";
+    var User = await UserManager.FindByIdAsync(Model.UserId);
+    var userName = User != null ? await UserManager.GetUserNameAsync(User) : string.Empty;
+    var firstName = User != null ? User.FirstName : string.Empty;
+    var lastName = User != null ? User.LastName : string.Empty;
+}
+<h1>Assign Role</h1>
+
+<h3>User: @firstName @lastName</h3>
+
+<form method="post" asp-action="AssignRole" asp-controller="Roles">
+    @Html.AntiForgeryToken()
+
+    <h4>Select Roles:</h4>
+
+    @foreach (var role in Model.Roles)
+    {
+     
+        <div class="form-check form-switch">
+            <input type="checkbox" id="@role.Id" name="SelectedRoles" value="@role.Name" @(Model.UserRoles.Contains(role.Name) ? "checked" : "") class="form-check-input" />
+            <label for="@role.Id" class="form-check-label">@role.Name</label>
+        </div>
+    }
+
+    <input type="hidden" name="UserId" value="@Model.UserId" />
+
+    <input type="submit" value="Save" class="btn btn-primary" />
+</form>

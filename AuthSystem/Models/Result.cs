@@ -8,6 +8,10 @@ namespace AuthSystem.Models
         public int ResultId { get; set; }
 
         public int Score { get; set; }
+
+        public int TestId { get; set; }
+
+        public int CalendarId { get; set; }
         public string AttemptedBy { get; set; }
     }
 }

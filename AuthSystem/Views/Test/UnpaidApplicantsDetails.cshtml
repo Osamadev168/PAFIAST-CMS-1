@@ -7,10 +7,6 @@
     ViewData["Title"] = "Applicant Stats";
 }
 
-<head>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
-</head>
-<body style="background-color: whitesmoke">
     <h2 style="font-family: 'Times New Roman', Times, serif; color:cadetblue">List of applicants that have not paid fee for: @ViewBag.TestName</h2>
     <table id="example" class="display table table-light table-hover table-striped" style="width:100%">
         <thead>
@@ -33,19 +29,5 @@
                 </tr>
 
             }
-
-
-
         </tbody>
     </table>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-
-
-</body>
-<script>
-
-    $('#example').DataTable();
-
-</script>

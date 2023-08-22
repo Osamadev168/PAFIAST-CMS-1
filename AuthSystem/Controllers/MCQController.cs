@@ -7,6 +7,7 @@ using OfficeOpenXml;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class MCQController : Controller
 
     {

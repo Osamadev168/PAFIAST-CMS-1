@@ -166,6 +166,9 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
@@ -355,7 +358,13 @@ namespace AuthSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("CalendarId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TestId")
                         .HasColumnType("int");
 
                     b.HasKey("ResultId");
@@ -657,6 +666,10 @@ namespace AuthSystem.Migrations
 
             modelBuilder.Entity("AuthSystem.Models.UserRolesViewModel", b =>
                 {
+                    b.Property<string>("SelectedRoles");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 

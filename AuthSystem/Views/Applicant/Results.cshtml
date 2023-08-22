@@ -1,0 +1,88 @@
+﻿@model List<TestApplication>
+@using Microsoft.AspNetCore.Identity
+@using AuthSystem.Areas.Identity.Data
+@inject AuthSystem.Data.AuthDbContext _test
+
+@{
+    ViewData["Title"] = "My Results";
+}
+
+<script src="https://kit.fontawesome.com/92cfe52abb.js" crossorigin="anonymous"></script>
+
+<h3>My Results</h3>
+<hr />
+    <style >
+    .result-id {
+        cursor: pointer;
+        color: #007bcf;
+    }
+
+    .copy-icon {
+        margin-right: 5px;
+    }
+</style>
+<table id="example" class="table table-hover">
+    <thead>
+        <tr>
+            <th>Application ID</th>
+
+            <th>Test Name</th>
+            <th>Attempted On</th>
+            <th>
+                Result ID
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach(var application in Model){
+                var resultId = _test.Results.Where(q => q.CalendarId == application.CalendarId && q.AttemptedBy == application.UserId).FirstOrDefault()?.ResultId;
+        <tr>
+            <td>
+                @application.Id
+            </td>
+            <td>
+                @application.Test.TestName
+
+            </td>
+            <td>
+                @application.Calendar.Date (@application.Calendar.StartTime)
+            </td>
+                <td>
+                    <span class="result-id" data-result-id="@resultId" title="Copy Result ID">
+                        <i class="fas fa-copy copy-icon"></i> 
+                        @resultId
+                    </span>
+                </td>
+            <td>
+                <a href="@Url.Action("ViewResult" , "Applicant" , new {testId = application.TestId  , calendarId = application.CalendarId})" class="btn btn-success">View Result</a>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var resultIdElements = document.querySelectorAll('.result-id');
+
+        resultIdElements.forEach(function (element) {
+            element.addEventListener('click', function () {
+                var resultId = element.getAttribute('data-result-id');
+                copyToClipboard(resultId);
+            });
+        });
+
+        function copyToClipboard(text) {
+            var textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Result ID copied to clipboard: ' + text);
+        }
+    });
+</script>

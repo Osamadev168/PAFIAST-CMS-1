@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize]
     public class RoleManagementController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -20,12 +21,14 @@ namespace AuthSystem.Controllers
             return View(roles);
         }
 
+        [Authorize(Roles = "Super Admin")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Super Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(IdentityRole role)
         {
