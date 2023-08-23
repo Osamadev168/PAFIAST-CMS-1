@@ -95,6 +95,7 @@ namespace AuthSystem.Controllers
             var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
 
             var Questions_MCQ = _test.MCQs.Where(x => x.SubjectId == SubjectId).Include(x => x.Subject);
+            ViewBag.SubjectId = SubjectId;
             return View(Questions_MCQ);
         }
 

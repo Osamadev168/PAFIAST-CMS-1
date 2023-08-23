@@ -12,8 +12,136 @@
             <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Upcoming events</h1>
             <div id="calendar" class="p-4"></div>
         </div>
+
+        <!-- Cards -->
+        
+            <div class="mt-5 gap-5 flex flex-wrap">
+                <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-[32%] p-2">
+                    <div class="rounded-xl bg-[#39CCCC] text-white border hover:shadow-md">
+                        <div class="flex justify-around items-center gap-2 text-white text-2xl font-bold mt-5">
+                            
+                            <p>Total Tests</p>
+                        </div>
+                        <div class="p-5 ">
+                            <div class="my-3 p-3 items-center flex justify-center h-28">
+                                <h3 class="text-3xl font-bold text-white dark:text-white">100</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-[32%] p-2">
+                    <div class="rounded-xl bg-[#39CCCC] text-white border hover:shadow-md">
+                    <div class="flex justify-around items-center gap-2 text-white text-2xl font-bold mt-5">
+                            
+                            <p>Total TestCenters</p>
+                        </div>
+                        <div class="p-5">
+                            <div class="my-3 p-3 items-center flex justify-center h-28">
+                                <h3 class="text-3xl font-bold text-white dark:text-white">48</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-[32%] p-2">
+                    <div class="rounded-xl bg-[#39CCCC] text-white border hover:shadow-md">
+                    <div class="flex justify-around items-center gap-2 text-white text-2xl font-bold mt-5">
+                            
+                            <p>Total Users</p>
+                        </div>
+                        <div class="p-5">
+                            <div class="my-3 p-3 items-center flex justify-center h-28">
+                                <h3 class="text-3xl font-bold text-white dark:text-white">58685</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- local user statistics -->
+        <div class="mt-5 mx-auto lg:flex justify-between">
+            <!-- Left Section -->
+            <div class="lg:w-[60%] xl:w-[70%]">
+                <div class="rounded-xl bg-gray-100 mt-5 border hover:shadow-md">
+                    <div class="flex flex-col mt-5 gap-2 text-teal-900 text-2xl font-bold mx-5">
+                        <p class="text-4xl font-bold text-teal-900">Local Users</p>
+                        <p class="text-lg font-semibold text-gray-600">Users from all over Pakistan</p>
+                    </div>
+                    <div class="flex justify-between items-center p-4">
+                        <!-- Content for the top section -->
+                    </div>
+                    <div class="bg-gray-100 mb-10 rounded-xl p-4">
+                        <div class="relative rounded-xl overflow-hidden bg-gray-100">
+                            <!-- Replace this with your PieChart code -->
+                            
+                                <canvas id="myPieChart" class="w-[80%]"></canvas>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add the right section here if needed -->
+            <div class="lg:w-1/4 xl:w-1/4  h-75">
+                <div class="shadow-2xl rounded-xl bg-gray-100 mt-5 border hover:shadow-md">
+                    <div class="p-4">
+                        <p class="text-2xl font-semibold text-teal-900">Latest Users</p>
+                        <!-- Add your recent users content here -->
+                    </div>
+                    <div class="flex items-center justify-between p-4">
+                        <!-- Content for the top section -->
+                    </div>
+                    <div class="bg-gray-100 mb-10 rounded-xl  p-4">
+                        <div class="flow-root">
+                            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Add your list items for recent users here -->
+                                @for(int i=0 ; i<15; i++){
+                                    <li class="py-3 sm:py-4">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="shrink-0">
+                                                <img alt="Lana image"
+                                                     class="rounded-full"
+                                                     height="32"
+                                                     src="~/logo.png"
+                                                     width="32" />
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="truncate text-sm font-medium text-gray-900 dark:text-white">
+                                                    Lana Byrd
+                                                </p>
+                                                <p class="truncate text-sm text-gray-500 dark:text-gray-400">
+                                                    email@windster.com
+                                                </p>
+                                            </div>
+                                            <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                                @DateTime.Now.ToString("MMM d, yyyy")
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="lg:w-full xl:w-full ">
+            <div class="rounded-xl bg-gray-100 mt-5 border hover:shadow-md">
+                <div class="flex flex-col mt-5 gap-2 text-teal-900 text-2xl font-bold mx-5">
+                    <p class="text-4xl font-bold text-teal-900">Local Users</p>
+                    <p class="text-lg font-semibold text-gray-600">Users from all over Pakistan</p>
+                </div>
+        <div class="bg-gray-100 rounded-xl shadow-md p-6 w-full ">
+            <canvas id="myLineChart" style="width: 100%;"></canvas>
+        </div>
+        </div>
+        </div>
+       
+
+        </div>
     </div>
-</div>
+
 
 
 @section Scripts{
@@ -27,28 +155,29 @@
                     {
                         title: 'Math Test',
                         start: '2023-08-01',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300'],
+                        classNames: ['event-badge', 'bg-blue-400 text-white text-l font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-white mb-2'],
                     },
                     {
                         title: 'Physics Exam',
                         start: '2023-08-07',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"'],
+                        classNames: ['event-badge', 'bg-blue-400 text-white text-l font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-white mb-2'],
                     },
                     {
                         title: 'English Exam',
                         start: '2023-08-15',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"'],
+                        classNames: ['event-badge', 'bg-blue-400 text-white text-l font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-white mb-2'],
                     },
-                    // Multiple events on a single day
+                   
+                   
                     {
                         title: 'Event 1',
                         start: '2023-08-15',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"'],
+                        classNames: ['event-badge', 'bg-blue-400 text-white text-l font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-white mb-2'],
                     },
                     {
                         title: 'Event 2',
                         start: '2023-08-15',
-                        classNames: ['event-badge', 'bg-yellow-500'],
+                        classNames: ['event-badge', 'bg-blue-400 text-white text-l font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-white mb-2'],
                     }
                     // Add more events...
                 ],
@@ -60,4 +189,56 @@
             calendar.render();
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById("myPieChart").getContext("2d");
+            const data = {
+                labels: ["District A", "District B", "District C"],
+                datasets: [
+                    {
+                        data: [300, 500, 200],
+                        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+                    },
+                ],
+            };
+            const config = {
+                type: "pie",
+                data: data,
+                options: {},
+            };
+            new Chart(ctx, config);
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById("myLineChart").getContext("2d");
+            const data = {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                datasets: [
+                    {
+                        label: "Monthly Sales",
+                        data: [1000, 1500, 1200, 1800, 1600, 2000],
+                        borderColor: "#3490dc",
+                        backgroundColor: "rgba(52, 144, 220, 0.2)",
+                        borderWidth: 2,
+                    },
+                ],
+            };
+            const config = {
+                type: "line",
+                data: data,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            };
+            new Chart(ctx, config);
+        });
+    </script>
+
 }

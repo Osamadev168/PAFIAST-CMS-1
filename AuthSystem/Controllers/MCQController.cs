@@ -32,6 +32,9 @@ namespace AuthSystem.Controllers
             return View(getQuestions);
         }
 
+
+
+
         [Authorize]
         public IActionResult Create()
         {
@@ -211,6 +214,26 @@ namespace AuthSystem.Controllers
             }
 
             return RedirectToAction("ViewQuestions", "Subject");
+        }
+        public IActionResult GetQuestions(int subjectId)
+        {
+
+
+            try
+            {
+                var questions = _test.MCQs.Where(q => q.SubjectId == subjectId).ToArray();
+
+                return Json(questions);
+            }
+
+
+
+            catch (Exception e)
+            {
+
+                return Json(new { Error = e.Message });
+            }
+
         }
     }
 }
