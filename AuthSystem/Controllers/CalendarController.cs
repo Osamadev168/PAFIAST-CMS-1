@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-using System.Net.Mail;
 
 namespace AuthSystem.Controllers
 {
@@ -191,7 +189,6 @@ namespace AuthSystem.Controllers
 
                 EmailSender emailSender = new();
 
-
                 string confirmationMessage = "Hello " + applicantName + "! ." + "Thank you for selecting a test calendar for " + test?.TestName +
                                              " against Application number: " + appliedTest.Id +
                                              " your test will be at " + centerName + " at " + calendarDate + " from " + calendarStartTime + " to " + calendarEndTime
@@ -276,7 +273,6 @@ namespace AuthSystem.Controllers
         }
 
         [Authorize(Roles = "Admin,Super Admin")]
-
         [HttpGet]
         public IActionResult ViewSubmittedApplications()
         {
@@ -293,7 +289,7 @@ namespace AuthSystem.Controllers
 
         [Authorize(Roles = "Admin,Super Admin")]
         [HttpPost]
-        public IActionResult VerifyFee(int applicationId , string  userId)
+        public IActionResult VerifyFee(int applicationId, string userId)
         {
             try
             {
@@ -302,7 +298,6 @@ namespace AuthSystem.Controllers
                 var applicantEmail = _userManager.FindByIdAsync(userId)?.Result?.UserName;
                 var applicantName = _userManager.FindByIdAsync(userId)?.Result?.FirstName + " " + _userManager.FindByIdAsync(userId)?.Result?.LastName;
 
-               
                 EmailSender emailSender = new();
 
                 if (testApplication != null)
@@ -421,7 +416,6 @@ namespace AuthSystem.Controllers
                 string centerName = "";
                 string confirmationMessage = "";
                 EmailSender emailSender = new();
-
 
                 if (calendar != null && test != null)
                 {

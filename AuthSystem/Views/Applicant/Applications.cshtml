@@ -6,6 +6,8 @@
 
 @{
     ViewData["Title"] = "My Applications";
+    var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+
     
 }
 
@@ -72,7 +74,7 @@
                     <p><i class="fas fa-hashtag"></i> @application.Id</p>
                 </td>
                 <td>
-                    <p><i class="fas fa-file-alt"></i> @application.Test.TestName</p>
+                    <p><i class="fas fa-file-alt" ></i> @application.Test.TestName</p>
                 </td>
                 <td>
                     @foreach (var testDetail in application.Test.TestDetails)
@@ -113,7 +115,7 @@
                 <td>
                     @if (application.IsPaid == true && application.IsVerified == true)
                     {
-                        <p><i class="fas fa-check-circle text-success"></i> Fee Verified</p>
+                        <p><i class="fas fa-check text-success"></i> Fee Verified</p>
                     }
                     @if (application.IsPaid == true && application.IsVerified == false)
                     {
@@ -123,11 +125,15 @@
                     {
                         <p><i class="fas fa-times-circle text-danger"></i> Fee Not Paid</p>
                     }
+                    @if (application.IsRejected == true)
+                    {
+                        <p><i class="fas fa-times-circle text-danger"></i> Fee Rejected (Please re-submit your correct fee details)</p>
+                    }
                 </td>
                 <td>
                     @if (application.Calendar != null)
                     {
-                        <p><i class="fas fa-check-circle"></i> Application Completed</p>
+                        <p><i class="fas fa-check-circle text-success"></i> Application Completed</p>
                     }
                     else
                     {
@@ -160,7 +166,7 @@
                     @application.SelectionTime.ToString("dddd, dd MMMM yyyy  HH:mm tt")
                 </td>
                 <td>
-                    @if (application.Calendar != null)
+                    @if (application.Calendar != null && application.HasFinished != true && application.Calendar.Date > today)
                     {
                         <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = application.Test.TestName, applicantName = userName, date = testDate , centerName = testCenterName , centerLocation = centerLocation , startTime = startTime , endTime = endTime})')">
                             <i class="fas fa-print"></i> Print Admit Card
