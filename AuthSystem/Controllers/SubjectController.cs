@@ -90,12 +90,18 @@ namespace AuthSystem.Controllers
         }
 
         [Authorize(Roles = "Admin,Super Admin")]
-        public IActionResult ViewQuestions()
+        public IActionResult ViewQuestions(int subjectId)
         {
-            var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
+
 
             var Questions_MCQ = _test.MCQs.Where(x => x.SubjectId == SubjectId).Include(x => x.Subject);
             ViewBag.SubjectId = SubjectId;
+    var Questions_MCQ = _test.MCQs.Where(x => x.SubjectId == subjectId).Include(x => x.Subject);
+            string subjectName = _test.Subjects.Where(s => s.SubjectId == subjectId).FirstOrDefault().SubjectName;
+            ViewBag.SubjectId = subjectId;
+            ViewBag.SubjectName = subjectName;
+
+
             return View(Questions_MCQ);
         }
 
@@ -106,11 +112,10 @@ namespace AuthSystem.Controllers
         }
 
         [Authorize(Roles = "Admin,Super Admin")]
-        public IActionResult ViewQuestionsFIB()
+        public IActionResult ViewQuestionsFIB(int subjectId)
         {
-            var SubjectId = HttpContext.Session.GetInt32("SelectedSubjectId").Value;
 
-            var Questions_Blanks = _test.Blanks.Where(x => x.SubjectId == SubjectId).Include(x => x.Subject);
+            var Questions_Blanks = _test.Blanks.Where(x => x.SubjectId == subjectId).Include(x => x.Subject);
             return View(Questions_Blanks);
         }
 

@@ -166,7 +166,7 @@
                     @application.SelectionTime.ToString("dddd, dd MMMM yyyy  HH:mm tt")
                 </td>
                 <td>
-                    @if (application.Calendar != null && application.HasFinished != true && application.Calendar.Date > today)
+                    @if (application.Calendar != null && application.HasFinished != true && application.Calendar.Date >= today)
                     {
                         <a href="#" class="btn btn-outline-success" onclick="printFeeVoucher('@Url.Action("PrintAdmitCard", "Calendar", new { testName = application.Test.TestName, applicantName = userName, date = testDate , centerName = testCenterName , centerLocation = centerLocation , startTime = startTime , endTime = endTime})')">
                             <i class="fas fa-print"></i> Print Admit Card

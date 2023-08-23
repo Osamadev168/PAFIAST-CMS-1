@@ -12,8 +12,7 @@ namespace AuthSystem.Models
 
         public int ApplicationId { get; set; }
 
-        [ForeignKey("QuestionId")]
-        public MCQ Question { get; set; }
+     
 
         public int QuestionId { get; set; }
 

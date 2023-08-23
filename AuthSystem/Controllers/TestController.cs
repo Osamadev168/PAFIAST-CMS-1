@@ -214,6 +214,8 @@ namespace AuthSystem.Controllers
             if (!attempted)
             {
                 var test = _test.Tests.FirstOrDefault(x => x.Id == Id);
+                int testDuration = test.Duration;
+                ViewBag.TestDuration = testDuration;
                 var testCalendar = _test.TestCalenders.FirstOrDefault(x => x.Id == C_Id && x.TestId == Id);
                 var isPresent = _test.TestApplications.Where(a => a.UserId == userId && a.IsVerified == true && a.CalendarId == C_Id && a.TestId == Id && a.CalenderToken == C_token).FirstOrDefault()?.IsPresent == true;
                 if (testCalendar == null)
@@ -236,7 +238,6 @@ namespace AuthSystem.Controllers
                 List<MCQ> questionsList;
 
                 var assignedQuestions = _test.AssignedQuestions
-                    .Include(aq => aq.Question)
                     .Where(aq => aq.UserId == userId && aq.TestDetailId == Id && aq.ApplicationId == applicationId)
                     .ToList();
 
@@ -283,7 +284,6 @@ namespace AuthSystem.Controllers
                             UserId = userId,
                             QuestionId = question.Id,
                             TestDetailId = Id,
-                            Question = question,
                             ApplicationId = applicationId
                         };
 
@@ -464,20 +464,20 @@ namespace AuthSystem.Controllers
             return NotFound();
         }
 
-        public async Task<IActionResult> SaveStartTimeAsync(int testId)
+        public async Task<IActionResult> SaveStartTime(int applicationId)
         {
             var user = await _userManager.GetUserAsync(User);
 
             var userId = user.Id;
 
-            var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
+            var testSession = _test.UserTestSessions.FirstOrDefault(q => q.ApplicationId == applicationId && q.UserId == userId);
             if (testSession == null)
             {
                 testSession = new UserTestSession
                 {
-                    TestId = testId,
                     UserId = userId,
                     StartTime = DateTime.Now,
+                    ApplicationId = applicationId
                 };
                 _test.UserTestSessions.Add(testSession);
             }
@@ -485,28 +485,50 @@ namespace AuthSystem.Controllers
             return Content("Done");
         }
 
-        public async Task<IActionResult> GetRemainingTimeAsync(int testId, int C_Id)
+        public async Task<IActionResult> GetRemainingTime(int applicationId, int testId, int calendarId)
         {
             var user = await _userManager.GetUserAsync(User);
 
             var userId = user.Id;
-            var testSession = _test.UserTestSessions.FirstOrDefault(q => q.TestId == testId && q.UserId == userId);
-            var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
-            var testCalendar = _test.TestCalenders.FirstOrDefault(q => q.TestId == testId && q.Id == C_Id);
-            var currentTime = DateTime.Now.TimeOfDay;
-            var endTime = testCalendar.EndTime.ToTimeSpan();
+            var testSession = _test.UserTestSessions.FirstOrDefault(q => q.ApplicationId == applicationId && q.UserId == userId);
 
-            var minutesPassed = (endTime - currentTime).TotalMinutes;
-
-            if (testSession != null && test != null)
+            if (testSession == null)
             {
-                var elapsedTime = currentTime - testSession.StartTime.TimeOfDay;
-                var remainingTime = test.Duration - minutesPassed;
-                return Json(remainingTime);
+                testSession = new UserTestSession
+                {
+                    ApplicationId = applicationId,
+                    StartTime = DateTime.Now, 
+                    UserId = userId
+                };
+                _test.UserTestSessions.Add(testSession);
+                _test.SaveChanges();
             }
 
-            return (Json(test.Duration));
+            var test = _test.Tests.FirstOrDefault(q => q.Id == testId);
+            var testCalendar = _test.TestCalenders.FirstOrDefault(q => q.TestId == testId && q.Id == calendarId);
+
+            double remainingTime = 0.00;
+            TimeSpan elapsedTime;
+            var currentTime = DateTime.Now;
+
+            if (test != null && testCalendar != null)
+            {
+                elapsedTime = currentTime - testSession.StartTime;
+                var minutesPassed = elapsedTime.TotalMinutes;
+
+                var remainingDuration = test.Duration - minutesPassed;
+
+                var remainingTimeSpan = (testCalendar.EndTime.ToTimeSpan() - currentTime.TimeOfDay).TotalMinutes;
+
+                remainingTime = Math.Min(remainingDuration, remainingTimeSpan);
+            }
+
+            return Json(remainingTime);
         }
+
+
+
+
 
         [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult CheckTestName(string testName)

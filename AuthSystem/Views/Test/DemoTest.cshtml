@@ -1,7 +1,10 @@
 ﻿@model List<MCQ>;
 @{
     ViewData["Title"] = "Test";
-    int applicationId = @ViewBag.ApplicationId;
+    int testId = ViewBag.TestId;
+    int applicationId = ViewBag.ApplicationId;
+    int testDuration = ViewBag.TestDuration;
+    int calendarId = ViewBag.CalendarId;
 }
 @if (Model != null && Model.ToList().Count > 0)
 {
@@ -209,19 +212,9 @@
                 console.error('Error fetching user responses:', error);
             });
     }
-    function getTestName() {
-        var url = window.location.href;
-        var testId = url.split("/").pop().split("?")[0];
-        fetch('/Test/GetTestName?testId=' + testId).then(response => response.json()).then(name => {
-            document.getElementById('test-name').innerText = name
-        });
-    }
+
     function getTestDuration() {
-        var url = window.location.href;
-        var testId = url.split("/").pop().split("?")[0];
-        const urlParams = new URLSearchParams(url.substring(url.indexOf('?')));
-        const cId = urlParams.get("C_Id");
-        fetch(`/Test/GetTestDuration?testId=${testId}&C_Id=${cId}`)
+        fetch(`/Test/GetRemainingTime?applicationId=${@applicationId}&testId=${@testId}&calendarId=${@calendarId}`)
             .then(response => response.json())
             .then(remainingMinutes => {
                 var hours = Math.floor(remainingMinutes / 60);
@@ -251,16 +244,9 @@
                 }, 1000);
             });
     }
-    function SaveStartTime() {
-        var url = window.location.href;
-        var testId = url.split("/").pop().split("?")[0];
-        fetch('/Test/SaveStartTime?testId=' + testId).then(() => {
-        })
-    }
+
     window.addEventListener('load', function () {
-        SaveStartTime();
         getTestDuration();
-        getTestName();
         fetchUserResponses();
     });
     function requestFullScreen(element) {

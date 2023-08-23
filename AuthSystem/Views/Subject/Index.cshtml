@@ -39,7 +39,7 @@
     @foreach (var subject in Model.Subjects)
     {
 
-    <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })">
+    <a href="@Url.Action("ViewQuestions", "Subject", new { subjectId = subject.SubjectId })">
             <div class="column" style="width: 25rem; display:flex; flex-direction:row;" data-subject-id="@subject.SubjectId">
                <div class="mydiv">
 
