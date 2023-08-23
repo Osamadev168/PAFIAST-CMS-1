@@ -688,14 +688,11 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CalendarId")
+                    b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("TestId")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
