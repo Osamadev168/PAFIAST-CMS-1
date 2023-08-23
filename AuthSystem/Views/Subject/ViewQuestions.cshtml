@@ -1,8 +1,15 @@
 ﻿@model IEnumerable<MCQ>;
 
+
 @{
     ViewData["Title"] = "View|Questions|MCQ";
     int subjectId = ViewBag.SubjectId;
+
+}
+<div class="p-4 sm:ml-64 mt-10">
+    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+ @* @foreach (var questions in Model) {
+
     string subjectName = ViewBag.SubjectName;
 }
 <h1>Questions in @subjectName</h1>
@@ -35,6 +42,7 @@
                                           placeholder="Provide a Question statement" ></textarea>
                                 <label>Answer</label>
 
+
                                 <input class="form-control"
                                        placeholder="Provide an Answer" id="answer"  name="answer"  />
                                 <label>Options</label>
@@ -52,6 +60,16 @@
                                 <textarea class="form-control"
                                            placeholder="Option 4" id="option4" name="option4">
                                        </textarea>
+
+
+} *@
+      
+                <!-- Start coding here -->
+        <div id="wrapper"></div> 
+        
+</div>
+</div>
+
 
                                 <div class="center-block" style="display : flex; flex-direction : column">
                                     <h3>Please select an option as an answer</h3>
@@ -274,3 +292,5 @@
 
 </script>
 
+
+   

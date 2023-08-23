@@ -1,9 +1,28 @@
-﻿@{
+﻿@model IEnumerable<MCQ>;
+@{
     ViewData["Title"] = "Options";
 }
+
+
+@* @{
+    ViewData["Title"] = "View|Questions|MCQ";
+} *@
+@* 
 
 <h1>Choose Options</h1>
 
 
 <a asp-action="Index" asp-controller="QuestionType">Create Questions</a>
-<a asp-action="Type" asp-controller="Subject">View Questions</a>
+<a asp-action="Type" asp-controller="Subject">View Questions</a> *@
+<div class="p-4 sm:ml-64 mt-10">
+    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+        <a asp-action="Index" asp-controller="QuestionType">Create Questions</a>
+        <a asp-action="Type" asp-controller="Subject">View Questions</a>
+    </div>
+    
+
+    
+
+        
+    
+</div>
