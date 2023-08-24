@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Create Test";
 }
+<div class="p-4 sm:ml-64 mt-10">
+    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
 <h2>Created Tests</h2>
 <hr />
 @if (Model.TestList.Count == 0)
@@ -75,6 +77,8 @@
         <hr />
     </div>
 }
+</div>
+</div>
 <script>
 
     function copyTestLink(event) {

@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Select Subject";
 }
-<style>
+@* <style>
     * {
         box-sizing: border-box;
     }
@@ -31,9 +31,9 @@
 
     }
 
-</style>
+</style> *@
 
-    <h1>All subjects</h1>
+   @*  <h1>All subjects</h1>
     <div>
 
     @foreach (var subject in Model.Subjects)
@@ -54,9 +54,9 @@
     <form method="post" asp-controller="Subject" asp-action="Create" class="form-control-lg" style="width:300px; height:300px;">
         <input asp-for="SubjectName" placeholder="Enter new subject name" class="form-control" />
         <button type="submit" class="btn btn-secondary">Create</button>
-    </form>
+    </form> *@
 @section Scripts {
-    <script>
+    @* <script>
         $(document).ready(function () {
             // Get all subject containers
             var subjectContainers = $('.column[data-subject-id]');
@@ -84,13 +84,55 @@
                 });
             });
         });
+    </script> *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var subjectContainers = document.querySelectorAll('.grid div[data-subject-id]');
+
+            subjectContainers.forEach(function (container) {
+                var subjectId = container.getAttribute('data-subject-id');
+
+                // Send AJAX request to fetch questions count
+                fetch('/Subject/GetQuestionsCount?subjectId=' + subjectId)
+                    .then(response => response.json())
+                    .then(data => {
+                        var count = data.count;
+                        var countHtml = '<span class="bg-blue-500 text-white py-1 px-2 rounded-full text-xs">' + count + ' Questions</span>';
+                        container.querySelector('.p-4').insertAdjacentHTML('beforeend', countHtml);
+                    })
+                    .catch(error => {
+                        console.error('Failed to fetch questions count for subject with ID ' + subjectId);
+                    });
+            });
+        });
     </script>
 
+
 }
-<style>
+@* <style>
 
     .mydiv{
        display : flex;
        flex-direction : row;
     }
-</style>
+</style> *@
+<div class="p-4 sm:ml-64 mt-10">
+    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+        <h1 class="text-xl font-semibold mb-4">All Subjects</h1>
+
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            @foreach (var subject in Model.Subjects)
+            {
+                <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })">
+                    <div class="bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 relative" data-subject-id="@subject.SubjectId" >
+                        <div class="p-4 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold mb-2">@subject.SubjectName</h3>
+                            @* <span class="bg-blue-500 text-white py-1 px-2 rounded-full  text-xs">7 Questions</span> *@
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+

@@ -8,7 +8,16 @@ namespace AuthSystem.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            if(User.Identity.IsAuthenticated)
+            {
+
+                return RedirectToAction("Dashboard", "Home");
+            }
+            else
+            {
+                return View();
+            }
+           
         }
         public IActionResult Dashboard()
         {

@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Upload|Questions";
 }
+<div class="p-4 sm:ml-64 mt-10">
+    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
 <div class="uploadFileContainer">
     <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-controller="MCQ">
         <div class="form-group">
@@ -11,6 +13,8 @@
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
 
+</div>
+</div>
 </div>
 <div style="display: flex; flex-direction: column">
     <span asp-validation-for="Content" class="text-danger"></span>

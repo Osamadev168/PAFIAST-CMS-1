@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthSystem.Models
 {
-    public class MCQ
+    public  class MCQ
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
