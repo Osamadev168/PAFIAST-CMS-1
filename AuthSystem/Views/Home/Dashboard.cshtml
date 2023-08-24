@@ -1,11 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
-@{
-
-
-}
+﻿
 <div class="p-4 sm:ml-64 mt-10">
     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <div class="bg-gray-100 p-6 shadow-lg rounded-lg">
@@ -16,8 +9,8 @@
 </div>
 
 
-@section Scripts{
-    <script>
+
+<script>
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
 
@@ -26,32 +19,35 @@
                 events: [
                     {
                         title: 'Math Test',
-                        start: '2023-08-01',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300'],
+                        start: '2023-08-01T10:00:00',
+                        end: '2023-08-01T12:00:00',
                     },
                     {
                         title: 'Physics Exam',
-                        start: '2023-08-07',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"'],
+                        start: '2023-08-07T14:00:00',
+                        end: '2023-08-07T16:00:00',
                     },
                     {
                         title: 'English Exam',
-                        start: '2023-08-15',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"'],
-                    },
-                    // Multiple events on a single day
-                    {
-                        title: 'Event 1',
-                        start: '2023-08-15',
-                        classNames: ['event-badge', 'bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"'],
+                        start: '2023-08-15T09:00:00',
+                        end: '2023-08-15T11:00:00',
                     },
                     {
-                        title: 'Event 2',
-                        start: '2023-08-15',
-                        classNames: ['event-badge', 'bg-yellow-500'],
-                    }
+                        title: 'English Exam',
+                        start: '2023-08-15T09:00:00',
+                        end: '2023-08-15T11:00:00',
+                    },
                     // Add more events...
                 ],
+                eventContent: function (info) {
+                    return {
+                        html: `<div class="event-badge bg-blue-400 text-white text-l font-medium mr-2 px-2.5 py-0.5 rounded-xl dark:bg-blue-900 dark:text-white mb-2">
+                                            <p class="mb-1">${info.event.title}</p>
+
+                                            <p class="text-sm">${info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${info.event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                        </div>`
+                    };
+                },
                 eventDidMount: function (info) {
                     // Use this callback to customize event rendering if needed
                 },
@@ -59,5 +55,5 @@
 
             calendar.render();
         });
-    </script>
-}
+</script>
+
