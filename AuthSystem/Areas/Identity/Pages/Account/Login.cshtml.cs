@@ -115,7 +115,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        return RedirectToAction("Applicant_Dashboard", "Home");
+                        return RedirectToAction("Dashboard", "Applicant");
                     }
                 }
                 if (result.RequiresTwoFactor)
