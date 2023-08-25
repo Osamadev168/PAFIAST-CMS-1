@@ -264,7 +264,7 @@ namespace AuthSystem.Controllers
             }
         
         }
-        public IActionResult GetQuestions(int subjectId)
+       /* public IActionResult GetQuestions(int subjectId)
         {
 
 
@@ -283,6 +283,6 @@ namespace AuthSystem.Controllers
                 return Json(new { Error = e.Message });
             }
 
-        }
+        }*/
     }
 }

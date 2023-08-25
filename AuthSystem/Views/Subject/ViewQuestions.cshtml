@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MCQ>;
+﻿@*@model IEnumerable<MCQ>;
 
 
 @{
@@ -8,7 +8,7 @@
 }
 <div class="p-4 sm:ml-64 mt-10">
     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
- @* @foreach (var questions in Model) {
+  @foreach (var questions in Model) {
 
     string subjectName = ViewBag.SubjectName;
 }
@@ -62,7 +62,7 @@
                                        </textarea>
 
 
-} *@
+} 
       
                 <!-- Start coding here -->
         <div id="wrapper"></div> 
@@ -204,8 +204,6 @@
 </table>
 
 <script src="https://cdn.tiny.cloud/1/ity2yj9qnyexhb9d3n2so42uklxs5mo5n84povwn2rrfueya/tinymce/6/tinymce.min.js" referrerpolicy="origin" rel="preload"></script>
-
-
 <script>
     var answerField = document.getElementById("answer");
     var radioOption1 = document.getElementById("radioOption1");
@@ -281,16 +279,5 @@
     }
 
 
-    fetch(`/MCQ/GetQuestions?subjectId=${@subjectId}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-
 </script>
-
-
-   
+*@
