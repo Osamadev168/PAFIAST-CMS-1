@@ -123,7 +123,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             @foreach (var subject in Model.Subjects)
             {
-                <a href="@Url.Action("SelectSubject", "Subject", new { subjectId = subject.SubjectId })">
+                <a href="@Url.Action("ViewQuestions", "Subject", new { subjectId = subject.SubjectId })">
                     <div class="bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 relative" data-subject-id="@subject.SubjectId" >
                         <div class="p-4 flex items-center justify-between">
                             <h3 class="text-lg font-semibold mb-2">@subject.SubjectName</h3>

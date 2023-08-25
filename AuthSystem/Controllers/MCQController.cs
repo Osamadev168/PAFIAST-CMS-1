@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
-using System.Runtime.CompilerServices;
 
 namespace AuthSystem.Controllers
 {
@@ -32,9 +31,6 @@ namespace AuthSystem.Controllers
             IEnumerable<MCQ> getQuestions = _test.MCQs.Include(q => q.Subject);
             return View(getQuestions);
         }
-
-
-
 
         [Authorize]
         public IActionResult Create()
@@ -82,17 +78,16 @@ namespace AuthSystem.Controllers
             return View(EditMCQData);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(MCQ obj , int Id)
+        public IActionResult Edit(MCQ obj, int Id)
         {
-                _test.MCQs.Update(obj);
-                _test.SaveChanges();
+            _test.MCQs.Update(obj);
+            _test.SaveChanges();
             return RedirectToAction("ViewQuestions", "Subject", new { subjectId = obj.SubjectId });
         }
 
-        public IActionResult Delete(int? Id , int subjectId)
+        public IActionResult Delete(int? Id, int subjectId)
         {
             var mcqData = _test.MCQs.Find(Id);
             if (mcqData == null)
@@ -121,7 +116,7 @@ namespace AuthSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult UploadFile(IFormFile file , int subjectId)
+        public IActionResult UploadFile(IFormFile file, int subjectId)
         {
             if (file == null || file.Length == 0)
             {
@@ -211,78 +206,46 @@ namespace AuthSystem.Controllers
             }
 
             return RedirectToAction("ViewQuestions", "Subject", new { subjectId = subjectId });
-
         }
 
-        public IActionResult CreateQuestion(int subjectId , string statement , string answer  , string option1 , string option2 , string option3 , string option4 , string diffLevel ) {
-
-
+        public IActionResult CreateQuestion(int subjectId, string statement, string answer, string option1, string option2, string option3, string option4, string diffLevel)
+        {
             try
-            {  
+            {
                 MCQ mcq = new()
-                { 
-                   Content = statement,
-                   Answer = answer,
-                   Option1 = option1,
-                   Option2 = option2,
-                   Option3 = option3,
-                   Option4 = option4,
-                   SubjectId = subjectId,
-                   Difficulty = diffLevel
-
-                
+                {
+                    Content = statement,
+                    Answer = answer,
+                    Option1 = option1,
+                    Option2 = option2,
+                    Option3 = option3,
+                    Option4 = option4,
+                    SubjectId = subjectId,
+                    Difficulty = diffLevel
                 };
 
                 _test.MCQs.Add(mcq);
                 _test.SaveChanges();
                 return RedirectToAction("ViewQuestions", "Subject", new { subjectId = subjectId });
             }
-
-            catch (Exception e) {
-
-                return Json(new { Error = e.Message });
-            
-            }
-        
-        }
-
-        public IActionResult GetQuestions(int subjectId) {
-
-
-            try
-            {
-                var questions = _test.MCQs.Where(q => q.SubjectId == subjectId).ToArray();
-
-                return Json(questions);
-            }
-
-
-
-            catch (Exception e) {
-
-                return Json(new { Error = e.Message });
-            }
-        
-        }
-        public IActionResult GetQuestions(int subjectId)
-        {
-
-
-            try
-            {
-                var questions = _test.MCQs.Where(q => q.SubjectId == subjectId).ToArray();
-
-                return Json(questions);
-            }
-
-
-
             catch (Exception e)
             {
-
                 return Json(new { Error = e.Message });
             }
+        }
 
+        public IActionResult GetQuestions(int subjectId)
+        {
+            try
+            {
+                var questions = _test.MCQs.Where(q => q.SubjectId == subjectId).ToArray();
+
+                return Json(questions);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
         }
     }
 }

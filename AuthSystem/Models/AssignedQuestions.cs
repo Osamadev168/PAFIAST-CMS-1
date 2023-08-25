@@ -12,8 +12,6 @@ namespace AuthSystem.Models
 
         public int ApplicationId { get; set; }
 
-     
-
         public int QuestionId { get; set; }
 
         [ForeignKey("TestDetailId")]
