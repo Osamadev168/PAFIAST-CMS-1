@@ -2,7 +2,6 @@
 using AuthSystem.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace AuthSystem.Data;
 
@@ -33,8 +32,6 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-    
-
         builder.Entity<TestApplication>()
                 .HasOne(uc => uc.Test)
                 .WithMany()
