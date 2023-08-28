@@ -1,6 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
+﻿#nullable disable
 
 using AuthSystem.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication;
@@ -117,7 +115,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        return RedirectToAction("Applicant_Dashboard", "Home");
+                        return RedirectToAction("Dashboard", "Applicant");
                     }
                 }
                 if (result.RequiresTwoFactor)

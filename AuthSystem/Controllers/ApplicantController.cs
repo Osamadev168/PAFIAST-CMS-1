@@ -79,6 +79,18 @@ namespace AuthSystem.Controllers
             return View(applications);
         }
 
+        public IActionResult Dashboard()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = e.Message });
+            }
+        }
+
         [HttpGet]
         public IActionResult TestResult(int resultId)
         {

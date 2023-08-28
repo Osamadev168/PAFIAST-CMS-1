@@ -497,7 +497,7 @@ namespace AuthSystem.Controllers
                 testSession = new UserTestSession
                 {
                     ApplicationId = applicationId,
-                    StartTime = DateTime.Now, 
+                    StartTime = DateTime.Now,
                     UserId = userId
                 };
                 _test.UserTestSessions.Add(testSession);
@@ -525,10 +525,6 @@ namespace AuthSystem.Controllers
 
             return Json(remainingTime);
         }
-
-
-
-
 
         [Authorize(Roles = "Admin,Super Admin")]
         public IActionResult CheckTestName(string testName)
