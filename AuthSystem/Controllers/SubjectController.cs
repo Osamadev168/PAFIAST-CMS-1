@@ -93,13 +93,8 @@ namespace AuthSystem.Controllers
         public IActionResult ViewQuestions(int subjectId)
         {
 
-
-            var Questions_MCQ = _test.MCQs.Where(x => x.SubjectId == subjectId).Include(x => x.Subject);
-            ViewBag.SubjectId = subjectId;
-            string subjectName = _test.Subjects.Where(s => s.SubjectId == subjectId).FirstOrDefault().SubjectName;
-            ViewBag.SubjectName = subjectName;
-
-
+            var Questions_MCQ = _test.MCQs.Where(x => x.SubjectId == SubjectId).Include(x => x.Subject);
+            ViewBag.SubjectId = SubjectId;
             return View(Questions_MCQ);
         }
 

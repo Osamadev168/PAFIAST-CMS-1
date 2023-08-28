@@ -85,14 +85,18 @@ namespace AuthSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(MCQ obj, int Id)
+        public IActionResult Edit(MCQ obj)
         {
-            _test.MCQs.Update(obj);
-            _test.SaveChanges();
-            return RedirectToAction("ViewQuestions", "Subject", new { subjectId = obj.SubjectId });
+            if (ModelState.IsValid)
+            {
+                _test.MCQs.Update(obj);
+                _test.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
         }
 
-        public IActionResult Delete(int? Id, int subjectId)
+        public IActionResult Delete(int? Id)
         {
             var mcqData = _test.MCQs.Find(Id);
             if (mcqData == null)
@@ -121,7 +125,7 @@ namespace AuthSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult UploadFile(IFormFile file, int subjectId)
+        public IActionResult UploadFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
@@ -246,6 +250,7 @@ namespace AuthSystem.Controllers
 
             }
 
+            return RedirectToAction("ViewQuestions", "Subject");
         }
 
         public IActionResult GetQuestions(int subjectId)
