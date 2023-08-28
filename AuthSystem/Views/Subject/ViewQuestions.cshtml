@@ -5,6 +5,7 @@
     ViewData["Title"] = "View|Questions|MCQ";
     int subjectId = ViewBag.SubjectId;
 }
+
 <div class="p-4 sm:ml-64 mt-10">
     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
  @* @foreach (var questions in Model) {
@@ -25,10 +26,403 @@
 } *@
       
                 <!-- Start coding here -->
-        <div id="wrapper"></div> 
-        
+         
+       
+                <!-- Start coding here -->
+        <div id="demo_info" class="box"></div>
+                <div class="bg-white dark:bg-gray-800 relative  sm:rounded-lg overflow-hidden">
+
+            <h1 class="flex items-center text-5xl font-bold dark:text-white">All Questions<span class="bg-blue-100 text-blue-800 text-2xl font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-2">Subject Name</span></h1>
+
+
+                    <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                         <div class="w-full md:w-1/2">
+                            <div class="w-full md:w-1/2">
+                                <div class="flex justify-center items-center">
+
+                                
+                                     @* <label for="custom-search" class="sr-only">Search</label> *@
+                            <span class="material-symbols-rounded font-bold text-2xl ">
+                                search
+                            </span>
+                                    <input type="text" id="custom-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" autocomplete="off" required=""> 
+                               </div>
+                    </div>
+                    </div> 
+               
+                 
+                
+                
+                        <div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+                    <button data-modal-target="extralarge-modal" data-modal-toggle="extralarge-modal" class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                                </svg>
+                                Add Question
+                            </button>
+                          
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="example">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3">Question</th>
+                                    <th scope="col" class="px-4 py-3">Option1</th>
+                                    <th scope="col" class="px-4 py-3">Option2</th>
+                                    <th scope="col" class="px-4 py-3">Option3</th>
+                                <th scope="col" class="px-4 py-3">Option4</th>
+                                <th scope="col" class="px-4 py-3">Answer</th>
+
+                            <th scope="col" class="px-4 py-3">Actions</th>
+
+
+                        </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var questions in Model) {
+                                <tr class="border-b dark:border-gray-700">
+
+                                <td class="px-4 py-3">@Html.Raw(@questions.Content)</td>
+                                <td class="px-4 py-3">@Html.Raw(@questions.Option1)</td>
+                                <td class="px-4 py-3">@Html.Raw(@questions.Option2)</td>
+                                <td class="px-4 py-3">@Html.Raw(@questions.Option3)</td>
+                                    <td class="px-4 py-3">@Html.Raw(@questions.Option4)</td>
+                                    <td class="px-4 py-3">@Html.Raw(@questions.Answer)</td>
+
+
+
+                                    <td class="px-4 py-3 flex items-center justify-end">
+                                        <button id="apple-imac-27-dropdown-button" data-dropdown-toggle="apple-imac-27-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
+                                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                            </svg>
+                                        </button>
+                                        <div id="apple-imac-27-dropdown" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                                            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
+                                                
+                                                <li>
+                                                    <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                                </li>
+                                            </ul>
+                                            <div class="py-1">
+                                                <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                                
+                            </tbody>
+                        </table>
+
+                
+                
+
+                    </div>
+
+
+
+
+
+                    <style>
+                
+                .dataTables_wrapper .dataTables_filter input[type="search"] {
+                    display:none
+                }
+
+                .dataTables_wrapper .dataTables_filter label {
+                    /* Your custom styles for the label here */
+                   display:none
+                    /* Add more styles as needed */
+                }
+
+
+                /* Pagination styles */
+
+                .dataTables_wrapper .dataTables_paginate {
+                    display: flex;
+                    
+                    align-items: center;
+                    margin-top: 1rem;
+                    border: 1px solid #6b7280;
+                    border-radius:10px;
+                    height:fit-content;
+                    padding:5px;
+
+
+                }
+                
+
+                    .dataTables_wrapper .dataTables_paginate .paginate_button {
+                                             
+                        font-size: 13px;
+                        background-color: white;
+                        
+
+                       
+                    }
+
+                        .dataTables_wrapper .dataTables_paginate .paginate_button.current  {
+                            background-color: #a5f3fc; /* Blue-500 color */
+                            background-blend-mode: darken;
+                            color: #fff;
+                            font-weight: bold;
+                            border:none;
+                        }
+
+                        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+                            background-color: #a5f3fc; /* Blue-500 color */
+                            background-blend-mode: darken;
+                            color: #fff;
+                            font-weight: bold;
+                            border: none;
+                            transform: scale(1.05); /* Increase size slightly on hover */
+                        }
+
+                        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+                            background-color: #a5f3fc; /* Blue-500 color */
+                            background-blend-mode: darken;
+                            color: #fff;
+                            
+                            border: none;
+                            transform: scale(1.05);
+                           
+                           
+                        }
+                        
+                   
+
+               
+            </style>
+
+           
+            
 </div>
 </div>
 
 
-   
+    <div id="extralarge-modal" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative w-full max-w-7xl max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <!-- Modal header -->
+                <div class="flex items-center bg-gray-100 justify-center p-5 border-b rounded-t dark:border-gray-600">
+                    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+                        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 rounded-t-lg" id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Manually</button>
+                            </li>
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="True">Upload File</button>
+                            </li>
+                           
+                        </ul>
+                    </div>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="extralarge-modal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div id="myTabContent">
+                    <div class="hidden p-4 rounded-lg bg-gray-100 dark:bg-gray-800 shadow-md flex items-center justify-center h-full" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                         <form method="post" asp-action="CreateQuestion" asp-controller="MCQ" asp-route-subjectId="@subjectId"
+                         class="mx-5" 
+                         >
+
+
+                            <label class="block font-semibold mb-2 text-gray-700">Statement</label>
+
+                            <textarea class="w-full px-4 py-2  border rounded-md resize-y focus:ring focus:ring-blue-300" id="statement"
+                                      name="statement"
+                                      placeholder="Provide a Question statement"></textarea>
+
+
+                            <label class="block mt-4 font-semibold text-gray-700">Answer</label>
+                            <input class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300" placeholder="Provide an Answer" id="answer" name="answer" readonly />
+
+                            <div class="mt-4 space-y-4">
+                                <label class="block font-semibold text-gray-700">Options</label>
+
+                                <div class="flex space-x-4 justify-between">
+                                    <textarea class="flex-grow px-4 py-2 border rounded-md resize-y focus:ring focus:ring-blue-300"
+                                              placeholder="Option 1" id="option1" name="option1"></textarea>
+
+                                    <textarea class="flex-grow px-4 py-2 border rounded-md resize-y focus:ring focus:ring-blue-300"
+                                              placeholder="Option 2" id="option2" name="option2"></textarea>
+                                </div>
+
+                                <div class="flex space-x-4 justify-between">
+                                    <textarea class="flex-grow px-4 py-2 border rounded-md resize-y focus:ring focus:ring-blue-300"
+                                              placeholder="Option 3" id="option3" name="option3"></textarea>
+
+                                    <textarea class="flex-grow px-4 py-2 border rounded-md resize-y focus:ring focus:ring-blue-300"
+                                              placeholder="Option 4" id="option4" name="option4"></textarea>
+                                </div>
+                            </div>
+                            <div class="flex space-x-4 mt-5 justify-between">
+                                <div class=" p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md w-[500px] ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Please select an option as an answer</h3>
+                                    <div class="space-y-2 ">
+                                        <label for="radioOption1" class="flex items-center cursor-pointer">
+                                            <input type="radio" class="form-radio mr-2" value="" name="Answer" id="radioOption1" />
+                                            <span class="text-gray-600">Option 1</span>
+                                        </label>
+                                        <label for="radioOption2" class="flex items-center cursor-pointer">
+                                            <input type="radio" class="form-radio mr-2" value="" name="Answer" id="radioOption2" />
+                                            <span class="text-gray-600">Option 2</span>
+                                        </label>
+                                        <label for="radioOption3" class="flex items-center cursor-pointer">
+                                            <input type="radio" class="form-radio mr-2" value="" name="Answer" id="radioOption3" />
+                                            <span class="text-gray-600">Option 3</span>
+                                        </label>
+                                        <label for="radioOption4" class="flex items-center cursor-pointer">
+                                            <input type="radio" class="form-radio mr-2" value="" name="Answer" id="radioOption4" />
+                                            <span class="text-gray-600">Option 4</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class=" p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md w-[500px]">
+                                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Please select a difficulty level for this question</h3>
+                                    <div class="space-y-2">
+                                        <label for="Easy" class="flex items-center cursor-pointer">
+                                            <input type="radio" value="Easy" class="form-radio mr-2" name="diffLevel" id="Easy" />
+                                            <span class="text-gray-600">Easy</span>
+                                        </label>
+                                        <label for="Medium" class="flex items-center cursor-pointer">
+                                            <input type="radio" value="Medium" class="form-radio mr-2" name="diffLevel" id="Medium" />
+                                            <span class="text-gray-600">Medium</span>
+                                        </label>
+                                        <label for="Hard" class="flex items-center cursor-pointer">
+                                            <input type="radio" value="Hard" class="form-radio mr-2" name="diffLevel" id="Hard" />
+                                            <span class="text-gray-600">Hard</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                <button type="submit" data-modal-hide="extralarge-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create</button>
+                                <button data-modal-hide="extralarge-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline</button>
+                            </div>
+
+                                </form>
+                       
+                    </div>
+                    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+
+                    <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-controller="MCQ" asp-route-subjectId="@subjectId">
+                        <div class="flex items-center justify-center w-full">
+                            <label for="dropzone-file" id="file-name" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                    </svg>
+                                    <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">CSV, Exel, .xls</p>
+                                </div>
+                                <input id="dropzone-file" type="file" class="hidden" required accept=".xlsx, .xls" />
+                            </label>
+                        </div>
+                        <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                            <button type="submit" data-modal-hide="extralarge-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Upload</button>
+                            <button data-modal-hide="extralarge-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+                        </div>
+                        </form>
+                    </div>
+                    
+                </div>
+                <!-- Modal footer -->
+                @* <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    <button data-modal-hide="extralarge-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">I accept</button>
+                    <button data-modal-hide="extralarge-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline</button> 
+                </div> *@
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.tiny.cloud/1/ity2yj9qnyexhb9d3n2so42uklxs5mo5n84povwn2rrfueya/tinymce/6/tinymce.min.js" referrerpolicy="origin" rel="preload"></script>
+    <script>
+        var answerField = document.getElementById("answer");
+        var radioOption1 = document.getElementById("radioOption1");
+        var radioOption2 = document.getElementById("radioOption2");
+        var radioOption3 = document.getElementById("radioOption3");
+        var radioOption4 = document.getElementById("radioOption4");
+
+
+        radioOption1.addEventListener("click", function () {
+            answerField.value = tinymce.get('option1').getContent({ format: 'html' });
+        });
+
+        radioOption2.addEventListener("click", function () {
+            answerField.value = tinymce.get('option2').getContent({ format: 'html' });
+        });
+
+        radioOption3.addEventListener("click", function () {
+            answerField.value = tinymce.get('option3').getContent({ format: 'html' });
+        });
+        radioOption4.addEventListener("click", function () {
+            answerField.value = tinymce.get('option4').getContent({ format: 'html' });
+        });
+
+
+
+        tinymce.init({
+            selector: '#statement',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                                 ',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        });
+
+        tinymce.init({
+            selector: '#option1',
+            width: 500,
+            height: 200,
+            plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                                 ',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        });
+        tinymce.init({
+            selector: '#option2',
+            width: 500,
+            height: 200,
+
+            plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                              ',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        }); tinymce.init({
+            selector: '#option3',
+            width: 500,
+            height: 200,
+            plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+
+        });
+        tinymce.init({
+            selector: '#option4',
+            width: 500,
+            height: 200,
+            plugins: 'anchor autolink charmap codesample emoticons image link lists searchreplace table visualblocks wordcount                         ',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image  table    | spellcheckdialog a11ycheck   | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+
+        });
+
+
+    </script>
+<script>
+    // Listen for file selection change event
+    document.getElementById('dropzone-file').addEventListener('change', handleFileSelect);
+
+    function handleFileSelect(event) {
+        var selectedFile = event.target.files[0];
+        var fileNameContainer = document.getElementById('file-name');
+
+        if (selectedFile) {
+            fileNameContainer.textContent = selectedFile.name; 
+           
+        } else {
+            fileNameContainer.textContent = 'No file selected';
+        }
+    }
+</script>
