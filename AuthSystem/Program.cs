@@ -12,16 +12,15 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
 })
-.AddRoles<IdentityRole>() // Add this line to enable roles
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<AuthDbContext>();
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSession();
+builder.Services.AddApplicationInsightsTelemetry();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -30,7 +29,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
-app.UseAuthentication(); // Add this line before UseAuthorization()
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

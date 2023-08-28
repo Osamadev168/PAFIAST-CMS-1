@@ -187,6 +187,8 @@
                                 <span class="ml-3">Dashboard</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-action="Index" asp-controller="Subject" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
@@ -196,6 +198,7 @@
                                 
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
 
                         <li>
                             <a asp-action="Test" asp-controller="Test" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -206,6 +209,8 @@
                                 
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Calendar" asp-action="CenterChangeRequests" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -215,6 +220,8 @@
                                 <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">@centerRequests</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Calendar" asp-action="ViewSubmittedApplications" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
@@ -223,6 +230,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">Fee verification</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Calendar" asp-action="Attendance" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
@@ -231,6 +240,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">Attendance</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="TestCenters" asp-action="ViewTestCenters" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
@@ -239,6 +250,7 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">Test centers</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
 
                         <li>
                             <a asp-controller="Test" asp-action="SystemStats" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -248,6 +260,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">System Sats</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                     }
                     @if (isSuperAdmin)
                     {
@@ -259,6 +273,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">Role Management</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                     }
                     @if (!isAdmin && !isSuperAdmin)
                     {
@@ -269,8 +285,11 @@
                                     <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
                                 </svg>
                                 <span class="ml-3">Dashboard</span>
+
                             </a>
+
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
                         <li>
                             <a asp-controller="Calendar" asp-action="Index" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -281,6 +300,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">Apply</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Applicant" asp-action="PayFee" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -291,6 +312,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">Pay Fee</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Calendar" asp-action="SelectCenter" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -301,6 +324,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">Book Calendar</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Applicant" asp-action="Applications" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -313,6 +338,8 @@
 
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Test" asp-action="MyTests" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -323,6 +350,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">My Tests</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                         <li>
                             <a asp-controller="Applicant" asp-action="Results" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -333,6 +362,8 @@
                                 <span class="flex-1 ml-3 whitespace-nowrap">My Results</span>
                             </a>
                         </li>
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
                     }
                 </ul>
             </div>
